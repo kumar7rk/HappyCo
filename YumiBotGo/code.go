@@ -18,7 +18,6 @@ func main() {
 	user := os.Getenv("DB_USER")
 	password := os.Getenv("DB_PASS")
 	dbname := os.Getenv("DB_NAME")
-	//port := os.Getenv("DB_PORT")
 
   psqlInfo := fmt.Sprintf("host=%s user=%s "+
     "password=%s dbname=%s sslmode=disable",
