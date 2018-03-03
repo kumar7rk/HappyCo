@@ -44,7 +44,6 @@ client.connect((err) => {
     console.error('connection error', err.stack)
   } else {
     console.log('connected')
-    console.log("Process.env "+process.env.DB_USER);
     //console.log(process.env)
     getUserData(65135);// ideally call in new conversation method
   }
@@ -54,7 +53,7 @@ client.connect((err) => {
 * calls other methods which sets the value of the objects
 */
 function getUserData(u_id){
-  console.log("getUserData");
+//  console.log("getUserData");
   
   getLatestInspections(u_id);
   getLatestReports(u_id);
