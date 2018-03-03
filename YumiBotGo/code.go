@@ -35,15 +35,6 @@ func main() {
 	}
 
 	fmt.Println("Connected");
-
-
-//	text: 'SELECT id, folder_id, created_at, template_name FROM inspections WHERE user_id = $1 
-//	AND folder_id IN ( SELECT portfolio_id FROM portfolio_access_controls WHERE user_id = $2) 
-//	AND archived_at IS NULL ORDER BY created_at DESC LIMIT 5',
-
-	//rows, err := db.Query("SELECT id, folder_id, created_at, template_name FROM inspections WHERE user_id = $1 
-	//AND folder_id IN ( SELECT portfolio_id FROM portfolio_access_controls WHERE user_id = $2) 
-	//AND archived_at IS NULL ORDER BY created_at DESC LIMIT 5'",65135)
 	rows, err := db.Query("SELECT id, folder_id, created_at, template_name FROM inspections WHERE user_id = $1 AND FOLDER_ID IN ( SELECT portfolio_id FROM portfolio_access_controls WHERE user_id = $3) AND archived_at IS NULL ORDER BY created_at DESC LIMIT $2", 65135,5,65135)
 	if err != nil {
     	panic(err)
