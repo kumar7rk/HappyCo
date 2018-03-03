@@ -2,8 +2,8 @@ package main
 
 import (
 	"fmt"
-	"database/sql"
 	_ "github.com/lib/pq"
+	"github.com/jmoiron/sqlx"
 
 	"github.com/joho/godotenv"
     "os"
