@@ -31,7 +31,7 @@ func main() {
     host, user, password, dbname)
 
 	//opening connection using sql package --> will change to sqlx 
-	db, err := sql.Open("postgres", psqlInfo)
+	db, err := sqlx.Connect("postgres", psqlInfo)
 	if err != nil {
 	  panic(err)
 	}
