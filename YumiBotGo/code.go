@@ -21,18 +21,19 @@ func main() {
 	  panic(err)
 	}	
 
-	getUserData();
+	getUserData("65135");
 }
 
-func getUserData(){
+func getUserData(u_id string){
 
 	// defining db parameters
 	host := os.Getenv("DB_HOST")
 	user := os.Getenv("DB_USER")
 	password := os.Getenv("DB_PASS")
 	dbname := os.Getenv("DB_NAME")
+
 	// buildiing db connection string
-  psqlInfo := fmt.Sprintf("host=%s user=%s "+
+  	psqlInfo := fmt.Sprintf("host=%s user=%s "+
     "password=%s dbname=%s sslmode=disable",
     host, user, password, dbname)
 
@@ -52,7 +53,7 @@ func getUserData(){
 
 	//running the query on the db
 	// right now it's fetching last 5 inspection for user_id 63135
-	rows, err := db.Query("SELECT id, folder_id, created_at, template_name FROM inspections WHERE user_id = $1 AND FOLDER_ID IN ( SELECT portfolio_id FROM portfolio_access_controls WHERE user_id = $3) AND archived_at IS NULL ORDER BY created_at DESC LIMIT $2", 65135,5,65135)
+	rows, err := db.Query("SELECT id, folder_id, created_at, template_name FROM inspections WHERE user_id = $1 AND FOLDER_ID IN ( SELECT portfolio_id FROM portfolio_access_controls WHERE user_id = $3) AND archived_at IS NULL ORDER BY created_at DESC LIMIT $2", u_id,5,u_id)
 	if err != nil {
     	panic(err)
     }
