@@ -10,7 +10,20 @@ import (
 	"github.com/joho/godotenv"
     "os"
 )
+type row struct{
+	role int
+	inspection string
+	report string
+	iap int
+}
+	var id string
+  	var folder_id string
+  	var created_at string
+  	var template_name string
 	
+	var r [10] row
+
+	var count int
 //starting main function
 // at this moment all of the code is in main function
 // from db connect to displaying results on console
@@ -20,8 +33,8 @@ func main() {
 	if err != nil {
 	  panic(err)
 	}	
-
 	getUserData("65135");
+		printValues();
 }
 
 func getUserData(u_id string){
@@ -60,16 +73,17 @@ func getUserData(u_id string){
   defer rows.Close()
   // fetching all the records 
   for rows.Next() {
-  	var id string
-  	var folder_id int
-  	var created_at string
-  	var template_name string
+  	
   	err = rows.Scan(&id, &folder_id, &created_at, &template_name)
   	if err != nil {
       panic(err)
     }
+
+    r[count].inspection = id+ " " + folder_id+ " " + created_at+ " " + template_name
+
+    count++
     // printing the fetched values
-    fmt.Println(id,folder_id,created_at,template_name)
+
   }
   err = rows.Err()
   if err != nil {
@@ -78,5 +92,10 @@ func getUserData(u_id string){
 	
 }
 
-
-
+func printValues() {
+	//fmt.Println(id,folder_id,created_at,template_name)
+	for i := 0; i < count; i++ {
+		fmt.Println(r[i].inspection)
+		
+	}
+}
