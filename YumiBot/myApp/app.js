@@ -61,7 +61,7 @@ function getUserData(u_id){
   getBusinessNotes(u_id);
   
   //waiting for 2 second to print values on console
-  //only used for testing should be removed in the release version
+  //the method only used for testing should be removed in the release version
   setTimeout(printValues,2000);
 }
 
@@ -179,6 +179,7 @@ function SetBusinessNotes(value) {
     business_notes_data.b_body.push(value.rows[0]['body']);
     }
 }
+
 // builds the note to display in the intercom conversation
 function noteBuilder(){
   message = '<b>A small note from Yumi 🐶</b><br/><br/>'
