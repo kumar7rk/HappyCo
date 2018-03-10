@@ -12,11 +12,13 @@ import (
     "os"
 )
 type row struct{
+	//main attributes
 	role int
 	inspection string
 	report string
 	iap int
 }
+	//db variables
 	var id string
   	var folder_id string
   	var created_at string
