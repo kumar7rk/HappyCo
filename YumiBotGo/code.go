@@ -4,6 +4,7 @@ package main
 //adding import statements
 import (
 	"fmt"
+	"strings"
 	_ "github.com/lib/pq"
 	"github.com/jmoiron/sqlx"
 
@@ -24,6 +25,10 @@ type row struct{
 	var r [10] row
 
 	var count int
+
+	var note string 
+
+
 //starting main function
 // at this moment all of the code is in main function
 // from db connect to displaying results on console
@@ -34,7 +39,8 @@ func main() {
 	  panic(err)
 	}	
 	getUserData("65135");
-		printValues();
+	// printValues();
+	noteBuilder();
 }
 
 func getUserData(u_id string){
@@ -87,7 +93,7 @@ func getUserData(u_id string){
   }
   err = rows.Err()
   if err != nil {
-  	panic(err)
+  	panic(err) 
   }
 	
 }
@@ -99,3 +105,19 @@ func printValues() {
 		
 	}
 }
+
+func noteBuilder() {
+	note = "<b>A small note from Yumi 🐶</b><br/><br/>"
+  	note += "<b>✅   Yumi found these recent <em>Inspections:</em></b><br/>"
+
+	for i := 0; i < count; i++ {
+
+		split := strings.Fields(r[i].inspection)
+		var url = "https://manage.happyco.com/folder/"+split[1]+"/inspections/"+split[0]
+	    var date = split[2]
+	    note += "<a href="+url+">"+url+"</a>" + " " + date
+	    note +="\n"
+	}
+	fmt.Println(note)
+}
+//
