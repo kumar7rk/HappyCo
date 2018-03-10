@@ -33,17 +33,25 @@ type row struct{
 // at this moment all of the code is in main function
 // from db connect to displaying results on console
 func main() {
+	
+	err:=loadEnv();
+	if err!=nil {
+		fmt.Println("Error loading .env file")
+	}
+	
+	getUserData("65135");
+	noteBuilder();
+}
+func loadEnv() (error){
 	// loading env file to load db parameters
 	err := godotenv.Load(".env")
 	if err != nil {
-	  panic(err)
+	  return err;
 	}	
-	getUserData("65135");
-	// printValues();
-	noteBuilder();
-}
 
-func getUserData(u_id string){
+	return nil;
+}
+func formURI() (codee string) {
 
 	// defining db parameters
 	host := os.Getenv("DB_HOST")
@@ -56,19 +64,32 @@ func getUserData(u_id string){
     "password=%s dbname=%s sslmode=disable",
     host, user, password, dbname)
 
+	// returing uri
+    return psqlInfo;
+}
+
+func connect(psqlInfo string) (*sqlx.DB, error){
 	//opening connection using sqlx package
 	db, err := sqlx.Connect("postgres", psqlInfo)
 	if err != nil {
-	  panic(err)
+		return nil, err;
 	}
-	defer db.Close()
+	return db,nil;
+}
+func getUserData(u_id string,){
+	psqlInfo := formURI();
+	if psqlInfo=="" {
+		fmt.Println("URI error")
+	}
 
-	err = db.Ping()
+	db,err := connect(psqlInfo);
+
+	if err == nil {
+		fmt.Println("Connected");
+	}
 	if err != nil {
-  		panic(err)
+		fmt.Println("Error connecting");
 	}
-
-	fmt.Println("Connected");
 
 	//running the query on the db
 	// right now it's fetching last 5 inspection for user_id 63135
@@ -86,18 +107,15 @@ func getUserData(u_id string){
     }
 
     r[count].inspection = id+ " " + folder_id+ " " + created_at+ " " + template_name
-
     count++
-    // printing the fetched values
-
   }
   err = rows.Err()
   if err != nil {
   	panic(err) 
   }
-	
-}
+  defer db.Close()
 
+}
 func printValues() {
 	//fmt.Println(id,folder_id,created_at,template_name)
 	for i := 0; i < count; i++ {
@@ -105,7 +123,6 @@ func printValues() {
 		
 	}
 }
-
 func noteBuilder() {
 	note = "<b>A small note from Yumi 🐶</b><br/><br/>"
   	note += "<b>✅   Yumi found these recent <em>Inspections:</em></b><br/>"
