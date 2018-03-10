@@ -39,8 +39,8 @@ func main() {
 		fmt.Println("Error loading .env file")
 	}
 	
-	getUserData("65135");
-	noteBuilder();
+	noteBuilder("65135");
+	
 }
 func loadEnv() (error){
 	// loading env file to load db parameters
@@ -123,7 +123,9 @@ func printValues() {
 		
 	}
 }
-func noteBuilder() {
+func noteBuilder(us_id string) {
+
+	getUserData(us_id);
 	note = "<b>A small note from Yumi 🐶</b><br/><br/>"
   	note += "<b>✅   Yumi found these recent <em>Inspections:</em></b><br/>"
 
