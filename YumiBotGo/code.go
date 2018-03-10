@@ -154,4 +154,3 @@ func noteBuilder(us_id string) {
 	}
 	fmt.Println(note)
 }
-//
