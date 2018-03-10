@@ -22,10 +22,13 @@ type row struct{
   	var created_at string
   	var template_name string
 	
+	// array for 10 rows just a number should be more in released version
 	var r [10] row
 
+	//counter to add values in array r
 	var count int
 
+	// note string to be displayed in intercom
 	var note string 
 
 
@@ -33,17 +36,19 @@ type row struct{
 // at this moment all of the code is in main function
 // from db connect to displaying results on console
 func main() {
-	
+	// loading .env file
 	err:=loadEnv();
 	if err!=nil {
 		fmt.Println("Error loading .env file")
 	}
 	
+	// calling noteBuilder
 	noteBuilder("65135");
 	
 }
+
+// loading env file to load db parameters
 func loadEnv() (error){
-	// loading env file to load db parameters
 	err := godotenv.Load(".env")
 	if err != nil {
 	  return err;
@@ -51,7 +56,9 @@ func loadEnv() (error){
 
 	return nil;
 }
-func formURI() (codee string) {
+// forming postgres URI
+// returns string
+func formURI() (str string) {
 
 	// defining db parameters
 	host := os.Getenv("DB_HOST")
@@ -68,6 +75,8 @@ func formURI() (codee string) {
     return psqlInfo;
 }
 
+//connecting to the database
+//returne db- sqlx
 func connect(psqlInfo string) (*sqlx.DB, error){
 	//opening connection using sqlx package
 	db, err := sqlx.Connect("postgres", psqlInfo)
@@ -76,6 +85,7 @@ func connect(psqlInfo string) (*sqlx.DB, error){
 	}
 	return db,nil;
 }
+//queries the db and adds returned values in array
 func getUserData(u_id string,){
 	psqlInfo := formURI();
 	if psqlInfo=="" {
@@ -116,6 +126,8 @@ func getUserData(u_id string,){
   defer db.Close()
 
 }
+//not used was used to print individual values fetched from db
+// might be used when calling new query :)
 func printValues() {
 	//fmt.Println(id,folder_id,created_at,template_name)
 	for i := 0; i < count; i++ {
@@ -123,6 +135,9 @@ func printValues() {
 		
 	}
 }
+//code starts running from here.
+// build the note in a string format
+// should be called when a new intercom message is received
 func noteBuilder(us_id string) {
 
 	getUserData(us_id);
