@@ -10,6 +10,8 @@ import (
 
 	"github.com/joho/godotenv"
     "os"
+
+   "time"
 )
 
 type row struct{
@@ -43,6 +45,7 @@ type row struct{
 //starting main function
 // at this moment all of the code is in main function
 // from db connect to displaying results on console
+		var dataAndTime string
 func main() {
 	// loading .env file
 	err:=loadEnv();
@@ -51,7 +54,33 @@ func main() {
 	}
 	
 	// calling noteBuilder
-	noteBuilder("65135");
+	//noteBuilder("65135");
+
+	
+	//var date, _ = time.Parse("Time:Z07:00T15:04:05 Date:2006-01-02 ", "Time:-03:30T19:18:35 Date:2119-10-29")
+
+	//defaultFormat := "2006-01-02 15:04:05 PM -07:00 Jan Mon MST"
+
+	formats := []map[string]string{
+		{"format": "2", "description": "Day"},
+		{"format": "Jan", "description": "Month"},
+		{"format": "2006", "description": "Year"},
+		
+
+		{"format": "3", "description": "Hours"},		
+		{"format": "04", "description": "Minutes"},		
+		{"format": "PM", "description": "AM or PM"}}
+
+		for _, f := range formats {
+			//dataAndTime += date.Format(f["format"]+ " ");
+			if f["description"] == "Hours" {
+			//	dataAndTime+=":"
+			}
+			//fmt.Print(date.Format(f["format"])+" ")
+		}
+//		fmt.Println(dataAndTime)
+
+noteBuilder("65135")
 	
 }
 
@@ -151,18 +180,41 @@ func printValues() {
 // should be called when a new intercom message is received
 func noteBuilder(us_id string) {
 	p:= fmt.Println
+	
 	getUserData(us_id);
+	
 	note = "<b>A small note from Yumi 🐶</b><br/><br/>"
   	note += "<b>✅   Yumi found these recent <em>Inspections:</em></b><br/>"
 
 	for i := 0; i < count; i++ {
-
 		split := strings.Fields(r[i].inspection)
-		var url = "https://manage.happyco.com/folder/"+split[1]+"/inspections/"+split[0]
-	    var date = split[2]
-	    note += "<a href="+url+">"+url+"</a>" + " " + date
-	    note +="\n"
+		 var url = "https://manage.happyco.com/folder/"+split[1]+"/inspections/"+split[0]
+
+		var date, _  = time.Parse(time.RFC3339, split[2])
+		formats := []map[string]string{
+				{"format": "02", "description": "Day"},
+				{"format": "Jan", "description": "Month"},
+				{"format": "2006", "description": "Year"},
+				
+
+				{"format": "3", "description": "Hours"},		
+				{"format": "04", "description": "Minutes"},		
+				{"format": "PM", "description": "AM or PM"}}
+
+		for _, f := range formats {
+			dataAndTime += date.Format(f["format"]+ " ");
+			if f["description"] == "Hours" {
+				dataAndTime = strings.TrimSpace(dataAndTime)
+				dataAndTime+=":"
+			}
+		}
+		//dataAndTime+="\n"
+	     note += "<a href="+url+">"+url+"</a>" + " " + dataAndTime
+	     note +="\n"
+
+	     dataAndTime =""
 	}
+		//p(dataAndTime)
 
 	p(note)
 }
