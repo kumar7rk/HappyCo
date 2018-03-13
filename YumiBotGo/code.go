@@ -196,7 +196,6 @@ func noteBuilder(us_id string) {
 				{"format": "Jan", "description": "Month"},
 				{"format": "2006", "description": "Year"},
 				
-
 				{"format": "3", "description": "Hours"},		
 				{"format": "04", "description": "Minutes"},		
 				{"format": "PM", "description": "AM or PM"}}
