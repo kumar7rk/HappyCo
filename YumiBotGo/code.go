@@ -18,12 +18,18 @@ type row struct{
 	report string
 	iap int
 }
-	//db variables
-	var id string
-  	var folder_id string
-  	var created_at string
-  	var template_name string
-	
+	//db variables for inspections query
+  	var business_I string
+  	var user_id_I string
+  	var role_I string
+  	var folder_id_I string
+  	var folder_name_I string
+  	var created_at_I string
+  	var template_name_I string
+	var id_I string
+  	var status_I string
+  	var location_I string
+  	
 	// array for 10 rows just a number should be more in released version
 	var r [10] row
 
@@ -102,10 +108,13 @@ func getUserData(u_id string,){
 	if err != nil {
 		fmt.Println("Error connecting");
 	}
-
+ /*
+ SELECT folders.business,folders.user,folders.role ,folders.folder_id,folders.folder_name,i.created_at::date as created_at,i.template_name,i.id,i.status,i.location FROM (SELECT businesses.business_id as business,businesses.user_id as user,role_id as role,folder_id as folder_id,folder_name as folder_name FROM (SELECT bm.business_id as business_id,bm.user_id as user_id,bm.business_role_id as role_id,f.id as folder_id,f.name as folder_name FROM business_membership as bm JOIN portfolios as f ON bm.business_id = f.business_id WHERE bm.user_id = 22772 AND bm.inactivated_at IS NULL AND f.inactivated_at IS NULL) as businesses GROUP BY businesses.business_id,businesses.role_id,businesses.user_id,folder_id,folder_name ORDER BY businesses.business_id ) as folders JOIN inspections as i ON folders.folder_id = i.folder_id WHERE i.user_id = '22772' AND i.archived_at IS NULL ORDER BY i.created_at DESC LIMIT 5;
+    */
 	//running the query on the db
 	// right now it's fetching last 5 inspection for user_id 63135
-	rows, err := db.Query("SELECT id, folder_id, created_at, template_name FROM inspections WHERE user_id = $1 AND FOLDER_ID IN ( SELECT portfolio_id FROM portfolio_access_controls WHERE user_id = $3) AND archived_at IS NULL ORDER BY created_at DESC LIMIT $2", u_id,5,u_id)
+//	rows, err := db.Query("SELECT id, folder_id, created_at, template_name FROM inspections WHERE user_id = $1 AND FOLDER_ID IN ( SELECT portfolio_id FROM portfolio_access_controls WHERE user_id = $3) AND archived_at IS NULL ORDER BY created_at DESC LIMIT $2", u_id,5,u_id)
+	rows, err := db.Query("SELECT folders.business,folders.user,folders.role ,folders.folder_id,folders.folder_name,i.created_at::date as created_at,i.template_name,i.id,i.status,i.location FROM (SELECT businesses.business_id as business,businesses.user_id as user,role_id as role,folder_id as folder_id,folder_name as folder_name FROM (SELECT bm.business_id as business_id,bm.user_id as user_id,bm.business_role_id as role_id,f.id as folder_id,f.name as folder_name FROM business_membership as bm JOIN portfolios as f ON bm.business_id = f.business_id WHERE bm.user_id = 65135 AND bm.inactivated_at IS NULL AND f.inactivated_at IS NULL) as businesses GROUP BY businesses.business_id,businesses.role_id,businesses.user_id,folder_id,folder_name ORDER BY businesses.business_id ) as folders JOIN inspections as i ON folders.folder_id = i.folder_id WHERE i.user_id = '65135' AND i.archived_at IS NULL ORDER BY i.created_at DESC LIMIT 5");
 	if err != nil {
     	panic(err)
     }
@@ -113,12 +122,12 @@ func getUserData(u_id string,){
   // fetching all the records 
   for rows.Next() {
   	
-  	err = rows.Scan(&id, &folder_id, &created_at, &template_name)
+  	err = rows.Scan(&business_I, &user_id_I, &role_I, &folder_id_I,&folder_name_I, &created_at_I, &template_name_I, &id_I,&status_I, &location_I)
   	if err != nil {
       panic(err)
     }
 
-    r[count].inspection = id+ " " + folder_id+ " " + created_at+ " " + template_name
+    r[count].inspection = id_I+ " " + folder_id_I+ " " + created_at_I+ " " + template_name_I
     count++
   }
   err = rows.Err()
