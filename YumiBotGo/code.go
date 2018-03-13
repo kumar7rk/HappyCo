@@ -11,6 +11,7 @@ import (
 	"github.com/joho/godotenv"
     "os"
 )
+
 type row struct{
 	//main attributes
 	role int
@@ -38,7 +39,6 @@ type row struct{
 
 	// note string to be displayed in intercom
 	var note string 
-
 
 //starting main function
 // at this moment all of the code is in main function
@@ -150,7 +150,7 @@ func printValues() {
 // build the note in a string format
 // should be called when a new intercom message is received
 func noteBuilder(us_id string) {
-
+	p:= fmt.Println
 	getUserData(us_id);
 	note = "<b>A small note from Yumi 🐶</b><br/><br/>"
   	note += "<b>✅   Yumi found these recent <em>Inspections:</em></b><br/>"
@@ -163,5 +163,6 @@ func noteBuilder(us_id string) {
 	    note += "<a href="+url+">"+url+"</a>" + " " + date
 	    note +="\n"
 	}
-	fmt.Println(note)
+
+	p(note)
 }
