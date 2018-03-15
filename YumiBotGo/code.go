@@ -54,33 +54,7 @@ func main() {
 	}
 	
 	// calling noteBuilder
-	//noteBuilder("65135");
-
-	
-	//var date, _ = time.Parse("Time:Z07:00T15:04:05 Date:2006-01-02 ", "Time:-03:30T19:18:35 Date:2119-10-29")
-
-	//defaultFormat := "2006-01-02 15:04:05 PM -07:00 Jan Mon MST"
-
-	formats := []map[string]string{
-		{"format": "2", "description": "Day"},
-		{"format": "Jan", "description": "Month"},
-		{"format": "2006", "description": "Year"},
-		
-
-		{"format": "3", "description": "Hours"},		
-		{"format": "04", "description": "Minutes"},		
-		{"format": "PM", "description": "AM or PM"}}
-
-		for _, f := range formats {
-			//dataAndTime += date.Format(f["format"]+ " ");
-			if f["description"] == "Hours" {
-			//	dataAndTime+=":"
-			}
-			//fmt.Print(date.Format(f["format"])+" ")
-		}
-//		fmt.Println(dataAndTime)
-
-noteBuilder("65135")
+	noteBuilder("48721")
 	
 }
 
@@ -123,7 +97,7 @@ func connect(psqlInfo string) (*sqlx.DB, error){
 	return db,nil;
 }
 //queries the db and adds returned values in array
-func getUserData(u_id string,){
+func getUserData(u_id string){
 	psqlInfo := formURI();
 	if psqlInfo=="" {
 		fmt.Println("URI error")
@@ -139,7 +113,7 @@ func getUserData(u_id string,){
 	}
 	//running the query on the db
 	// right now it's fetching last 5 inspection for user_id 63135
-	rows, err := db.Query("SELECT folders.business,folders.user,folders.role ,folders.folder_id,folders.folder_name,i.created_at::date as created_at,i.template_name,i.id,i.status,i.location FROM (SELECT businesses.business_id as business,businesses.user_id as user,role_id as role,folder_id as folder_id,folder_name as folder_name FROM (SELECT bm.business_id as business_id,bm.user_id as user_id,bm.business_role_id as role_id,f.id as folder_id,f.name as folder_name FROM business_membership as bm JOIN portfolios as f ON bm.business_id = f.business_id WHERE bm.user_id = $1 AND bm.inactivated_at IS NULL AND f.inactivated_at IS NULL) as businesses GROUP BY businesses.business_id,businesses.role_id,businesses.user_id,folder_id,folder_name ORDER BY businesses.business_id ) as folders JOIN inspections as i ON folders.folder_id = i.folder_id WHERE i.user_id = $3 AND i.archived_at IS NULL ORDER BY i.created_at DESC LIMIT $2",u_id,5,u_id);
+	rows, err := db.Query("SELECT folders.business,folders.user,folders.role ,folders.folder_id,folders.folder_name,i.created_at_I as created_at,i.template_name,i.id,i.status,i.location FROM (SELECT businesses.business_id as business,businesses.user_id as user,role_id as role,folder_id as folder_id,folder_name as folder_name FROM (SELECT bm.business_id as business_id,bm.user_id as user_id,bm.business_role_id as role_id,f.id as folder_id,f.name as folder_name FROM business_membership as bm JOIN portfolios as f ON bm.business_id = f.business_id WHERE bm.user_id = $1 AND bm.inactivated_at IS NULL AND f.inactivated_at IS NULL) as businesses GROUP BY businesses.business_id,businesses.role_id,businesses.user_id,folder_id,folder_name ORDER BY businesses.business_id ) as folders JOIN inspections as i ON folders.folder_id = i.folder_id WHERE i.user_id = $3 AND i.archived_at IS NULL ORDER BY i.created_at DESC LIMIT $2",u_id,5,u_id);
 	if err != nil {
     	panic(err)
     }
@@ -203,13 +177,10 @@ func noteBuilder(us_id string) {
 				dataAndTime+=":"
 			}
 		}
-		//dataAndTime+="\n"
-	     note += "<a href="+url+">"+url+"</a>" + " " + dataAndTime
-	     note +="\n"
-
-	     dataAndTime =""
+		note += "<a href="+url+">"+url+"</a>" + " " + dataAndTime
+	    note +="\n"
+		dataAndTime =""
 	}
-		//p(dataAndTime)
 
-	p(note)
+	//p(note)
 }
