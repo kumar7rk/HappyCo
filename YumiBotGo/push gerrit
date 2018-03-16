@@ -1,0 +1,4 @@
+git commit --amend --reset-author
+
+git push origin HEAD:refs/for/master
+
