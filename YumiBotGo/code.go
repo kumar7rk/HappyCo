@@ -42,10 +42,12 @@ type row struct{
 	// note string to be displayed in intercom
 	var note string 
 
+	// date and time formatted string
+	var dataAndTime string
+	
 //starting main function
 // at this moment all of the code is in main function
 // from db connect to displaying results on console
-		var dataAndTime string
 func main() {
 	// loading .env file
 	err:=loadEnv();
@@ -54,7 +56,10 @@ func main() {
 	}
 	
 	// calling noteBuilder
-	noteBuilder("48721")
+	//54456 gkhouses
+	//32204 colony starwood
+	//22755 liberty
+	noteBuilder("65135")
 	
 }
 
@@ -112,12 +117,10 @@ func getUserData(u_id string){
 		fmt.Println("Error connecting");
 	}
 	//running the query on the db
-	// right now it's fetching last 5 inspection for user_id 63135
-	rows, err := db.Query("SELECT folders.business,folders.user,folders.role ,folders.folder_id,folders.folder_name,i.created_at_I as created_at,i.template_name,i.id,i.status,i.location FROM (SELECT businesses.business_id as business,businesses.user_id as user,role_id as role,folder_id as folder_id,folder_name as folder_name FROM (SELECT bm.business_id as business_id,bm.user_id as user_id,bm.business_role_id as role_id,f.id as folder_id,f.name as folder_name FROM business_membership as bm JOIN portfolios as f ON bm.business_id = f.business_id WHERE bm.user_id = $1 AND bm.inactivated_at IS NULL AND f.inactivated_at IS NULL) as businesses GROUP BY businesses.business_id,businesses.role_id,businesses.user_id,folder_id,folder_name ORDER BY businesses.business_id ) as folders JOIN inspections as i ON folders.folder_id = i.folder_id WHERE i.user_id = $3 AND i.archived_at IS NULL ORDER BY i.created_at DESC LIMIT $2",u_id,5,u_id);
+	rows, err := db.Query("SELECT folders.business,folders.user,folders.role ,folders.folder_id,folders.folder_name,i.created_at as created_at,i.template_name,i.id,i.status,i.location FROM (SELECT businesses.business_id as business,businesses.user_id as user,role_id as role,folder_id as folder_id,folder_name as folder_name FROM (SELECT bm.business_id as business_id,bm.user_id as user_id,bm.business_role_id as role_id,f.id as folder_id,f.name as folder_name FROM business_membership as bm JOIN portfolios as f ON bm.business_id = f.business_id WHERE bm.user_id = $1 AND bm.inactivated_at IS NULL AND f.inactivated_at IS NULL) as businesses GROUP BY businesses.business_id,businesses.role_id,businesses.user_id,folder_id,folder_name ORDER BY businesses.business_id ) as folders JOIN inspections as i ON folders.folder_id = i.folder_id WHERE i.user_id = $3 AND i.archived_at IS NULL AND i.created_at > (CURRENT_DATE- interval '30 day') ORDER BY i.created_at DESC LIMIT $2",u_id,5,u_id);
 	if err != nil {
     	panic(err)
     }
-  defer rows.Close()
   // fetching all the records 
   for rows.Next() {
   	
@@ -182,5 +185,5 @@ func noteBuilder(us_id string) {
 		dataAndTime =""
 	}
 
-	//p(note)
+	p(note)
 }
