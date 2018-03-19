@@ -110,19 +110,19 @@ func formURI() (str string) {
 	dbname := os.Getenv("DB_NAME")
 
 	// buildiing db connection string
-  	psqlInfo := fmt.Sprintf("host=%s user=%s "+
+  	postgresURI := fmt.Sprintf("host=%s user=%s "+
     "password=%s dbname=%s sslmode=disable",
     host, user, password, dbname)
 
 	// returing uri
-    return psqlInfo;
+    return postgresURI;
 }
 
 //connecting to the database
 //returne db- sqlx
-func connect(psqlInfo string) (*sqlx.DB, error){
+func connect(postgresURI string) (*sqlx.DB, error){
 	//opening connection using sqlx package
-	db, err := sqlx.Connect("postgres", psqlInfo)
+	db, err := sqlx.Connect("postgres", postgresURI)
 	if err != nil {
 		return nil, err;
 	}
@@ -130,12 +130,12 @@ func connect(psqlInfo string) (*sqlx.DB, error){
 }
 //queries the db and adds returned values in array
 func getUserData(u_id string){
-	psqlInfo := formURI();
-	if psqlInfo=="" {
+	postgresURI := formURI();
+	if postgresURI=="" {
 		fmt.Println("URI error")
 	}
 
-	db,err := connect(psqlInfo);
+	db,err := connect(postgresURI);
 
 	if err == nil {
 		fmt.Println("Connected");
@@ -250,6 +250,5 @@ func noteBuilder(us_id string) {
 		 note +="\n"
 		 note +="\n"
 	}
-
 	p(note)
 }
