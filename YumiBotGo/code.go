@@ -103,7 +103,7 @@ func main() {
 	//54456 gkhouses
 	//32204 colony starwood
 	//22755 liberty
-	noteBuilder("56210")
+	noteBuilder("65135")
 	
 }
 
@@ -318,23 +318,60 @@ func noteBuilder(us_id string) {
 	    note +="\n"
 		dataAndTime =""
 	}
+
+
     note +="\n"
 	note +="\n"
-  	note += "<b>✅   Yumi found these recent <em>Inspections:</em></b><br/>"
+  	note += "<b>✅   Yumi found these recent <em>Reports:</em></b><br/>"
     note +="\n"
   	
 	for i := 0; i < count1; i++ {
+
 		split := strings.Fields(r[i].report)
-		 var url = "https://manage.happyco.com/reports/"+split[0]
-		 note += "<a href="+url+">"+url+"</a>"
+		var url = "https://manage.happyco.com/reports/"+split[0]
+
+		var date, _  = time.Parse(time.RFC3339, split[1])
+		formats := []map[string]string{
+				{"format": "02", "description": "Day"},
+				{"format": "Jan", "description": "Month"},
+				{"format": "2006", "description": "Year"},
+				
+				{"format": "3", "description": "Hours"},		
+				{"format": "04", "description": "Minutes"},		
+				{"format": "PM", "description": "AM or PM"}}
+
+		for _, f := range formats {
+			dataAndTime += date.Format(f["format"]+ " ");
+			if f["description"] == "Hours" {
+				dataAndTime = strings.TrimSpace(dataAndTime)
+				dataAndTime+=":"
+			}
+		}
+		 note += "<a href="+url+">"+url+"</a>" + " " + dataAndTime
 		 note +="\n"
 		 note +="\n"
 	}
+	var date, _  = time.Parse(time.RFC3339, expires_at_iap)
+		formats := []map[string]string{
+				{"format": "02", "description": "Day"},
+				{"format": "Jan", "description": "Month"},
+				{"format": "2006", "description": "Year"},
+				
+				{"format": "3", "description": "Hours"},		
+				{"format": "04", "description": "Minutes"},		
+				{"format": "PM", "description": "AM or PM"}}
 
+		for _, f := range formats {
+			dataAndTime += date.Format(f["format"]+ " ");
+			if f["description"] == "Hours" {
+				dataAndTime = strings.TrimSpace(dataAndTime)
+				dataAndTime+=":"
+			}
+		}
 	if expires_at_iap != "" {
 		note+="\n"
 		note+="\n"
-		note+= "The business is on IAP. It expires on"+expires_at_iap
+		note+= "The business is on IAP. It expires on "+dataAndTime
 	}
 
 	p(note)
