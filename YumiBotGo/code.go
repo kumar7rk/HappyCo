@@ -49,6 +49,10 @@ type row struct{
   	var business_ro string
   	var role_ro string
 
+  	//db variable for iap query
+  	var expires_at_iap string
+
+
 /*type data struct{
 	business_I string 
   	user_id_I string
@@ -78,7 +82,7 @@ type row struct{
 	var count1 int
 	//counter to add values in array r for role
 	var count2 int
-
+	
 	// note string to be displayed in intercom
 	var note string 
 
@@ -99,7 +103,7 @@ func main() {
 	//54456 gkhouses
 	//32204 colony starwood
 	//22755 liberty
-	noteBuilder("22772")
+	noteBuilder("56210")
 	
 }
 
@@ -221,6 +225,23 @@ func getUserData(u_id string){
   	panic(err2) 
   }
 
+
+  rows3, err3 := db.Queryx("SELECT expires_at FROM iap_receipts WHERE company_id IN (SELECT business_id FROM business_membership WHERE user_id = $1) ORDER BY expires_at DESC limit 1",u_id);
+  if err3 != nil {
+    	panic(err3)
+  }
+  for rows3.Next() {
+	err3 = rows3.Scan(&expires_at_iap)
+	if err3 != nil {
+    	panic(err3)
+  	}
+  	r[0].iap = expires_at_iap
+  }
+  err3 = rows3.Err()
+  if err3 != nil {
+  	panic(err3) 
+  }
+
   defer db.Close()
 
 }
@@ -309,5 +330,12 @@ func noteBuilder(us_id string) {
 		 note +="\n"
 		 note +="\n"
 	}
+
+	if expires_at_iap != "" {
+		note+="\n"
+		note+="\n"
+		note+= "The business is on IAP. It expires on"+expires_at_iap
+	}
+
 	p(note)
 }
