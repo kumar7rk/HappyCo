@@ -10,16 +10,17 @@ import (
 
 	"github.com/joho/godotenv"
     "os"
+    "strconv"
 
    "time"
 )
 
 type row struct{
 	//main attributes
-	role int
 	inspection string
 	report string
-	iap int
+	role string
+	iap string
 }
 	//db variables for inspections query
   	var business_I string
@@ -44,6 +45,10 @@ type row struct{
 	var public_id_R string
   	var location_R string
 
+  	//db variable for role query
+  	var business_ro string
+  	var role_ro string
+
 /*type data struct{
 	business_I string 
   	user_id_I string
@@ -56,15 +61,23 @@ type row struct{
   	status_I string
   	location_I string
 }*/
-	// array for 10 rows just a number should be more in released version
+	//array for inspections
 	var r [5] row
+	//array for reports
 	var r1 [5] row
+	//array for role
+	var r2 [5] row
+	//array for iap
+	var r3 [5] row
 
 	//var d [10] data
 
-	//counter to add values in array r
+	//counter to add values in array r for inspections
 	var count int
+	//counter to add values in array r for reports
 	var count1 int
+	//counter to add values in array r for role
+	var count2 int
 
 	// note string to be displayed in intercom
 	var note string 
@@ -86,7 +99,7 @@ func main() {
 	//54456 gkhouses
 	//32204 colony starwood
 	//22755 liberty
-	noteBuilder("65135")
+	noteBuilder("22772")
 	
 }
 
@@ -186,9 +199,26 @@ func getUserData(u_id string){
     //r[count].inspection = data1.id_I+ " " + data1.folder_id_I+ " " + data1.created_at_I+ " " + data1.template_name_I
     count1++
   }
-  err = rows1.Err()
+  err1 = rows1.Err()
   if err1 != nil {
   	panic(err1) 
+  }
+
+  rows2, err2 := db.Queryx("SELECT business_id,business_role_id FROM business_membership WHERE user_id = $1 AND inactivated_at IS NULL",u_id);
+  if err2 != nil {
+    	panic(err2)
+  }
+  for rows2.Next() {
+	err2 = rows2.Scan(&business_ro, &role_ro)
+	if err2 != nil {
+    	panic(err2)
+  	}
+  	r[count2].role = business_ro+ " " + role_ro
+  	count2++
+  }
+  err2 = rows2.Err()
+  if err2 != nil {
+  	panic(err2) 
   }
 
   defer db.Close()
@@ -211,7 +241,36 @@ func noteBuilder(us_id string) {
 	getUserData(us_id);
 	
 	note = "<b>A small note from Yumi 🐶</b><br/><br/>"
+
+	note += "User is associated with the following businesses \n"
+
+// 1, 2, 3, 4 = Constant Admin, PM, Inspector, Limited Inspector
+// 8, 9 = Basic Admin, PM
+	var roles = [10]string{"","Admin","Process Manger", "Inspector","Limited Inspector", "","","","Admin","Process Manager"}
+	for i := 0; i < count2; i++ {	
+		split := strings.Fields(r[i].role)
+		permission, err := strconv.Atoi(split[1])
+
+		if split[1]=="1"||split[1]=="2"||split[1]=="3"||split[1]=="4" {
+			note+=" The business is on Constant/full Permissions \n"
+		}
+
+		if split[1]=="8"||split[1]=="9" {
+			note+=" The business is on Basic Permissions \n"
+		}
+
+		if err!=nil {
+			panic(err)
+		}
+		note += roles[permission] + " for "
+		var text = "https://manage.happyco.com/admin/businesses/"+split[0]
+		note+=text +"\n"
+	}
+
+	note +="\n"
+	note +="\n"
   	note += "<b>✅   Yumi found these recent <em>Inspections:</em></b><br/>"
+	note +="\n"
 
 	for i := 0; i < count; i++ {
 		split := strings.Fields(r[i].inspection)
