@@ -349,7 +349,7 @@ func noteBuilder(us_id string) {
 		}
 		 note += "<a href="+url+">"+url+"</a>" + " " + formatted_date
 		 note +="\n"
-		 note +="\n"
+		 formatted_date=""
 	}
 	var date, _  = time.Parse(time.RFC3339, expires_at_iap)
 		formats := []map[string]string{
