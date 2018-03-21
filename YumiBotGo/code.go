@@ -87,7 +87,7 @@ type row struct{
 	var note string 
 
 	// date and time formatted string
-	var dataAndTime string
+	var formatted_date string
 	
 //starting main function
 // at this moment all of the code is in main function
@@ -308,15 +308,15 @@ func noteBuilder(us_id string) {
 				{"format": "PM", "description": "AM or PM"}}
 
 		for _, f := range formats {
-			dataAndTime += date.Format(f["format"]+ " ");
+			formatted_date += date.Format(f["format"]+ " ");
 			if f["description"] == "Hours" {
-				dataAndTime = strings.TrimSpace(dataAndTime)
-				dataAndTime+=":"
+				formatted_date = strings.TrimSpace(formatted_date)
+				formatted_date+=":"
 			}
 		}
-		note += "<a href="+url+">"+url+"</a>" + " " + dataAndTime
+		note += "<a href="+url+">"+url+"</a>" + " " + formatted_date
 	    note +="\n"
-		dataAndTime =""
+		formatted_date =""
 	}
 
 
@@ -341,13 +341,13 @@ func noteBuilder(us_id string) {
 				{"format": "PM", "description": "AM or PM"}}
 
 		for _, f := range formats {
-			dataAndTime += date.Format(f["format"]+ " ");
+			formatted_date += date.Format(f["format"]+ " ");
 			if f["description"] == "Hours" {
-				dataAndTime = strings.TrimSpace(dataAndTime)
-				dataAndTime+=":"
+				formatted_date = strings.TrimSpace(formatted_date)
+				formatted_date+=":"
 			}
 		}
-		 note += "<a href="+url+">"+url+"</a>" + " " + dataAndTime
+		 note += "<a href="+url+">"+url+"</a>" + " " + formatted_date
 		 note +="\n"
 		 note +="\n"
 	}
@@ -362,16 +362,16 @@ func noteBuilder(us_id string) {
 				{"format": "PM", "description": "AM or PM"}}
 
 		for _, f := range formats {
-			dataAndTime += date.Format(f["format"]+ " ");
+			formatted_date += date.Format(f["format"]+ " ");
 			if f["description"] == "Hours" {
-				dataAndTime = strings.TrimSpace(dataAndTime)
-				dataAndTime+=":"
+				formatted_date = strings.TrimSpace(formatted_date)
+				formatted_date+=":"
 			}
 		}
 	if expires_at_iap != "" {
 		note+="\n"
 		note+="\n"
-		note+= "The business is on IAP. It expires on "+dataAndTime
+		note+= "The business is on IAP. It expires on "+formatted_date
 	}
 
 	p(note)
