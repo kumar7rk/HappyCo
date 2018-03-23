@@ -70,9 +70,9 @@ type row struct{
 	//array for reports
 	var r1 [5] row
 	//array for role
-	var r2 [5] row
+	var r2 [1] row
 	//array for iap
-	var r3 [5] row
+	var r3 [1] row
 
 	//var d [10] data
 
