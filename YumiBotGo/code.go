@@ -13,8 +13,10 @@ import (
     "strconv"
 
    "time"
-)
 
+   	intercom "gopkg.in/intercom/intercom-go.v2"
+
+)
 type row struct{
 	//main attributes
 	inspection string
@@ -51,7 +53,6 @@ type row struct{
 
   	//db variable for iap query
   	var expires_at_iap string
-
 
 /*type data struct{
 	business_I string 
@@ -99,11 +100,43 @@ func main() {
 		fmt.Println("Error loading .env file")
 	}
 	
+	access_token := os.Getenv("INTERCOM_ACCESS_TOKEN")
+	ic := intercom.NewClient(access_token, "")
+
+	user_id_In := "65135"
+	// user_id_In :=os.Args[1]
+	user, err := ic.Users.FindByUserID(user_id_In)
+	fmt.Println(user.Name)
+	_=err
+
+	noteBuilder(user_id_In)
+	/*convo, err := ic.Conversations.Find("15332988274")
+	fmt.Println(convo)
+	_=err*/
+
+	adminList, err := ic.Admins.List()
+	admins := adminList.Admins
+
+	
+	admin:=admins[14]
+
+	convo, err:= ic.Conversations.Reply("15363702969",&admin,intercom.CONVERSATION_NOTE,note)
+	//fmt.Println(convo)
+	_=err
+
+	/*http := TestConversationHTTPClient{t: t, expectedURI: "/conversations", fixtureFilename: "fixtures/conversations.json"}
+	api := ConversationAPI{httpClient: &http}
+	convos, _ := api.list(conversationListParams{})
+
+	fmt.Println(convos.Conversations[0].ID)*/
+
+	// convo, err :=ic.Conversations.Reply(conversation_id,&admin, intercom.CONVERSATION_NOTE,note)
+
+
 	// calling noteBuilder
 	//54456 gkhouses
 	//32204 colony starwood
 	//22755 liberty
-	noteBuilder("65135")
 	
 }
 
@@ -263,7 +296,7 @@ func noteBuilder(us_id string) {
 	
 	note = "<b>A small note from Yumi 🐶</b><br/><br/>"
 
-	note += "User is associated with the following businesses \n"
+	note += "<b>✅User is associated with the following businesses</b><br/><br/>"
 
 // 1, 2, 3, 4 = Constant Admin, PM, Inspector, Limited Inspector
 // 8, 9 = Basic Admin, PM
@@ -285,12 +318,12 @@ func noteBuilder(us_id string) {
 		}
 		note += roles[permission] + " for "
 		var text = "https://manage.happyco.com/admin/businesses/"+split[0]
-		note+=text +"\n"
+		note+=text +"<br/><br/>"
 	}
 
 	note +="\n"
 	note +="\n"
-  	note += "<b>✅   Yumi found these recent <em>Inspections:</em></b><br/>"
+  	note += "<b>✅   Yumi found these recent (max: 5) <em>Inspections in last 30 days:</em></b><br/>"
 	note +="\n"
 
 	for i := 0; i < count; i++ {
@@ -322,7 +355,7 @@ func noteBuilder(us_id string) {
 
     note +="\n"
 	note +="\n"
-  	note += "<b>✅   Yumi found these recent <em>Reports:</em></b><br/>"
+  	note += "<b>✅   Yumi found these recent (max: 5) <em>Reports in last 30 days:</em></b><br/>"
     note +="\n"
   	
 	for i := 0; i < count1; i++ {
@@ -376,3 +409,5 @@ func noteBuilder(us_id string) {
 
 	p(note)
 }
+
+
