@@ -110,9 +110,6 @@ func main() {
 	_=err
 
 	noteBuilder(user_id_In)
-	/*convo, err := ic.Conversations.Find("15332988274")
-	fmt.Println(convo)
-	_=err*/
 
 	adminList, err := ic.Admins.List()
 	admins := adminList.Admins
@@ -130,14 +127,7 @@ func main() {
 
 	fmt.Println(convos.Conversations[0].ID)*/
 
-	// convo, err :=ic.Conversations.Reply(conversation_id,&admin, intercom.CONVERSATION_NOTE,note)
-
-
-	// calling noteBuilder
-	//54456 gkhouses
-	//32204 colony starwood
-	//22755 liberty
-	
+	// convo, err :=ic.Conversations.Reply(conversation_id,&admin, intercom.CONVERSATION_NOTE,note)	
 }
 
 // loading env file to load db parameters
