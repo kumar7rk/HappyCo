@@ -118,7 +118,7 @@ func main() {
 	admin:=admins[14]
 
 	convo, err:= ic.Conversations.Reply("15363702969",&admin,intercom.CONVERSATION_NOTE,note)
-	//fmt.Println(convo)
+	fmt.Println(convo)
 	_=err
 
 	/*http := TestConversationHTTPClient{t: t, expectedURI: "/conversations", fixtureFilename: "fixtures/conversations.json"}
