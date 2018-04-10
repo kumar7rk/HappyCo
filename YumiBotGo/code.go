@@ -1,3 +1,6 @@
+// At this stage the code needs to be run manually. It works as expected
+// change the user_id at loc 109 and conversation id (from intercom url - the last numbers after /) at loc 126
+// Build and run the code through terminal
 
 package main
 
@@ -114,8 +117,11 @@ func main() {
 	adminList, err := ic.Admins.List()
 	admins := adminList.Admins
 
-	
+	// setting admin to HappyBot
+	// Addes the note from user named HappyBot
 	admin:=admins[14]
+
+	//15363702969 my conversation id
 
 	convo, err:= ic.Conversations.Reply("15363702969",&admin,intercom.CONVERSATION_NOTE,note)
 	fmt.Println(convo)
