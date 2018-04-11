@@ -285,13 +285,16 @@ func printValues() {
 		
 	}
 }
-//code starts running from here.
+// code starts running from here.
 // build the note in a string format
 // should be called when a new intercom message is received
+
 func noteBuilder(us_id string) {
 	p:= fmt.Println
+	//getting user data from the database
 	getUserData(us_id);
 	
+//***************working to construct the business string***********
 	note = "<b>A small note from Yumi 🐶</b><br/><br/>"
 
 	note += "<b>✅User is associated with the following businesses</b><br/><br/>"
@@ -321,6 +324,8 @@ func noteBuilder(us_id string) {
 
 	note +="\n"
 	note +="\n"
+
+//***************working to construct the inspection string***********
   	note += "<b>✅   Yumi found these recent (max: 5) <em>Inspections in last 30 days:</em></b><br/>"
 	note +="\n"
 
@@ -350,6 +355,7 @@ func noteBuilder(us_id string) {
 		formatted_date =""
 	}
 
+//***************working to construct the report string***********
 
     note +="\n"
 	note +="\n"
@@ -399,6 +405,8 @@ func noteBuilder(us_id string) {
 				formatted_date+=":"
 			}
 		}
+//***************working to construct the iap string***********
+// this is only a part of the code if the business is on iap
 	if expires_at_iap != "" {
 		note+="\n"
 		note+="\n"
