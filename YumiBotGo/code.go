@@ -20,6 +20,8 @@ import (
    	intercom "gopkg.in/intercom/intercom-go.v2"
 
 )
+
+//****************************Variable declaration********************************************
 type row struct{
 	//main attributes
 	inspection string
@@ -94,6 +96,8 @@ type row struct{
 	// date and time formatted string
 	var formatted_date string
 	
+//****************************Main function********************************************
+
 //starting main function
 // at this moment all of the code is in main function
 // from db connect to displaying results on console
@@ -137,6 +141,8 @@ func main() {
 	// convo, err :=ic.Conversations.Reply(conversation_id,&admin, intercom.CONVERSATION_NOTE,note)	
 }
 
+//****************************Loading Enviornment Variables********************************************
+
 // loading env file to load db parameters
 func loadEnv() (error){
 	err := godotenv.Load(".env")
@@ -146,6 +152,8 @@ func loadEnv() (error){
 
 	return nil;
 }
+//****************************Forming DB URI********************************************
+
 // forming postgres URI
 // returns string
 func formURI() (str string) {
@@ -164,6 +172,7 @@ func formURI() (str string) {
 	// returing uri
     return postgresURI;
 }
+//****************************Connecting with DB********************************************
 
 //connecting to the database
 //returne db- sqlx
@@ -175,6 +184,9 @@ func connect(postgresURI string) (*sqlx.DB, error){
 	}
 	return db,nil;
 }
+
+//****************************Getting UserData********************************************
+
 //queries the db and adds returned values in array
 func getUserData(u_id string){
 	postgresURI := formURI();
@@ -276,6 +288,8 @@ func getUserData(u_id string){
   defer db.Close()
 
 }
+//****************************Printing values- only for testing********************************************
+
 //not used was used to print individual values fetched from db
 // might be used when calling new query :)
 func printValues() {
@@ -285,10 +299,11 @@ func printValues() {
 		
 	}
 }
+//****************************Building note********************************************
+
 // code starts running from here.
 // build the note in a string format
 // should be called when a new intercom message is received
-
 func noteBuilder(us_id string) {
 	p:= fmt.Println
 	//getting user data from the database
