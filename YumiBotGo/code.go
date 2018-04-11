@@ -69,6 +69,7 @@ type row struct{
   	status_I string
   	location_I string
 }*/
+
 	//array for inspections
 	var r [5] row
 	//array for reports
@@ -81,11 +82,11 @@ type row struct{
 	//var d [10] data
 
 	//counter to add values in array r for inspections
-	var count int
+	var inspection_counter int
 	//counter to add values in array r for reports
-	var count1 int
+	var report_counter int
 	//counter to add values in array r for role
-	var count2 int
+	var role_counter int
 	
 	// note string to be displayed in intercom
 	var note string 
@@ -206,9 +207,10 @@ func getUserData(u_id string){
   	if err != nil {
       panic(err)
     }
-    r[count].inspection = id_I+ " " + folder_id_I+ " " + created_at_I+ " " + template_name_I
+
+    r[inspection_counter].inspection = id_I+ " " + folder_id_I+ " " + created_at_I+ " " + template_name_I
     // r[count].inspection = data1.id_I+ " " + data1.folder_id_I+ " " + data1.created_at_I+ " " + data1.template_name_I
-    count++
+    inspection_counter++
   }
   err = rows.Err()
   if err != nil {
@@ -228,9 +230,9 @@ func getUserData(u_id string){
   	if err1 != nil {
       panic(err1)
     }
-     r[count1].report = public_id_R+ " " + created_at_R+ " " + name_R
+     r[report_counter].report = public_id_R+ " " + created_at_R+ " " + name_R
     //r[count].inspection = data1.id_I+ " " + data1.folder_id_I+ " " + data1.created_at_I+ " " + data1.template_name_I
-    count1++
+    report_counter++
   }
   err1 = rows1.Err()
   if err1 != nil {
@@ -246,8 +248,8 @@ func getUserData(u_id string){
 	if err2 != nil {
     	panic(err2)
   	}
-  	r[count2].role = business_ro+ " " + role_ro
-  	count2++
+  	r[role_counter].role = business_ro+ " " + role_ro
+  	role_counter++
   }
   err2 = rows2.Err()
   if err2 != nil {
@@ -297,7 +299,7 @@ func noteBuilder(us_id string) {
 // 1, 2, 3, 4 = Constant Admin, PM, Inspector, Limited Inspector
 // 8, 9 = Basic Admin, PM
 	var roles = [10]string{"","Admin","Process Manger", "Inspector","Limited Inspector", "","","","Admin","Process Manager"}
-	for i := 0; i < count2; i++ {	
+	for i := 0; i < role_counter; i++ {	
 		split := strings.Fields(r[i].role)
 		permission, err := strconv.Atoi(split[1])
 
@@ -322,7 +324,7 @@ func noteBuilder(us_id string) {
   	note += "<b>✅   Yumi found these recent (max: 5) <em>Inspections in last 30 days:</em></b><br/>"
 	note +="\n"
 
-	for i := 0; i < count; i++ {
+	for i := 0; i < inspection_counter; i++ {
 		split := strings.Fields(r[i].inspection)
 		 var url = "https://manage.happyco.com/folder/"+split[1]+"/inspections/"+split[0]
 
@@ -354,7 +356,7 @@ func noteBuilder(us_id string) {
   	note += "<b>✅   Yumi found these recent (max: 5) <em>Reports in last 30 days:</em></b><br/>"
     note +="\n"
   	
-	for i := 0; i < count1; i++ {
+	for i := 0; i < report_counter; i++ {
 
 		split := strings.Fields(r[i].report)
 		var url = "https://manage.happyco.com/reports/"+split[0]
