@@ -111,7 +111,7 @@ func main() {
 	access_token := os.Getenv("INTERCOM_ACCESS_TOKEN")
 	ic := intercom.NewClient(access_token, "")
 //65135
-	user_id_In := "65135"
+	user_id_In := "49656"
 	// user_id_In :=os.Args[1]
 	user, err := ic.Users.FindByUserID(user_id_In)
 	fmt.Println(user.Name)
@@ -127,7 +127,7 @@ func main() {
 	admin:=admins[14]
 
 	//15363702969 my conversation id
-	convo, err:= ic.Conversations.Reply("15363702969",&admin,intercom.CONVERSATION_NOTE,note)
+	convo, err:= ic.Conversations.Reply("16379517862",&admin,intercom.CONVERSATION_NOTE,note)
 	fmt.Println(convo)
 	_=err
 
