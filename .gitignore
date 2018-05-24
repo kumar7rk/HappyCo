@@ -7,3 +7,7 @@ YumiBotGo/code
 .DS_Store
 YumiBotGo/YumiBotGo
 
+YumiBotGo/server
+YumiBotGo/server.go
+YumiBotGo/.DS_Store
+.DS_Store
