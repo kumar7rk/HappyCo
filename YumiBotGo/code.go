@@ -19,6 +19,11 @@ import (
 
    	intercom "gopkg.in/intercom/intercom-go.v2"
 
+  "net/http"
+  
+//  "io"
+  "encoding/json"
+ "io/ioutil"
 )
 
 //****************************Variable declaration********************************************
@@ -96,6 +101,24 @@ type row struct{
 	// date and time formatted string
 	var formatted_date string
 	
+
+type Innermost struct {
+	Key0 string `json:"user_id"`
+}
+
+type Inner struct {
+	Key1 string `json:"id"`
+	Key2 Innermost `json:"user"`
+}
+
+type Outer struct {
+	Key3 Inner `json:"item"`
+}
+
+type Outmost struct {
+	Key4 Outer `json:"data"`
+}
+
 //****************************Main function********************************************
 
 //starting main function
@@ -108,38 +131,62 @@ func main() {
 		fmt.Println("Error loading .env file")
 	}
 	
-	access_token := os.Getenv("INTERCOM_ACCESS_TOKEN")
-	ic := intercom.NewClient(access_token, "")
-//65135
-	user_id_In := "49656"
-	// user_id_In :=os.Args[1]
-	user, err := ic.Users.FindByUserID(user_id_In)
-	fmt.Println(user.Name)
-	_=err
+	http.HandleFunc("/", newConversation)
+  if err := http.ListenAndServe(":8080", nil); err != nil {
+    panic(err)
+    return
+  }
+}
 
-	noteBuilder(user_id_In)
+func newConversation(w http.ResponseWriter, r *http.Request) {
+	p:= fmt.Println
+
+	access_token := os.Getenv("INTERCOM_ACCESS_TOKEN") // change INTERCOM_ACCESS_TOKEN_TEST
+	ic := intercom.NewClient(access_token, "")
+
+
+	// Read body
+	b, err := ioutil.ReadAll(r.Body)
+	defer r.Body.Close()
+	if err != nil {
+		http.Error(w, err.Error(), 500)
+		return
+	}
+
+	// Unmarshal
+    var msg Outmost
+	err = json.Unmarshal(b, &msg)
+	if err != nil {
+		http.Error(w, err.Error(), 500)
+		return
+	}
+
+	var conversation_id_In = msg.Key4.Key3.Key1 //15363702969
+	user_id_In := msg.Key4.Key3.Key2.Key0 //65135
+	
+	user, err := ic.Users.FindByUserID(user_id_In)
+	_=err
+	
+	p("Conversation id: "+ conversation_id_In)
+	p("User id: "+ user_id_In)
+	p("User name: "+user.Name)
+
 
 	adminList, err := ic.Admins.List()
 	admins := adminList.Admins
 
 	// setting admin to HappyBot
-	// Addes the note from user named HappyBot
-	admin:=admins[14]
+	// Adds the note from user named HappyBot
+	
+	admin:=admins[14] // change [0]
 
-	//15363702969 my conversation id
-	convo, err:= ic.Conversations.Reply("16379517862",&admin,intercom.CONVERSATION_NOTE,note)
-	fmt.Println(convo)
+	noteBuilder(user_id_In)
+
+	convo, err:= ic.Conversations.Reply(conversation_id_In,&admin,intercom.CONVERSATION_NOTE,note)
+	//fmt.Println(convo)
 	_=err
-
-	/*http := TestConversationHTTPClient{t: t, expectedURI: "/conversations", fixtureFilename: "fixtures/conversations.json"}
-	api := ConversationAPI{httpClient: &http}
-	convos, _ := api.list(conversationListParams{})
-
-	fmt.Println(convos.Conversations[0].ID)*/
-
-	// convo, err :=ic.Conversations.Reply(conversation_id,&admin, intercom.CONVERSATION_NOTE,note)	
+	_=convo
 }
-
 //****************************Loading Enviornment Variables********************************************
 
 // loading env file to load db parameters
@@ -188,6 +235,10 @@ func connect(postgresURI string) (*sqlx.DB, error){
 
 //queries the db and adds returned values in array
 func getUserData(u_id string){
+	inspection_counter = 0
+	role_counter = 0
+	report_counter = 0;
+	
 	postgresURI := formURI();
 	if postgresURI=="" {
 		fmt.Println("URI error")
@@ -304,7 +355,7 @@ func printValues() {
 // build the note in a string format
 // should be called when a new intercom message is received
 func noteBuilder(us_id string) {
-	p:= fmt.Println
+	//p:= fmt.Println
 	//getting user data from the database
 	getUserData(us_id);
 	
@@ -426,8 +477,9 @@ func noteBuilder(us_id string) {
 		note+="\n"
 		note+= "The business is on IAP. It expires on "+formatted_date
 	}
+		 formatted_date=""
 
-	p(note)
+	//p(note)
 }
 
 
