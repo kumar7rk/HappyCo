@@ -104,6 +104,7 @@ type row struct{
 
 type Innermost struct {
 	Key0 string `json:"user_id"`
+	Key01 string `json:"type"`
 }
 
 type Inner struct {
@@ -140,6 +141,7 @@ func main() {
 
 func newConversation(w http.ResponseWriter, r *http.Request) {
 	p:= fmt.Println
+ 	w.Write([]byte("Done"))
 
 	access_token := os.Getenv("INTERCOM_ACCESS_TOKEN") // change INTERCOM_ACCESS_TOKEN_TEST
 	ic := intercom.NewClient(access_token, "")
@@ -163,29 +165,34 @@ func newConversation(w http.ResponseWriter, r *http.Request) {
 
 	var conversation_id_In = msg.Key4.Key3.Key1 //15363702969
 	user_id_In := msg.Key4.Key3.Key2.Key0 //65135
+
+	var user_type = msg.Key4.Key3.Key2.Key01
 	
-	user, err := ic.Users.FindByUserID(user_id_In)
-	_=err
+	if user_type == "user" {
+		user, err := ic.Users.FindByUserID(user_id_In)
+		_=err
+		
 	
-	p("Conversation id: "+ conversation_id_In)
-	p("User id: "+ user_id_In)
-	p("User name: "+user.Name)
+		p("Conversation id: "+ conversation_id_In)
+		p("User id: "+ user_id_In)
+		p("User name: "+user.Name)
 
 
-	adminList, err := ic.Admins.List()
-	admins := adminList.Admins
+		adminList, err := ic.Admins.List()
+		admins := adminList.Admins
 
-	// setting admin to HappyBot
-	// Adds the note from user named HappyBot
-	
-	admin:=admins[14] // change [0]
+		// setting admin to HappyBot
+		// Adds the note from user named HappyBot
+		
+		admin:=admins[14] // change [0]
 
-	noteBuilder(user_id_In)
+		noteBuilder(user_id_In)
 
-	convo, err:= ic.Conversations.Reply(conversation_id_In,&admin,intercom.CONVERSATION_NOTE,note)
-	//fmt.Println(convo)
-	_=err
-	_=convo
+		convo, err:= ic.Conversations.Reply(conversation_id_In,&admin,intercom.CONVERSATION_NOTE,note)
+		//fmt.Println(convo)
+		_=err
+		_=convo
+	}
 }
 //****************************Loading Enviornment Variables********************************************
 
