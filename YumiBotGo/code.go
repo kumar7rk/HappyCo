@@ -254,7 +254,7 @@ func getUserData(u_id string){
 	db,err := connect(postgresURI);
 
 	if err == nil {
-		fmt.Println("Connected");
+		fmt.Println("DB Connected");
 	}
 	if err != nil {
 		fmt.Println("Error connecting");
