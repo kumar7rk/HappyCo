@@ -438,6 +438,7 @@ func noteBuilder(us_id string) {
 
 		split := strings.Fields(r[i].report)
 		var url = "https://manage.happyco.com/reports/"+split[0]
+		var name = split[2]
 
 		var date, _  = time.Parse(time.RFC3339, split[1])
 		formats := []map[string]string{
@@ -456,7 +457,7 @@ func noteBuilder(us_id string) {
 				formatted_date+=":"
 			}
 		}
-		 note += "<a href="+url+">"+url+"</a>" + " " + formatted_date
+		 note += "<a href="+url+">"+name+"</a>" + " " + formatted_date
 		 note +="\n"
 		 formatted_date=""
 	}
