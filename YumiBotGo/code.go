@@ -64,18 +64,6 @@ type row struct{
   	//db variable for iap query
   	var expires_at_iap string
 
-/*type data struct{
-	business_I string 
-  	user_id_I string
-  	role_I string
-  	folder_id_I string
-  	folder_name_I string
-  	created_at_I string
-  	template_name_I string
-	id_I string
-  	status_I string
-  	location_I string
-}*/
 
 	//array for inspections
 	var r [5] row
@@ -489,5 +477,3 @@ func noteBuilder(us_id string) {
 
 	//p(note)
 }
-
-
