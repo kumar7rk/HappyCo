@@ -63,7 +63,9 @@ type row struct{
 
   	//db variable for iap query
   	var expires_at_iap string
-
+	
+	//db variable for integration query
+	var business_integration int
 
 	//array for inspections
 	var r [5] row
@@ -88,6 +90,9 @@ type row struct{
 
 	// date and time formatted string
 	var formatted_date string
+
+	// name of the integration if there's one
+	var integration_is string
 	
 
 type Innermost struct {
@@ -153,6 +158,9 @@ func newConversation(w http.ResponseWriter, r *http.Request) {
 
 	var conversation_id_In = msg.Key4.Key3.Key1 //15363702969
 	user_id_In := msg.Key4.Key3.Key2.Key0 //65135
+
+	//var conversation_id_In = "15363702969"
+	// user_id_In := "73252"
 
 	var user_type = msg.Key4.Key3.Key2.Key01
 	
@@ -330,6 +338,66 @@ func getUserData(u_id string){
   	panic(err3) 
   }
 
+  //Yardi
+  rows4, err4 := db.Queryx("Select count(id) FROM integration_yardi_properties WHERE business_id IN (SELECT business_id from business_membership WHERE user_id = $1 AND inactivated_at IS NULL)",u_id);
+  if err4 != nil {
+    	panic(err4)
+  }
+  for rows4.Next() {
+	err4 = rows4.Scan(&business_integration)
+	if err4 != nil {
+    	panic(err4)
+  	}
+  	if business_integration > 0 {
+  		integration_is = "Yardi"
+  		business_integration = 0;
+  	}
+  }
+  err4 = rows4.Err()
+  if err4 != nil {
+  	panic(err4) 
+  }
+
+  // MRI
+  rows5, err5 := db.Queryx("Select count(id) FROM integration_mri_properties WHERE business_id IN (SELECT business_id from business_membership WHERE user_id = $1 AND inactivated_at IS NULL)",u_id);
+  if err5 != nil {
+    	panic(err5)
+  }
+  for rows5.Next() {
+	err5 = rows5.Scan(&business_integration)
+	if err5 != nil {
+    	panic(err5)
+  	}
+  	if business_integration > 0 {
+  		integration_is = "MRI"
+  		business_integration = 0;
+  	}
+  }
+  err5 = rows5.Err()
+  if err5 != nil {
+  	panic(err5) 
+  }
+
+  // Resman
+  rows6, err6 := db.Queryx("Select count(id) FROM integration_resman_properties WHERE business_id IN (SELECT business_id from business_membership WHERE user_id = $1 AND inactivated_at IS NULL)",u_id);
+  if err6 != nil {
+    	panic(err6)
+  }
+  for rows6.Next() {
+	err6 = rows6.Scan(&business_integration)
+	if err6 != nil {
+    	panic(err6)
+  	}
+  	if business_integration > 0 {
+  		integration_is = "Resman"
+  		business_integration = 0;
+  	}
+  }
+  err6 = rows6.Err()
+  if err6 != nil {
+  	panic(err6) 
+  }
+
   defer db.Close()
 
 }
@@ -350,7 +418,7 @@ func printValues() {
 // build the note in a string format
 // should be called when a new intercom message is received
 func noteBuilder(us_id string) {
-	//p:= fmt.Println
+	p:= fmt.Println
 	//getting user data from the database
 	getUserData(us_id);
 	
@@ -475,5 +543,11 @@ func noteBuilder(us_id string) {
 	}
 		 formatted_date=""
 
+//***************working to construct the integration string***********
+		 if integration_is != "" {
+		 	note+="\n"
+			note+="\n"
+			note+= "The business is "+integration_is
+		 }
 	//p(note)
 }
