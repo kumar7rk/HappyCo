@@ -401,24 +401,13 @@ func getUserData(u_id string){
   defer db.Close()
 
 }
-//****************************Printing values- only for testing********************************************
-
-//not used was used to print individual values fetched from db
-// might be used when calling new query :)
-func printValues() {
-	//fmt.Println(id,folder_id,created_at,template_name)
-	for i := 0; i < inspection_counter; i++ {
-		fmt.Println(r[i].inspection)
-		
-	}
-}
 //****************************Building note********************************************
 
 // code starts running from here.
 // build the note in a string format
 // should be called when a new intercom message is received
 func noteBuilder(us_id string) {
-	p:= fmt.Println
+	// p:= fmt.Println
 	//getting user data from the database
 	getUserData(us_id);
 	
