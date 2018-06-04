@@ -1,6 +1,5 @@
-// At this stage the code needs to be run manually. It works as expected
-// change the user_id at loc 109 and conversation id (from intercom url - the last numbers after /) at loc 126
-// Build and run the code through terminal
+// Code run when a new conversation is received.
+// need to setup ngrok beforehand and point the webhook to the right ngrok url manually
 
 package main
 
@@ -21,7 +20,6 @@ import (
 
   "net/http"
   
-//  "io"
   "encoding/json"
  "io/ioutil"
 )
