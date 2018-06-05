@@ -1,4 +1,4 @@
-// Code run when a new conversation is received.
+// Code runs when a new conversation is received. :)
 // need to setup ngrok beforehand and point the webhook to the right ngrok url manually
 
 package main
@@ -25,13 +25,13 @@ import (
 )
 
 //****************************Variable declaration********************************************
-type row struct{
-	//main attributes
-	inspection string
-	report string
-	role string
-	iap string
-}
+	type row struct{
+		//main attributes
+		inspection string
+		report string
+		role string
+		iap string
+	}
 	//db variables for inspections query
   	var business_I string
   	var user_id_I string
@@ -154,13 +154,13 @@ func newConversation(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	var conversation_id_In = msg.Key4.Key3.Key1 //15363702969
+	var user_type = msg.Key4.Key3.Key2.Key01
 	user_id_In := msg.Key4.Key3.Key2.Key0 //65135
+	var conversation_id_In = msg.Key4.Key3.Key1 //15363702969
 
 	//var conversation_id_In = "15363702969"
 	// user_id_In := "73252"
 
-	var user_type = msg.Key4.Key3.Key2.Key01
 	
 	if user_type == "user" {
 		user, err := ic.Users.FindByUserID(user_id_In)
@@ -481,7 +481,11 @@ func noteBuilder(us_id string) {
 
 		split := strings.Fields(r[i].report)
 		var url = "https://manage.happyco.com/reports/"+split[0]
-		var name = split[2]
+		var name string
+		for i := 2; i < len(split); i++ {
+			name += split[i]
+			name += " "
+		 }
 
 		var date, _  = time.Parse(time.RFC3339, split[1])
 		formats := []map[string]string{
