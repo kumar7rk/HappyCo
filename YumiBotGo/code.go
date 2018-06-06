@@ -38,13 +38,14 @@ import (
 	  	location_I string
 	}
 
+	//main attributes
 	type row struct{
-		//main attributes
 		inspection string
 		report string
 		role string
 		iap string
 	}
+
 	//db variables for inspections query
   	var business_I string
   	var user_id_I string
@@ -191,7 +192,7 @@ func newConversation(w http.ResponseWriter, r *http.Request) {
 		// setting admin to HappyBot
 		// Adds the note from user named HappyBot
 		
-		admin:=admins[14] // change [0]
+		admin:=admins[13] // change [0]
 
 		noteBuilder(user_id_In)
 
