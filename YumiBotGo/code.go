@@ -1,5 +1,8 @@
-// Code runs when a new conversation is received. :)
-// need to setup ngrok beforehand and point the webhook to the right ngrok url manually
+/* Code runs with ngrok (for testing) when a new conversation is received. :)
+
+need to setup ngrok beforehand and point the webhook to the right ngrok url manually everytime you boot up
+
+*/
 
 package main
 
@@ -7,24 +10,25 @@ package main
 import (
 	"fmt"
 	"strings"
-	_ "github.com/lib/pq"
-	"github.com/jmoiron/sqlx"
-
-	"github.com/joho/godotenv"
-    "os"
+	"os"
     "strconv"
 
    "time"
-
-   	intercom "gopkg.in/intercom/intercom-go.v2"
-
-  "net/http"
   
+  "net/http"  
   "encoding/json"
- "io/ioutil"
+  "io/ioutil"
+	
+  _ "github.com/lib/pq"
+  "github.com/jmoiron/sqlx"
+  "github.com/joho/godotenv"
+  
+  intercom "gopkg.in/intercom/intercom-go.v2"
+
 )
 
 //****************************Variable declaration********************************************
+	// testing for moving to sqlx structScan
 	type data struct{
 		business_I string 
 	  	user_id_I string
@@ -107,6 +111,8 @@ import (
 	var integration_is string
 	
 
+// structs for reading payload in json received from Intercom
+// Could have better names; for sure :)
 type Innermost struct {
 	Key0 string `json:"user_id"`
 	Key01 string `json:"type"`
@@ -136,23 +142,26 @@ func main() {
 	if err!=nil {
 		fmt.Println("Error loading .env file")
 	}
-	
+
+	//handling every new convesations in newConversation method	
 	http.HandleFunc("/", newConversation)
   if err := http.ListenAndServe(":8080", nil); err != nil {
     panic(err)
     return
   }
 }
+//****************************New Conversation********************************************
 
+//gets intercom token, admin list, reads the payload, and post note as a reply in the conversation
 func newConversation(w http.ResponseWriter, r *http.Request) {
 	p:= fmt.Println
  	w.Write([]byte("Received"))
-
+ 	// gets intercom access token
 	access_token := os.Getenv("INTERCOM_ACCESS_TOKEN") // change INTERCOM_ACCESS_TOKEN_TEST
 	ic := intercom.NewClient(access_token, "")
 
 
-	// Read body
+	// Read body/payload
 	b, err := ioutil.ReadAll(r.Body)
 	defer r.Body.Close()
 	if err != nil {
@@ -160,7 +169,7 @@ func newConversation(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	// Unmarshal
+	// Unmarshal the json
     var msg Outmost
 	err = json.Unmarshal(b, &msg)
 	if err != nil {
@@ -168,32 +177,36 @@ func newConversation(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
+	/* getting attributes from the received json
+	user type - lead/user
+	user_id_In - happyCo user id
+	conversation_id_in - Intercom conversation I
+	*/
+
 	var user_type = msg.Key4.Key3.Key2.Key01
 	user_id_In := msg.Key4.Key3.Key2.Key0 //65135
 	var conversation_id_In = msg.Key4.Key3.Key1 //15363702969
-
-	//var conversation_id_In = "15363702969"
-	// user_id_In := "73252"
-
 	
+	//only run the following code when the received message is from a HappyCo user
 	if user_type == "user" {
 		user, err := ic.Users.FindByUserID(user_id_In)
 		_=err
 		
 	
+		//testing prints
 		p("Conversation id: "+ conversation_id_In)
 		p("User id: "+ user_id_In)
 		p("User name: "+user.Name)
 
-
+		// getting admin list from Intercom
 		adminList, err := ic.Admins.List()
 		admins := adminList.Admins
 
 		// setting admin to HappyBot
-		// Adds the note from user named HappyBot
-		
+		// Adds the note from admin - HappyBot
 		admin:=admins[13] // change [0]
 
+		// calling the method to compile the note with all the required information
 		noteBuilder(user_id_In)
 
 		convo, err:= ic.Conversations.Reply(conversation_id_In,&admin,intercom.CONVERSATION_NOTE,note)
