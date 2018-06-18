@@ -1,0 +1,13 @@
+{
+  "name": "Quomo",
+  "version": "1.0",  
+  "manifest_version": 2,
+  "description": "Clean up the UI of Intercom",
+  "icons": { "128": "Quomo.png" },
+  "content_scripts": [
+   {
+      "matches": ["https://app.intercom.io/a/apps/yaqkh6zy/*"],
+      "js": ["Quomo.js"]
+    }
+   ]
+}
