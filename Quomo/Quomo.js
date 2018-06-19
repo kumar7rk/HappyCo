@@ -10,25 +10,11 @@
 
 // ==/UserScript==
 //relase notes
-//0.1 --> hides the unknown and unused sections in the right sidebar
-//0.2 --> shows an alert dialog when a customer is from tier 2 support (Buildium, ACH, Equity, Colony Starwood)
-//0.3 --> improvement in the logic for hiding unused sections- less ways to break :D
-//0.4 --> Added admin details in the alert dialog for tier 2 support. Added dialog for Freddie-Mac
-//0.5 --> Show an alert dialog for Due Diligence plans so that we don't reply them with regular workflow like creating reports, browsing template library etc.
-//0.6 --> Updated Admin list for Equity and some improvements around showing annoying alert dialog multiple time
-//0.7 --> Added list of users supported by Freddie Mac 10 May 2018
-//0.8 --> Supporting Notes section added in right sidebar 23 May 2018
-//0.8.1 --> Not showing dialog for @buildium.com and @happy.co 12 June 2018
-//0.8.2 --> Improved code for hiding the sections in the right sidebar 13 June 2018
-//0.8.3 --> Annoying dialog not showing multiple times consistently but still for a few times 13 June 2018
-//1.0 --> Replaced dialog with a button; Renaming script
-
+//1.0 --> Shows a button for a tier 2 user, hides unwanted sections and some unknown values.
+//1.0.1 --> If multiple dialogs are added, removing all at once when the
 (function() {
 //    'use strict';
 //--- Style our newly added elements using CSS.
-    //static,initial,inherit - doesn't add
-    // fixed, sticky - top left
-    // relative- whole bar top left
 GM_addStyle ( multilineStr ( function () {/*!
     #myContainer {
         position:               relative;
@@ -56,13 +42,13 @@ GM_addStyle ( multilineStr ( function () {/*!
 }
     var gmMain = function() {
 
-        var dialog_text = ""
         var sections_to_be_removed = ["Last viewed","External profiles","Tags","Segments"]
         var all_sections = [];
         // waiting for three seconds and then hides unused sidebar elements such as last viewed external profiles, tags, segments
-    // is last viewed exists the code kind of breaks
+        // is last viewed exists the code kind of breaks
         setTimeout(function() {
             var button_text = ""
+            var dialog_text = ""
             var elements = document.getElementsByClassName('profile__sidebar-section ember-view');
             var user_type = "";
             var section_name = "Section Name= ";
@@ -124,22 +110,31 @@ GM_addStyle ( multilineStr ( function () {/*!
             var zNode = document.createElement ('div');
             zNode.innerHTML = '<button id="myButton" type="button" >' +button_text +'</button>';
             zNode.setAttribute ('id', 'myContainer');
-            if (button_text === ""){
-                var elem = document.getElementById("myContainer");
-                for (var i = 0; i< 10; i++)
+
+            for (var i = 0; i< 10; i++){
+                    var elem = document.getElementById("myContainer");
+                    console.log(i+"");
                     elem.parentNode.removeChild(elem);
-            }
-            if (button_text != ""){
-                the_div.appendChild (zNode);
-                document.getElementById ("myButton").addEventListener (
-                "click", function(){zNode.innerHTML = dialog_text;document.getElementById("myContainer").appendChild (zNode);}, false);
             }
 /*
-                var elem = document.getElementById("myContainer");
-                for (var i = 0; i< 10; i++)
+            if (button_text === ""){
+                for (var i = 0; i< 10; i++){
+                    var elem = document.getElementById("myContainer");
+                    console.log(i+"");
                     elem.parentNode.removeChild(elem);
+                }
+            }
 */
-        }, 3000); //Three seconds will elapse and Code will execute.
+            if (button_text != ""){
+                the_div.appendChild (zNode);
+
+                document.getElementById ("myButton").addEventListener (
+                "click", function(){
+                    zNode.innerHTML = dialog_text;
+                    document.getElementById("myContainer").appendChild (zNode);}
+                    , false);
+            }
+        }, 5000); //Three seconds will elapse and Code will execute.
     };
     // waiting for 12 seconds; hides all the unknown values in details, company details
     // if you click "show x hidden" quick enough it would hide hidden unknown as well
