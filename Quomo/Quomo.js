@@ -1,7 +1,7 @@
 // ==UserScript==
 // @name         Quomo
 // @namespace    https://app.intercom.io/a/apps/yaqkh6zy
-// @version      1.0
+// @version      1.0.1
 // @description  See notes below
 // @author       You
 // @match        https://app.intercom.io/a/apps/yaqkh6zy/*
@@ -46,6 +46,7 @@ GM_addStyle ( multilineStr ( function () {/*!
         var all_sections = [];
         // waiting for three seconds and then hides unused sidebar elements such as last viewed external profiles, tags, segments
         // is last viewed exists the code kind of breaks
+//        window.onload = function(){});
         setTimeout(function() {
             var button_text = ""
             var dialog_text = ""
@@ -111,20 +112,15 @@ GM_addStyle ( multilineStr ( function () {/*!
             zNode.innerHTML = '<button id="myButton" type="button" >' +button_text +'</button>';
             zNode.setAttribute ('id', 'myContainer');
 
-            for (var i = 0; i< 10; i++){
-                    var elem = document.getElementById("myContainer");
-                    console.log(i+"");
-                    elem.parentNode.removeChild(elem);
-            }
-/*
             if (button_text === ""){
                 for (var i = 0; i< 10; i++){
                     var elem = document.getElementById("myContainer");
                     console.log(i+"");
+                    if (elem !=null)
                     elem.parentNode.removeChild(elem);
                 }
             }
-*/
+
             if (button_text != ""){
                 the_div.appendChild (zNode);
 
