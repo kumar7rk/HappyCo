@@ -207,10 +207,8 @@ func newConversation(w http.ResponseWriter, r *http.Request) {
 		// calling the method to compile the note with all the required information
 		noteBuilder(user_id_In)
 
-		convo, err:= ic.Conversations.Reply(conversation_id_In,&admin,intercom.CONVERSATION_NOTE,note)
+		_convo, _err:= ic.Conversations.Reply(conversation_id_In,&admin,intercom.CONVERSATION_NOTE,note)
 		//fmt.Println(convo)
-		_=err
-		_=convo
 	}
 }
 //****************************Loading Enviornment Variables********************************************
