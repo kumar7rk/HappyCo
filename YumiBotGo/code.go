@@ -156,8 +156,8 @@ func newConversation(w http.ResponseWriter, r *http.Request) {
 	p:= fmt.Println
  	w.Write([]byte("Received"))
  	// gets intercom access token
-	access_token := os.Getenv("INTERCOM_ACCESS_TOKEN") // change INTERCOM_ACCESS_TOKEN_TEST
-	ic := intercom.NewClient(access_token, "")
+	accessToken := os.Getenv("INTERCOM_ACCESS_TOKEN") // change INTERCOM_ACCESS_TOKEN_TEST
+	ic := intercom.NewClient(accessToken, "")
 
 
 	// Read body/payload
