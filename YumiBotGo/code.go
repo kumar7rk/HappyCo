@@ -1,6 +1,6 @@
 /* Code runs with ngrok (for testing) when a new conversation is received. :)
 
-need to setup ngrok beforehand and point the webhook to the right ngrok url manually everytime you boot up
+need to setup ngrok beforehand and point the webhook to the right ngrok url manually everytime your machine boot up
 
 */
 
@@ -147,7 +147,6 @@ func main() {
 	http.HandleFunc("/", newConversation)
   if err := http.ListenAndServe(":8080", nil); err != nil {
     panic(err)
-    return
   }
 }
 //****************************New Conversation********************************************
