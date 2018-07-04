@@ -188,8 +188,7 @@ func newConversation(w http.ResponseWriter, r *http.Request) {
 	
 	//only run the following code when the received message is from a HappyCo user
 	if user_type == "user" {
-		user, err := ic.Users.FindByUserID(user_id_In)
-		_=err
+		user, _err := ic.Users.FindByUserID(user_id_In)
 		
 	
 		//testing prints
