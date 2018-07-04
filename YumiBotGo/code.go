@@ -95,20 +95,20 @@ import (
 	//var d [10] data
 
 	//counter to add values in array r for inspections
-	var inspection_counter int
+	var inspectionCounter int
 	//counter to add values in array r for reports
-	var report_counter int
+	var reportCounter int
 	//counter to add values in array r for role
-	var role_counter int
+	var roleCounter int
 	
 	// note string to be displayed in intercom
 	var note string 
 
 	// date and time formatted string
-	var formatted_date string
+	var formattedDate string
 
 	// name of the integration if there's one
-	var integration_is string
+	var integration string
 	
 
 // structs for reading payload in json received from Intercom
@@ -178,26 +178,27 @@ func newConversation(w http.ResponseWriter, r *http.Request) {
 
 	/* getting attributes from the received json
 	user type - lead/user
-	user_id_In - happyCo user id
-	conversation_id_in - Intercom conversation I
+	userId - happyCo user id
+	conversationId - Intercom conversation I
 	*/
+	
 
-	var user_type = msg.Key4.Key3.Key2.Key01
-	user_id_In := msg.Key4.Key3.Key2.Key0 //65135
-	var conversation_id_In = msg.Key4.Key3.Key1 //15363702969
+	userType := msg.Key4.Key3.Key2.Key01
+	userId := msg.Key4.Key3.Key2.Key0 //65135
+	conversationId := msg.Key4.Key3.Key1 //15363702969
 	
 	//only run the following code when the received message is from a HappyCo user
-	if user_type == "user" {
-		user, _err := ic.Users.FindByUserID(user_id_In)
-		
-	
+	if userType == "user" {
+		user, _err := ic.Users.FindByUserID(userId)
+		//_=err
 		//testing prints
-		p("Conversation id: "+ conversation_id_In)
-		p("User id: "+ user_id_In)
+		p("Conversation id: "+ conversationId)
+		p("User id: "+ userId)
 		p("User name: "+user.Name)
 
 		// getting admin list from Intercom
-		adminList, err := ic.Admins.List()
+		adminList, err1 := ic.Admins.List()
+		_=err1
 		admins := adminList.Admins
 
 		// setting admin to HappyBot
@@ -205,9 +206,10 @@ func newConversation(w http.ResponseWriter, r *http.Request) {
 		admin:=admins[13] // change [0]
 
 		// calling the method to compile the note with all the required information
-		noteBuilder(user_id_In)
+		noteBuilder(userId)
 
-		_convo, _err:= ic.Conversations.Reply(conversation_id_In,&admin,intercom.CONVERSATION_NOTE,note)
+		ic.Conversations.Reply(conversationId,&admin,intercom.CONVERSATION_NOTE,note)
+			
 		//fmt.Println(convo)
 	}
 }
@@ -259,9 +261,9 @@ func connect(postgresURI string) (*sqlx.DB, error){
 
 //queries the db and adds returned values in array
 func getUserData(u_id string){
-	inspection_counter = 0
-	role_counter = 0
-	report_counter = 0;
+	inspectionCounter = 0
+	roleCounter = 0
+	reportCounter = 0;
 	
 	postgresURI := formURI();
 	if postgresURI=="" {
@@ -294,9 +296,9 @@ func getUserData(u_id string){
       panic(err)
     }
 
-    r[inspection_counter].inspection = id_I+ " " + folder_id_I+ " " + created_at_I+ " " + template_name_I
+    r[inspectionCounter].inspection = id_I+ " " + folder_id_I+ " " + created_at_I+ " " + template_name_I
     // r[count].inspection = data1.id_I+ " " + data1.folder_id_I+ " " + data1.created_at_I+ " " + data1.template_name_I
-    inspection_counter++
+    inspectionCounter++
   }
   err = rows.Err()
   if err != nil {
@@ -316,9 +318,9 @@ func getUserData(u_id string){
   	if err1 != nil {
       panic(err1)
     }
-     r[report_counter].report = public_id_R+ " " + created_at_R+ " " + name_R
+     r[reportCounter].report = public_id_R+ " " + created_at_R+ " " + name_R
     //r[count].inspection = data1.id_I+ " " + data1.folder_id_I+ " " + data1.created_at_I+ " " + data1.template_name_I
-    report_counter++
+    reportCounter++
   }
   err1 = rows1.Err()
   if err1 != nil {
@@ -334,8 +336,8 @@ func getUserData(u_id string){
 	if err2 != nil {
     	panic(err2)
   	}
-  	r[role_counter].role = business_ro+ " " + role_ro
-  	role_counter++
+  	r[roleCounter].role = business_ro+ " " + role_ro
+  	roleCounter++
   }
   err2 = rows2.Err()
   if err2 != nil {
@@ -370,7 +372,7 @@ func getUserData(u_id string){
     	panic(err4)
   	}
   	if business_integration > 0 {
-  		integration_is = "Yardi"
+  		integration = "Yardi"
   		business_integration = 0;
   	}
   }
@@ -390,7 +392,7 @@ func getUserData(u_id string){
     	panic(err5)
   	}
   	if business_integration > 0 {
-  		integration_is = "MRI"
+  		integration = "MRI"
   		business_integration = 0;
   	}
   }
@@ -410,7 +412,7 @@ func getUserData(u_id string){
     	panic(err6)
   	}
   	if business_integration > 0 {
-  		integration_is = "Resman"
+  		integration = "Resman"
   		business_integration = 0;
   	}
   }
@@ -422,6 +424,7 @@ func getUserData(u_id string){
   defer db.Close()
 
 }
+
 //****************************Building note********************************************
 
 // code starts running from here.
@@ -440,7 +443,7 @@ func noteBuilder(us_id string) {
 // 1, 2, 3, 4 = Constant Admin, PM, Inspector, Limited Inspector
 // 8, 9 = Basic Admin, PM
 	var roles = [10]string{"","Admin","Process Manger", "Inspector","Limited Inspector", "","","","Admin","Process Manager"}
-	for i := 0; i < role_counter; i++ {	
+	for i := 0; i < roleCounter; i++ {	
 		split := strings.Fields(r[i].role)
 		permission, err := strconv.Atoi(split[1])
 
@@ -467,7 +470,7 @@ func noteBuilder(us_id string) {
   	note += "<b>✅   Yumi found these recent (max: 5) <em>Inspections in last 30 days:</em></b><br/>"
 	note +="\n"
 
-	for i := 0; i < inspection_counter; i++ {
+	for i := 0; i < inspectionCounter; i++ {
 		split := strings.Fields(r[i].inspection)
 		 var url = "https://manage.happyco.com/folder/"+split[1]+"/inspections/"+split[0]
 
@@ -482,15 +485,15 @@ func noteBuilder(us_id string) {
 				{"format": "PM", "description": "AM or PM"}}
 
 		for _, f := range formats {
-			formatted_date += date.Format(f["format"]+ " ");
+			formattedDate += date.Format(f["format"]+ " ");
 			if f["description"] == "Hours" {
-				formatted_date = strings.TrimSpace(formatted_date)
-				formatted_date+=":"
+				formattedDate = strings.TrimSpace(formattedDate)
+				formattedDate+=":"
 			}
 		}
-		note += "<a href="+url+">"+url+"</a>" + " " + formatted_date
+		note += "<a href="+url+">"+url+"</a>" + " " + formattedDate
 	    note +="\n"
-		formatted_date =""
+		formattedDate =""
 	}
 
 //***************working to construct the report string***********
@@ -500,7 +503,7 @@ func noteBuilder(us_id string) {
   	note += "<b>✅   Yumi found these recent (max: 5) <em>Reports in last 30 days:</em></b><br/>"
     note +="\n"
   	
-	for i := 0; i < report_counter; i++ {
+	for i := 0; i < reportCounter; i++ {
 
 		split := strings.Fields(r[i].report)
 		var url = "https://manage.happyco.com/reports/"+split[0]
@@ -521,15 +524,15 @@ func noteBuilder(us_id string) {
 				{"format": "PM", "description": "AM or PM"}}
 
 		for _, f := range formats {
-			formatted_date += date.Format(f["format"]+ " ");
+			formattedDate += date.Format(f["format"]+ " ");
 			if f["description"] == "Hours" {
-				formatted_date = strings.TrimSpace(formatted_date)
-				formatted_date+=":"
+				formattedDate = strings.TrimSpace(formattedDate)
+				formattedDate+=":"
 			}
 		}
-		 note += "<a href="+url+">"+name+"</a>" + " " + formatted_date
+		 note += "<a href="+url+">"+name+"</a>" + " " + formattedDate
 		 note +="\n"
-		 formatted_date=""
+		 formattedDate=""
 	}
 	var date, _  = time.Parse(time.RFC3339, expires_at_iap)
 		formats := []map[string]string{
@@ -542,10 +545,10 @@ func noteBuilder(us_id string) {
 				{"format": "PM", "description": "AM or PM"}}
 
 		for _, f := range formats {
-			formatted_date += date.Format(f["format"]+ " ");
+			formattedDate += date.Format(f["format"]+ " ");
 			if f["description"] == "Hours" {
-				formatted_date = strings.TrimSpace(formatted_date)
-				formatted_date+=":"
+				formattedDate = strings.TrimSpace(formattedDate)
+				formattedDate+=":"
 			}
 		}
 //***************working to construct the iap string***********
@@ -553,15 +556,15 @@ func noteBuilder(us_id string) {
 	if expires_at_iap != "" {
 		note+="\n"
 		note+="\n"
-		note+= "The business is on IAP. It expires on "+formatted_date
+		note+= "The business is on IAP. It expires on "+formattedDate
 	}
-		 formatted_date=""
+		 formattedDate=""
 
 //***************working to construct the integration string***********
-		 if integration_is != "" {
+		 if integration != "" {
 		 	note+="\n"
 			note+="\n"
-			note+= "The business is "+integration_is
+			note+= "The business is "+integration
 		 }
 	//p(note)
 }
