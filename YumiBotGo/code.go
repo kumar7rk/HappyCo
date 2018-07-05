@@ -113,22 +113,22 @@ import (
 
 // structs for reading payload in json received from Intercom
 // Could have better names; for sure :)
-type Innermost struct {
-	Key0 string `json:"user_id"`
-	Key01 string `json:"type"`
+type User struct {
+	UserID string `json:"user_id"`
+	Type string `json:"type"`
 }
 
-type Inner struct {
-	Key1 string `json:"id"`
-	Key2 Innermost `json:"user"`
+type Item struct {
+	ConversationID string `json:"id"`
+	User User `json:"user"`
 }
 
-type Outer struct {
-	Key3 Inner `json:"item"`
+type Data struct {
+	Item Item `json:"item"`
 }
 
-type Outmost struct {
-	Key4 Outer `json:"data"`
+type Message struct {
+	Data Data `json:"data"`
 }
 
 //****************************Main function********************************************
@@ -169,7 +169,7 @@ func newConversation(w http.ResponseWriter, r *http.Request) {
 	}
 
 	// Unmarshal the json
-    var msg Outmost
+    var msg Message
 	err = json.Unmarshal(b, &msg)
 	if err != nil {
 		http.Error(w, err.Error(), 500)
@@ -182,15 +182,15 @@ func newConversation(w http.ResponseWriter, r *http.Request) {
 	conversationId - Intercom conversation I
 	*/
 	
-
-	userType := msg.Key4.Key3.Key2.Key01
-	userId := msg.Key4.Key3.Key2.Key0 //65135
-	conversationId := msg.Key4.Key3.Key1 //15363702969
+	userType := msg.Data.Item.User.Type
+	userId := msg.Data.Item.User.UserID //65135
+	conversationId := msg.Data.Item.ConversationID //15363702969
+	
 	
 	//only run the following code when the received message is from a HappyCo user
 	if userType == "user" {
-		user, _err := ic.Users.FindByUserID(userId)
-		//_=err
+		user, err := ic.Users.FindByUserID(userId)
+		_=err
 		//testing prints
 		p("Conversation id: "+ conversationId)
 		p("User id: "+ userId)
