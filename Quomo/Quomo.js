@@ -1,7 +1,7 @@
 // ==UserScript==
 // @name         Quomo
 // @namespace    https://app.intercom.io/a/apps/yaqkh6zy
-// @version      1.0.1
+// @version      1.0.2
 // @description  See notes below
 // @author       You
 // @match        https://app.intercom.io/a/apps/yaqkh6zy/*
@@ -11,7 +11,8 @@
 // ==/UserScript==
 //relase notes
 //1.0 --> Shows a button for a tier 2 user, hides unwanted sections and some unknown values.
-//1.0.1 --> If multiple dialogs are added, removing all at once when the
+//1.0.1 --> If multiple dialogs are added, removing all at once when the next conversation is non-tier2
+//1.0.2 --> Adding dialog only once and also when it's clicked the info dialog is added once. Did some testing working consistently. Not too sure about the later one.
 (function() {
 //    'use strict';
 //--- Style our newly added elements using CSS.
@@ -47,6 +48,11 @@ GM_addStyle ( multilineStr ( function () {/*!
         // waiting for three seconds and then hides unused sidebar elements such as last viewed external profiles, tags, segments
         // is last viewed exists the code kind of breaks
 //        window.onload = function(){});
+
+        var elem = document.getElementById("myContainer");
+        if (elem !=null) elem.parentNode.removeChild(elem);
+
+
         setTimeout(function() {
             var button_text = ""
             var dialog_text = ""
@@ -111,23 +117,27 @@ GM_addStyle ( multilineStr ( function () {/*!
             var zNode = document.createElement ('div');
             zNode.innerHTML = '<button id="myButton" type="button" >' +button_text +'</button>';
             zNode.setAttribute ('id', 'myContainer');
+            var elem = document.getElementById("myContainer");
 
-            if (button_text === ""){
+/*            if (button_text === ""){
                 for (var i = 0; i< 10; i++){
-                    var elem = document.getElementById("myContainer");
+//                    var elem = document.getElementById("myContainer");
                     console.log(i+"");
                     if (elem !=null)
-                    elem.parentNode.removeChild(elem);
+                        elem.parentNode.removeChild(elem);
                 }
             }
-
+*/
             if (button_text != ""){
-                the_div.appendChild (zNode);
+                if(elem === null){
+                    the_div.appendChild (zNode);
+                }
 
                 document.getElementById ("myButton").addEventListener (
                 "click", function(){
                     zNode.innerHTML = dialog_text;
-                    document.getElementById("myContainer").appendChild (zNode);}
+                    if(elem!=null)
+                        elem.appendChild (zNode);}
                     , false);
             }
         }, 5000); //Three seconds will elapse and Code will execute.
