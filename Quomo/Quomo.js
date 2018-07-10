@@ -13,6 +13,7 @@
 //1.0 --> Shows a button for a tier 2 user, hides unwanted sections and some unknown values.
 //1.0.1 --> If multiple dialogs are added, removing all at once when the next conversation is non-tier2
 //1.0.2 --> Adding dialog only once and also when it's clicked the info dialog is added once. Did some testing working consistently. Not too sure about the later one.
+//1.0.3 --> Change filter to each; making sure the timeout is called once - resulting in the button only getting added once JB
 (function() {
 //    'use strict';
 //--- Style our newly added elements using CSS.
@@ -41,6 +42,7 @@ GM_addStyle ( multilineStr ( function () {/*!
     ;
     return str;
 }
+    var timeout = null;
     var gmMain = function() {
 
         var sections_to_be_removed = ["Last viewed","External profiles","Tags","Segments"]
@@ -53,7 +55,13 @@ GM_addStyle ( multilineStr ( function () {/*!
         if (elem !=null) elem.parentNode.removeChild(elem);
 
 
-        setTimeout(function() {
+        console.log("5000")
+        if(timeout) {
+            clearTimeout(timeout);
+            timeout = null;
+        }
+
+        timeout = setTimeout(function() {
             var button_text = ""
             var dialog_text = ""
             var elements = document.getElementsByClassName('profile__sidebar-section ember-view');
@@ -86,7 +94,7 @@ GM_addStyle ( multilineStr ( function () {/*!
 
             var bool = bool1 || bool2
 
-            $(".kv__value").filter(function (){
+            $(".kv__value").each(function (){
                 var text_here = $(this).text().trim()
                 if((text_here === "buildium") && !bool){
                     button_text = "Buildium"
@@ -119,17 +127,9 @@ GM_addStyle ( multilineStr ( function () {/*!
             zNode.setAttribute ('id', 'myContainer');
             var elem = document.getElementById("myContainer");
 
-/*            if (button_text === ""){
-                for (var i = 0; i< 10; i++){
-//                    var elem = document.getElementById("myContainer");
-                    console.log(i+"");
-                    if (elem !=null)
-                        elem.parentNode.removeChild(elem);
-                }
-            }
-*/
             if (button_text != ""){
                 if(elem === null){
+                console.log("Button")
                     the_div.appendChild (zNode);
                 }
 
@@ -140,23 +140,25 @@ GM_addStyle ( multilineStr ( function () {/*!
                         elem.appendChild (zNode);}
                     , false);
             }
-        }, 5000); //Three seconds will elapse and Code will execute.
+        }, 3000); //Three seconds will elapse and Code will execute.
     };
     // waiting for 12 seconds; hides all the unknown values in details, company details
     // if you click "show x hidden" quick enough it would hide hidden unknown as well
     setTimeout(function() {
-        $(".kv__value").filter(function(){
+        $(".kv__value").each(function(){
             return $(this).text().trim() === "Unknown";
         }).parent().hide();
     }, 12000); //Twelve seconds will elapse and Code will execute.
 
     var fireOnHashChangesToo = true;
     var pageURLCheckTimer = setInterval(function () {
+
         if (this.lastPathStr !== location.pathname || this.lastQueryStr !== location.search || (fireOnHashChangesToo && this.lastHashStr !== location.hash)) {
             this.lastPathStr = location.pathname;
             this.lastQueryStr = location.search;
             this.lastHashStr = location.hash;
             gmMain ();
+
         }
     } , 111);
 })();
