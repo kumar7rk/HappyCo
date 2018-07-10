@@ -27,7 +27,7 @@ import (
 
 )
 
-//****************************Variable declaration********************************************
+//********************************************Variable declaration********************************************
 	// testing for moving to sqlx structScan
 	type data struct{
 		business_I string 
@@ -131,7 +131,7 @@ type Message struct {
 	Data Data `json:"data"`
 }
 
-//****************************Main function********************************************
+//********************************************Main function********************************************
 
 //starting main function
 // at this moment all of the code is in main function
@@ -149,7 +149,7 @@ func main() {
     panic(err)
   }
 }
-//****************************New Conversation********************************************
+//********************************************New Conversation********************************************
 
 //gets intercom token, admin list, reads the payload, and post note as a reply in the conversation
 func newConversation(w http.ResponseWriter, r *http.Request) {
@@ -179,14 +179,14 @@ func newConversation(w http.ResponseWriter, r *http.Request) {
 	/* getting attributes from the received json
 	user type - lead/user
 	userId - happyCo user id
-	conversationId - Intercom conversation I
+	conversationId - Intercom conversation Id
 	*/
 	
 	userType := msg.Data.Item.User.Type
 	userId := msg.Data.Item.User.UserID //65135
 	conversationId := msg.Data.Item.ConversationID //15363702969
-	
-	
+
+
 	//only run the following code when the received message is from a HappyCo user
 	if userType == "user" {
 		user, err := ic.Users.FindByUserID(userId)
@@ -209,11 +209,11 @@ func newConversation(w http.ResponseWriter, r *http.Request) {
 		noteBuilder(userId)
 
 		ic.Conversations.Reply(conversationId,&admin,intercom.CONVERSATION_NOTE,note)
-			
 		//fmt.Println(convo)
-	}
+	}	
 }
-//****************************Loading Enviornment Variables********************************************
+
+//********************************************Loading Enviornment Variables********************************************
 
 // loading env file to load db parameters
 func loadEnv() (error){
@@ -224,7 +224,7 @@ func loadEnv() (error){
 
 	return nil;
 }
-//****************************Forming DB URI********************************************
+//********************************************Forming DB URI********************************************
 
 // forming postgres URI
 // returns string
@@ -244,7 +244,7 @@ func formURI() (str string) {
 	// returing uri
     return postgresURI;
 }
-//****************************Connecting with DB********************************************
+//********************************************Connecting with DB********************************************
 
 //connecting to the database
 //returne db- sqlx
@@ -257,7 +257,7 @@ func connect(postgresURI string) (*sqlx.DB, error){
 	return db,nil;
 }
 
-//****************************Getting UserData********************************************
+//********************************************Getting UserData********************************************
 
 //queries the db and adds returned values in array
 func getUserData(u_id string){
@@ -425,7 +425,7 @@ func getUserData(u_id string){
 
 }
 
-//****************************Building note********************************************
+//********************************************Building note********************************************
 
 // code starts running from here.
 // build the note in a string format
@@ -435,7 +435,7 @@ func noteBuilder(us_id string) {
 	//getting user data from the database
 	getUserData(us_id);
 	
-//***************working to construct the business string***********
+//******************constructing business string******************
 	note = "<b>A small note from Yumi 🐶</b><br/><br/>"
 
 	note += "<b>✅User is associated with the following businesses</b><br/><br/>"
@@ -466,7 +466,7 @@ func noteBuilder(us_id string) {
 	note +="\n"
 	note +="\n"
 
-//***************working to construct the inspection string***********
+//******************constructing inspection string******************
   	note += "<b>✅   Yumi found these recent (max: 5) <em>Inspections in last 30 days:</em></b><br/>"
 	note +="\n"
 
@@ -496,7 +496,7 @@ func noteBuilder(us_id string) {
 		formattedDate =""
 	}
 
-//***************working to construct the report string***********
+//******************constructing report string******************
 
     note +="\n"
 	note +="\n"
@@ -551,7 +551,7 @@ func noteBuilder(us_id string) {
 				formattedDate+=":"
 			}
 		}
-//***************working to construct the iap string***********
+//******************constructing iap string******************
 // this is only a part of the code if the business is on iap
 	if expires_at_iap != "" {
 		note+="\n"
@@ -560,11 +560,12 @@ func noteBuilder(us_id string) {
 	}
 		 formattedDate=""
 
-//***************working to construct the integration string***********
+//******************constructing integration string******************
 		 if integration != "" {
 		 	note+="\n"
 			note+="\n"
 			note+= "The business is "+integration
 		 }
-	//p(note)
+
+		 //return note
 }
