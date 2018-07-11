@@ -154,7 +154,12 @@ func main() {
 //gets intercom token, admin list, reads the payload, and post note as a reply in the conversation
 func newConversation(w http.ResponseWriter, r *http.Request) {
 	p:= fmt.Println
- 	w.Write([]byte("Received"))
+
+  	//w.WriteHeader(http.StatusOK)
+    //w.Header().Set("header_name", "header_value")
+  	w.Write([]byte("Received"))
+
+
  	// gets intercom access token
 	accessToken := os.Getenv("INTERCOM_ACCESS_TOKEN") // change INTERCOM_ACCESS_TOKEN_TEST
 	ic := intercom.NewClient(accessToken, "")
@@ -431,6 +436,7 @@ func getUserData(u_id string){
 // build the note in a string format
 // should be called when a new intercom message is received
 func noteBuilder(us_id string) {
+	note = "";
 	// p:= fmt.Println
 	//getting user data from the database
 	getUserData(us_id);
@@ -559,6 +565,7 @@ func noteBuilder(us_id string) {
 		note+= "The business is on IAP. It expires on "+formattedDate
 	}
 		 formattedDate=""
+		 expires_at_iap=""
 
 //******************constructing integration string******************
 		 if integration != "" {
@@ -566,6 +573,7 @@ func noteBuilder(us_id string) {
 			note+="\n"
 			note+= "The business is "+integration
 		 }
+		 integration=""
 
 		 //return note
 }
