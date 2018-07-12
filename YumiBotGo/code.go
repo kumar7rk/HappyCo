@@ -153,18 +153,11 @@ func main() {
 
 //gets intercom token, admin list, reads the payload, and post note as a reply in the conversation
 func newConversation(w http.ResponseWriter, r *http.Request) {
-	p:= fmt.Println
+	//p:= fmt.Println
 
   	//w.WriteHeader(http.StatusOK)
     //w.Header().Set("header_name", "header_value")
   	w.Write([]byte("Received"))
-
-
- 	// gets intercom access token
-	accessToken := os.Getenv("INTERCOM_ACCESS_TOKEN") // change INTERCOM_ACCESS_TOKEN_TEST
-	ic := intercom.NewClient(accessToken, "")
-
-
 	// Read body/payload
 	b, err := ioutil.ReadAll(r.Body)
 	defer r.Body.Close()
@@ -190,6 +183,16 @@ func newConversation(w http.ResponseWriter, r *http.Request) {
 	userType := msg.Data.Item.User.Type
 	userId := msg.Data.Item.User.UserID //65135
 	conversationId := msg.Data.Item.ConversationID //15363702969
+  	intercomStuff(userType, userId, conversationId);
+
+}
+
+func intercomStuff(userType string, userId string, conversationId string){
+		p:= fmt.Println
+
+	// gets intercom access token
+	accessToken := os.Getenv("INTERCOM_ACCESS_TOKEN") // change INTERCOM_ACCESS_TOKEN_TEST
+	ic := intercom.NewClient(accessToken, "")
 
 
 	//only run the following code when the received message is from a HappyCo user
