@@ -155,7 +155,6 @@ func main() {
 func newConversation(w http.ResponseWriter, r *http.Request) {
 	//p:= fmt.Println
 
-  	//w.WriteHeader(http.StatusOK)
     //w.Header().Set("header_name", "header_value")
 	// Read body/payload
 	b, err := ioutil.ReadAll(r.Body)
@@ -172,6 +171,7 @@ func newConversation(w http.ResponseWriter, r *http.Request) {
 		http.Error(w, err.Error(), 500)
 		return
 	}
+  	w.WriteHeader(http.StatusOK)
   	w.Write([]byte("Received"))
 
 	/* getting attributes from the received json
@@ -214,7 +214,7 @@ func intercomStuff(userType string, userId string, conversationId string){
 		admin:=admins[13] // change [0]
 
 		// calling the method to compile the note with all the required information
-		noteBuilder(userId)
+		note := noteBuilder(userId)
 
 		ic.Conversations.Reply(conversationId,&admin,intercom.CONVERSATION_NOTE,note)
 		//fmt.Println(convo)
@@ -438,8 +438,11 @@ func getUserData(u_id string){
 // code starts running from here.
 // build the note in a string format
 // should be called when a new intercom message is received
-func noteBuilder(us_id string) {
-	note = "";
+func noteBuilder(us_id string) string {
+	//note = "";
+
+	var note string
+
 	// p:= fmt.Println
 	//getting user data from the database
 	getUserData(us_id);
@@ -577,5 +580,5 @@ func noteBuilder(us_id string) {
 		 }
 		 integration=""
 
-		 //return note
+		 return note
 }
