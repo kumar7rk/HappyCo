@@ -157,7 +157,6 @@ func newConversation(w http.ResponseWriter, r *http.Request) {
 
   	//w.WriteHeader(http.StatusOK)
     //w.Header().Set("header_name", "header_value")
-  	w.Write([]byte("Received"))
 	// Read body/payload
 	b, err := ioutil.ReadAll(r.Body)
 	defer r.Body.Close()
@@ -173,6 +172,7 @@ func newConversation(w http.ResponseWriter, r *http.Request) {
 		http.Error(w, err.Error(), 500)
 		return
 	}
+  	w.Write([]byte("Received"))
 
 	/* getting attributes from the received json
 	user type - lead/user
@@ -561,7 +561,6 @@ func noteBuilder(us_id string) {
 			}
 		}
 //******************constructing iap string******************
-// this is only a part of the code if the business is on iap
 	if expires_at_iap != "" {
 		note+="\n"
 		note+="\n"
