@@ -1,6 +1,4 @@
-/* Code runs with ngrok (for testing) when a new conversation is received. :)
-
-need to setup ngrok beforehand and point the webhook to the right ngrok url manually everytime your machine boot up
+/* Adding User Data from DB to Intercom as a note for every new conversation
 
 */
 
