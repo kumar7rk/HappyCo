@@ -54,7 +54,6 @@ GM_addStyle ( multilineStr ( function () {/*!
         var elem = document.getElementById("myContainer");
         if (elem !=null) elem.parentNode.removeChild(elem);
 
-
         console.log("5000")
         if(timeout) {
             clearTimeout(timeout);
@@ -140,8 +139,13 @@ GM_addStyle ( multilineStr ( function () {/*!
                         elem.appendChild (zNode);}
                     , false);
             }
+
+            $('[data-attribute-id=email]').parent().parent().find('[data-is-interactive=true]').off('click').on('click mouseover',function(e){
+                window.open('https://manage.happyco.com/admin/search?utf8=✓&query='+$(this).attr('data-value'));
+            }).css('color','#00c389');
+
         }, 3000); //Three seconds will elapse and Code will execute.
-    };
+};
     // waiting for 12 seconds; hides all the unknown values in details, company details
     // if you click "show x hidden" quick enough it would hide hidden unknown as well
     setTimeout(function() {
