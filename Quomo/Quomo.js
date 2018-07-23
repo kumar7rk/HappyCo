@@ -1,7 +1,7 @@
 // ==UserScript==
 // @name         Quomo
 // @namespace    https://app.intercom.io/a/apps/yaqkh6zy
-// @version      1.0.2
+// @version      1.1.1
 // @description  See notes below
 // @author       You
 // @match        https://app.intercom.io/a/apps/yaqkh6zy/*
@@ -14,6 +14,9 @@
 //1.0.1 --> If multiple dialogs are added, removing all at once when the next conversation is non-tier2
 //1.0.2 --> Adding dialog only once and also when it's clicked the info dialog is added once. Did some testing working consistently. Not too sure about the later one.
 //1.0.3 --> Change filter to each; making sure the timeout is called once - resulting in the button only getting added once JB
+//1.1 --> Merging IntercomHide; Hovering over email opens admin in new window
+//1.1.1 --> roll back hover feature
+
 (function() {
 //    'use strict';
 //--- Style our newly added elements using CSS.
@@ -43,6 +46,7 @@ GM_addStyle ( multilineStr ( function () {/*!
     return str;
 }
     var timeout = null;
+    var counter = 0;
     var gmMain = function() {
 
         var sections_to_be_removed = ["Last viewed","External profiles","Tags","Segments"]
@@ -140,8 +144,11 @@ GM_addStyle ( multilineStr ( function () {/*!
                     , false);
             }
 
-            $('[data-attribute-id=email]').parent().parent().find('[data-is-interactive=true]').off('click').on('click mouseover',function(e){
-                window.open('https://manage.happyco.com/admin/search?utf8=✓&query='+$(this).attr('data-value'));
+            $('[data-attribute-id=email]').parent().parent().find('[data-is-interactive=true]').off('click').on('click',function(e){
+//                if (counter === 0){
+                    window.open('https://manage.happyco.com/admin/search?utf8=✓&query='+$(this).attr('data-value'));
+//                    counter = 1;
+//                }
             }).css('color','#00c389');
 
         }, 3000); //Three seconds will elapse and Code will execute.
