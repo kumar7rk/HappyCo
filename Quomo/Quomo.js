@@ -14,7 +14,7 @@
 //1.0.1 --> If multiple dialogs are added, removing all at once when the next conversation is non-tier2
 //1.0.2 --> Adding dialog only once and also when it's clicked the info dialog is added once. Did some testing working consistently. Not too sure about the later one.
 //1.0.3 --> Change filter to each; making sure the timeout is called once - resulting in the button only getting added once JB
-//1.1 --> Merging IntercomHide; Hovering over email opens admin in new window
+//1.1 --> Merging IntercomHappyCo; Hovering over email opens admin in new window
 //1.1.1 --> roll back hover feature
 
 (function() {
