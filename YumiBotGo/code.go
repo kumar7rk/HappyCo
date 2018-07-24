@@ -80,7 +80,10 @@ import (
 	
 	//db variable for integration query
 	var business_integration int
-
+	
+	//db variable for dd query
+	var plan_type string
+	
 	//array for inspections
 	var r [5] row
 	//array for reports
@@ -427,6 +430,23 @@ func getUserData(u_id string){
   	panic(err6) 
   }
 
+  // DD/buildium/mri
+  rows7, err7 := db.Queryx("Select plan_type FROM subscriptions WHERE business_id IN (SELECT business_id from business_membership WHERE user_id = $1 AND inactivated_at IS NULL)",u_id);
+  if err7 != nil {
+    	panic(err7)
+  }
+  for rows7.Next() {
+	err7 = rows7.Scan(&plan_type)
+	if err7 != nil {
+    	panic(err7)
+  	}
+  }
+  err7 = rows7.Err()
+  if err7 != nil {
+  	panic(err7) 
+  }
+
+
   defer db.Close()
 
 }
@@ -577,6 +597,27 @@ func noteBuilder(us_id string) string {
 			note+= "The business is "+integration
 		 }
 		 integration=""
+
+//******************constructing plan_type string******************
+
+		 note+="The plan is (just for testing) "+plan_type
+
+		if plan_type == "due_diligence" {
+			note+="\n"
+			note+="\n"
+			note+= "The plan is "+plan_type
+		}
+		if plan_type == "buildium" {
+			note+="\n"
+			note+="\n"
+			note+= "The plan is "+plan_type			
+		}
+		if plan_type == "mri" {
+			note+="\n"
+			note+="\n"
+			note+= "The plan is "+plan_type
+		}
+		plan_type = ""
 
 		 return note
 }
