@@ -505,22 +505,20 @@ func noteBuilder(us_id string) string {
 
 //******************constructing plan_type string******************
 
-		 note+="The plan is (just for testing) "+plan_type
-
 		if plan_type == "due_diligence" {
 			note+="\n"
 			note+="\n"
-			note+= "The plan is "+plan_type
+			note+= "Plan: "+plan_type
 		}
 		if plan_type == "buildium" {
 			note+="\n"
 			note+="\n"
-			note+= "The plan is "+plan_type			
+			note+= "Plan: "+plan_type
 		}
 		if plan_type == "mri" {
 			note+="\n"
 			note+="\n"
-			note+= "The plan is "+plan_type
+			note+= "Plan: "+plan_type
 		}
 		plan_type = ""
 		note+="\n"
@@ -616,7 +614,7 @@ func noteBuilder(us_id string) string {
 	if expires_at_iap != "" {
 		note+="\n"
 		note+="\n"
-		note+= "The business is on IAP. It expires on "+formattedDate
+		note+= "<b>The business is on IAP. It expires on </b>"+formattedDate
 	}
 		 formattedDate=""
 		 expires_at_iap=""
