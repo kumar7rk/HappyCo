@@ -229,7 +229,7 @@ func intercomStuff(userType string, userId string, conversationId string){
 
 		if plan_type_replica == "buildium" {
 			//ic.Conversations.Reply(conversationId,&admin,intercom.CONVERSATION_COMMENT,"Testing on internal plan \n " +buildiumMessage)
-			plan_type_replica = buildiumMessage // fun stuff
+			plan_type_replica = buildiumMessage //fun stuff
 			plan_type_replica = ""
 		}
 		//fmt.Println(convo)
