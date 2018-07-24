@@ -83,6 +83,8 @@ import (
 	
 	//db variable for dd query
 	var plan_type string
+
+	var plan_type_replica string
 	
 	//array for inspections
 	var r [5] row
@@ -218,6 +220,18 @@ func intercomStuff(userType string, userId string, conversationId string){
 		note := noteBuilder(userId)
 
 		ic.Conversations.Reply(conversationId,&admin,intercom.CONVERSATION_NOTE,note)
+
+		var buildiumMessage string;
+		//extracting firstName from the user name.
+		firstName := strings.Fields(user.Name)
+
+		buildiumMessage = "Hi "+ firstName[0] +"  \n \n Buildium Support team are the best place to help you with this query as they understand your unique workflow and are trained in Happy Inspector 💫  \n <b>Our friends at Buildium support your Happy Inspector subscription and mobile app and can be reached at 888-414-1988, or by submitting a ticket through your Buildium account.</b>   \n Please also feel free to take a look through our FAQ on the Buildium integration:  \n https://intercom.help/happyco/frequently-asked-questions/buildium-integration-faq/faq-buildium-integration  \n Thanks!  \n HappyCo team ☺"
+
+		if plan_type_replica == "buildium" {
+			//ic.Conversations.Reply(conversationId,&admin,intercom.CONVERSATION_COMMENT,"Testing on internal plan \n " +buildiumMessage)
+			plan_type_replica = buildiumMessage // fun stuff
+			plan_type_replica = ""
+		}
 		//fmt.Println(convo)
 	}	
 }
@@ -520,6 +534,7 @@ func noteBuilder(us_id string) string {
 			note+="\n"
 			note+= "Plan: "+plan_type
 		}
+		plan_type_replica = plan_type
 		plan_type = ""
 		note+="\n"
 		note+="\n"
