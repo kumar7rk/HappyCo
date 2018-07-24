@@ -494,7 +494,38 @@ func noteBuilder(us_id string) string {
 	}
 
 	note +="\n"
-	note +="\n"
+
+//******************constructing integration string******************
+		 if integration != "" {
+		 	note+="\n"
+			note+="\n"
+			note+= "The business is "+integration
+		 }
+		 integration=""
+
+//******************constructing plan_type string******************
+
+		 note+="The plan is (just for testing) "+plan_type
+
+		if plan_type == "due_diligence" {
+			note+="\n"
+			note+="\n"
+			note+= "The plan is "+plan_type
+		}
+		if plan_type == "buildium" {
+			note+="\n"
+			note+="\n"
+			note+= "The plan is "+plan_type			
+		}
+		if plan_type == "mri" {
+			note+="\n"
+			note+="\n"
+			note+= "The plan is "+plan_type
+		}
+		plan_type = ""
+		note+="\n"
+		note+="\n"
+
 
 //******************constructing inspection string******************
   	note += "<b>✅   Yumi found these recent (max: 5) <em>Inspections in last 30 days:</em></b><br/>"
@@ -590,34 +621,6 @@ func noteBuilder(us_id string) string {
 		 formattedDate=""
 		 expires_at_iap=""
 
-//******************constructing integration string******************
-		 if integration != "" {
-		 	note+="\n"
-			note+="\n"
-			note+= "The business is "+integration
-		 }
-		 integration=""
-
-//******************constructing plan_type string******************
-
-		 note+="The plan is (just for testing) "+plan_type
-
-		if plan_type == "due_diligence" {
-			note+="\n"
-			note+="\n"
-			note+= "The plan is "+plan_type
-		}
-		if plan_type == "buildium" {
-			note+="\n"
-			note+="\n"
-			note+= "The plan is "+plan_type			
-		}
-		if plan_type == "mri" {
-			note+="\n"
-			note+="\n"
-			note+= "The plan is "+plan_type
-		}
-		plan_type = ""
 
 		 return note
 }
