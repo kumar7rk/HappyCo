@@ -25,19 +25,6 @@ import (
 )
 
 //********************************************Variable declaration********************************************
-// testing for moving to sqlx structScan
-type data struct {
-	business_I      string
-	user_id_I       string
-	role_I          string
-	folder_id_I     string
-	folder_name_I   string
-	created_at_I    string
-	template_name_I string
-	id_I            string
-	status_I        string
-	location_I      string
-}
 
 //main attributes
 type row struct {
@@ -45,6 +32,19 @@ type row struct {
 	report     string
 	role       string
 	iap        string
+}
+
+type Inspection struct {
+	Business     string
+	User         string
+	Role         string
+	FolderID     string `db:"folder_id"`
+	FolderName   string `db:"folder_name"`
+	CreatedAt    string `db:"created_at"`
+	TemplateName string `db:"template_name"`
+	ID           string
+	Status       string
+	Location     string
 }
 
 //db variables for inspections query
@@ -117,8 +117,9 @@ var formattedDate string
 // name of the integration if there's one
 var integration string
 
+var inspectionsArray []Inspection
+
 // structs for reading payload in json received from Intercom
-// Could have better names; for sure :)
 type User struct {
 	UserID string `json:"user_id"`
 	Type   string `json:"type"`
@@ -309,29 +310,38 @@ func getUserData(u_id string) {
 	// data1:=data{}
 	//var data1 data
 	//var d[10] data
-	//running the query on the db
-	rows, err := db.Queryx("SELECT folders.business,folders.user,folders.role ,folders.folder_id,folders.folder_name,i.created_at as created_at,i.template_name,i.id,i.status,i.location FROM (SELECT businesses.business_id as business,businesses.user_id as user,role_id as role,folder_id as folder_id,folder_name as folder_name FROM (SELECT bm.business_id as business_id,bm.user_id as user_id,bm.business_role_id as role_id,f.id as folder_id,f.name as folder_name FROM business_membership as bm JOIN portfolios as f ON bm.business_id = f.business_id WHERE bm.user_id = $1 AND bm.inactivated_at IS NULL AND f.inactivated_at IS NULL) as businesses GROUP BY businesses.business_id,businesses.role_id,businesses.user_id,folder_id,folder_name ORDER BY businesses.business_id ) as folders JOIN inspections as i ON folders.folder_id = i.folder_id WHERE i.user_id = $3 AND i.archived_at IS NULL AND i.created_at > (CURRENT_DATE- interval '30 day') ORDER BY i.created_at DESC LIMIT $2", u_id, 5, u_id)
-	if err != nil {
-		panic(err)
+
+	//fetching most recent (5) inspections for the user within the last 30 days.
+
+	err1 := db.Select(&inspectionsArray, "SELECT folders.business,folders.user,folders.role ,folders.folder_id,folders.folder_name,i.created_at as created_at,i.template_name,i.id,i.status,i.location FROM (SELECT businesses.business_id as business,businesses.user_id as user,role_id as role,folder_id as folder_id,folder_name as folder_name FROM (SELECT bm.business_id as business_id,bm.user_id as user_id,bm.business_role_id as role_id,f.id as folder_id,f.name as folder_name FROM business_membership as bm JOIN portfolios as f ON bm.business_id = f.business_id WHERE bm.user_id = $1 AND bm.inactivated_at IS NULL AND f.inactivated_at IS NULL) as businesses GROUP BY businesses.business_id,businesses.role_id,businesses.user_id,folder_id,folder_name ORDER BY businesses.business_id ) as folders JOIN inspections as i ON folders.folder_id = i.folder_id WHERE i.user_id = $1::varchar AND i.archived_at IS NULL AND i.created_at > (CURRENT_DATE- interval '30 day') ORDER BY i.created_at DESC LIMIT $2", u_id, 5)
+	/*
+		rows, err := db.Queryx("SELECT folders.business,folders.user,folders.role ,folders.folder_id,folders.folder_name,i.created_at as created_at,i.template_name,i.id,i.status,i.location FROM (SELECT businesses.business_id as business,businesses.user_id as user,role_id as role,folder_id as folder_id,folder_name as folder_name FROM (SELECT bm.business_id as business_id,bm.user_id as user_id,bm.business_role_id as role_id,f.id as folder_id,f.name as folder_name FROM business_membership as bm JOIN portfolios as f ON bm.business_id = f.business_id WHERE bm.user_id = $1 AND bm.inactivated_at IS NULL AND f.inactivated_at IS NULL) as businesses GROUP BY businesses.business_id,businesses.role_id,businesses.user_id,folder_id,folder_name ORDER BY businesses.business_id ) as folders JOIN inspections as i ON folders.folder_id = i.folder_id WHERE i.user_id = $3 AND i.archived_at IS NULL AND i.created_at > (CURRENT_DATE- interval '30 day') ORDER BY i.created_at DESC LIMIT $2", u_id, 5, u_id)
+
+	*/
+	if err1 != nil {
+		panic(err1)
 	}
 	// fetching all the records
-	for rows.Next() {
+	/*
+		for rows.Next() {
 
-		err = rows.Scan(&business_I, &user_id_I, &role_I, &folder_id_I, &folder_name_I, &created_at_I, &template_name_I, &id_I, &status_I, &location_I)
-		// err = rows.StructScan(&data1)
-		// fmt.Println(data1)
+			err = rows.Scan(&business_I, &user_id_I, &role_I, &folder_id_I, &folder_name_I, &created_at_I, &template_name_I, &id_I, &status_I, &location_I)
+			// err = rows.StructScan(&data1)
+			// fmt.Println(data1)
+			if err != nil {
+				panic(err)
+			}
+
+			r[inspectionCounter].inspection = id_I + " " + folder_id_I + " " + created_at_I + " " + template_name_I
+			// r[count].inspection = data1.id_I+ " " + data1.folder_id_I+ " " + data1.created_at_I+ " " + data1.template_name_I
+			inspectionCounter++
+		}
+
+		err = rows.Err()
 		if err != nil {
 			panic(err)
 		}
-
-		r[inspectionCounter].inspection = id_I + " " + folder_id_I + " " + created_at_I + " " + template_name_I
-		// r[count].inspection = data1.id_I+ " " + data1.folder_id_I+ " " + data1.created_at_I+ " " + data1.template_name_I
-		inspectionCounter++
-	}
-	err = rows.Err()
-	if err != nil {
-		panic(err)
-	}
+	*/
 
 	rows1, err1 := db.Queryx("SELECT folders.business,folders.user,folders.role,folders.folder_id,folders.folder_name,r.created_at as created_at,r.name,r.public_id,r.location FROM (SELECT businesses.business_id as business,businesses.user_id as user,role_id as role,folder_id as folder_id,folder_name as folder_name FROM (SELECT bm.business_id as business_id,bm.user_id as user_id,bm.business_role_id as role_id,f.id as folder_id,f.name as folder_name FROM business_membership as bm JOIN portfolios as f ON bm.business_id = f.business_id WHERE bm.user_id = $1 AND bm.inactivated_at IS NULL AND f.inactivated_at IS NULL) as businesses GROUP BY businesses.business_id,businesses.role_id,businesses.user_id,folder_id,folder_name ORDER BY businesses.business_id ) as folders JOIN reports_v3 as r ON folders.folder_id = r.folder_id WHERE r.user_id = $3 AND r.archived_at IS NULL AND r.created_at > (CURRENT_DATE- interval '30 day') ORDER BY r.created_at DESC LIMIT $2", u_id, 5, u_id)
 	if err1 != nil {
@@ -545,33 +555,19 @@ func noteBuilder(us_id string) string {
 	//******************constructing inspection string******************
 	note += "<b>✅   Yumi found these recent (max: 5) <em>Inspections in last 30 days:</em></b><br/>"
 	note += "\n"
+	var url string
+	for _, inspection := range inspectionsArray {
 
-	for i := 0; i < inspectionCounter; i++ {
-		split := strings.Fields(r[i].inspection)
-		var url = "https://manage.happyco.com/folder/" + split[1] + "/inspections/" + split[0]
+		url = "https://manage.happyco.com/folder/" + inspection.FolderID + "/inspections/" + inspection.ID
 
-		var date, _ = time.Parse(time.RFC3339, split[2])
-		formats := []map[string]string{
-			{"format": "02", "description": "Day"},
-			{"format": "Jan", "description": "Month"},
-			{"format": "2006", "description": "Year"},
+		var date, _ = time.Parse(time.RFC3339, inspection.CreatedAt)
+		formattedDate = date.Format("02 Jan 2006 3:04PM")
 
-			{"format": "3", "description": "Hours"},
-			{"format": "04", "description": "Minutes"},
-			{"format": "PM", "description": "AM or PM"}}
-
-		for _, f := range formats {
-			formattedDate += date.Format(f["format"] + " ")
-			if f["description"] == "Hours" {
-				formattedDate = strings.TrimSpace(formattedDate)
-				formattedDate += ":"
-			}
-		}
 		note += "<a href=" + url + ">" + url + "</a>" + " " + formattedDate
 		note += "\n"
 		formattedDate = ""
+		url = ""
 	}
-
 	//******************constructing report string******************
 
 	note += "\n"
@@ -590,45 +586,16 @@ func noteBuilder(us_id string) string {
 		}
 
 		var date, _ = time.Parse(time.RFC3339, split[1])
-		formats := []map[string]string{
-			{"format": "02", "description": "Day"},
-			{"format": "Jan", "description": "Month"},
-			{"format": "2006", "description": "Year"},
-
-			{"format": "3", "description": "Hours"},
-			{"format": "04", "description": "Minutes"},
-			{"format": "PM", "description": "AM or PM"}}
-
-		for _, f := range formats {
-			formattedDate += date.Format(f["format"] + " ")
-			if f["description"] == "Hours" {
-				formattedDate = strings.TrimSpace(formattedDate)
-				formattedDate += ":"
-			}
-		}
+		formattedDate = date.Format("02 Jan 2006 3:04PM")
 		note += "<a href=" + url + ">" + name + "</a>" + " " + formattedDate
 		note += "\n"
 		formattedDate = ""
 	}
-	var date, _ = time.Parse(time.RFC3339, expires_at_iap)
-	formats := []map[string]string{
-		{"format": "02", "description": "Day"},
-		{"format": "Jan", "description": "Month"},
-		{"format": "2006", "description": "Year"},
 
-		{"format": "3", "description": "Hours"},
-		{"format": "04", "description": "Minutes"},
-		{"format": "PM", "description": "AM or PM"}}
-
-	for _, f := range formats {
-		formattedDate += date.Format(f["format"] + " ")
-		if f["description"] == "Hours" {
-			formattedDate = strings.TrimSpace(formattedDate)
-			formattedDate += ":"
-		}
-	}
 	//******************constructing iap string******************
 	if expires_at_iap != "" {
+		var date, _ = time.Parse(time.RFC3339, expires_at_iap)
+		formattedDate = date.Format("02 Jan 2006 3:04PM")
 		note += "\n"
 		note += "\n"
 		note += "<b>The business is on IAP. It expires on </b>" + formattedDate
