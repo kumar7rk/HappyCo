@@ -26,15 +26,6 @@ import (
 
 //********************************************Variable declaration********************************************
 
-//main attributes
-//we might get rid of this too
-type row struct {
-	inspection string
-	report     string
-	role       string
-	iap        string
-}
-
 type Inspection struct {
 	Business     string
 	User         string
@@ -76,9 +67,6 @@ type Plan struct {
 	Type string `db:"plan_type"`
 }
 
-//db variable for dd query
-var plan_type string
-
 var plan_type_replica string
 
 // note string to be displayed in intercom
@@ -87,10 +75,11 @@ var note string
 // date and time formatted string
 var formattedDate string
 
-// name of the integration if there's one
+// integration's name
 var integrationName string
 
-var inspectionsArray []Inspection
+//recs
+var inspectionsRec []Inspection
 
 var reportsRec []Report
 
@@ -219,7 +208,6 @@ func intercomStuff(userType string, userId string, conversationId string) {
 			plan_type_replica = buildiumMessage //fun stuff
 			plan_type_replica = ""
 		}
-		//fmt.Println(convo)
 	}
 }
 
@@ -290,7 +278,7 @@ func getUserData(u_id string) {
 
 	//fetching most recent (5) inspections for the user within the last 30 days.
 
-	err = db.Select(&inspectionsArray, "SELECT folders.business,folders.user,folders.role ,folders.folder_id,folders.folder_name,i.created_at as created_at,i.template_name,i.id,i.status,i.location FROM (SELECT businesses.business_id as business,businesses.user_id as user,role_id as role,folder_id as folder_id,folder_name as folder_name FROM (SELECT bm.business_id as business_id,bm.user_id as user_id,bm.business_role_id as role_id,f.id as folder_id,f.name as folder_name FROM business_membership as bm JOIN portfolios as f ON bm.business_id = f.business_id WHERE bm.user_id = $1 AND bm.inactivated_at IS NULL AND f.inactivated_at IS NULL) as businesses GROUP BY businesses.business_id,businesses.role_id,businesses.user_id,folder_id,folder_name ORDER BY businesses.business_id ) as folders JOIN inspections as i ON folders.folder_id = i.folder_id WHERE i.user_id = $1::varchar AND i.archived_at IS NULL AND i.created_at > (CURRENT_DATE- interval '30 day') ORDER BY i.created_at DESC LIMIT $2", u_id, 5)
+	err = db.Select(&inspectionsRec, "SELECT folders.business,folders.user,folders.role ,folders.folder_id,folders.folder_name,i.created_at as created_at,i.template_name,i.id,i.status,i.location FROM (SELECT businesses.business_id as business,businesses.user_id as user,role_id as role,folder_id as folder_id,folder_name as folder_name FROM (SELECT bm.business_id as business_id,bm.user_id as user_id,bm.business_role_id as role_id,f.id as folder_id,f.name as folder_name FROM business_membership as bm JOIN portfolios as f ON bm.business_id = f.business_id WHERE bm.user_id = $1 AND bm.inactivated_at IS NULL AND f.inactivated_at IS NULL) as businesses GROUP BY businesses.business_id,businesses.role_id,businesses.user_id,folder_id,folder_name ORDER BY businesses.business_id ) as folders JOIN inspections as i ON folders.folder_id = i.folder_id WHERE i.user_id = $1::varchar AND i.archived_at IS NULL AND i.created_at > (CURRENT_DATE- interval '30 day') ORDER BY i.created_at DESC LIMIT $2", u_id, 5)
 	if err != nil {
 		panic(err)
 	}
@@ -405,10 +393,10 @@ func noteBuilder(us_id string) string {
 	}
 	integrationName = ""
 
-	//******************constructing plan_type string******************
+	//******************constructing plan type string******************
 
 	for _, plan := range planRec {
-		
+
 		if plan.Type == "due_diligence" {
 			note += "\n"
 			note += "\n"
@@ -433,7 +421,7 @@ func noteBuilder(us_id string) string {
 	note += "<b>✅   Yumi found these recent (max: 5) <em>Inspections in last 30 days:</em></b><br/>"
 	note += "\n"
 	var url string
-	for _, inspection := range inspectionsArray {
+	for _, inspection := range inspectionsRec {
 
 		url = "https://manage.happyco.com/folder/" + inspection.FolderID + "/inspections/" + inspection.ID
 
