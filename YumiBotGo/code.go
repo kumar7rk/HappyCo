@@ -48,54 +48,38 @@ type Inspection struct {
 	Location     string
 }
 
-//db variables for report query
-var business_R string
-var user_id_R string
-var role_R string
-var folder_id_R string
-var folder_name_R string
-var created_at_R string
-var name_R string
-var public_id_R string
-var location_R string
+type Report struct {
+	Business   string
+	User       string
+	Role       string
+	FolderID   string `db:"folder_id"`
+	FolderName string `db:"folder_name"`
+	CreatedAt  string `db:"created_at"`
+	Name       string
+	PublicID   string `db:"public_id"`
+	Location   string
+}
 
-//db variable for role query
-var business_ro string
-var role_ro string
+type Business struct {
+	ID   string `db:"business_id"`
+	Role string `db:"business_role_id"`
+}
+type IAP struct {
+	Expiry string `db:"expires_at"`
+}
 
-//db variable for iap query
-var expires_at_iap string
+type Integration struct {
+	ID int `db:"id"`
+}
 
-//db variable for integration query
-var business_integration int
+type Plan struct {
+	Type string `db:"plan_type"`
+}
 
 //db variable for dd query
 var plan_type string
 
 var plan_type_replica string
-
-//array for inspections
-var r [5]row
-
-//array for reports
-var r1 [5]row
-
-//array for role
-var r2 [1]row
-
-//array for iap
-var r3 [1]row
-
-//var d [10] data
-
-//counter to add values in array r for inspections
-var inspectionCounter int
-
-//counter to add values in array r for reports
-var reportCounter int
-
-//counter to add values in array r for role
-var roleCounter int
 
 // note string to be displayed in intercom
 var note string
@@ -104,9 +88,19 @@ var note string
 var formattedDate string
 
 // name of the integration if there's one
-var integration string
+var integrationName string
 
 var inspectionsArray []Inspection
+
+var reportsRec []Report
+
+var businessRec []Business
+
+var iapRec []IAP
+
+var integrationRec []Integration
+
+var planRec []Plan
 
 // structs for reading payload in json received from Intercom
 type User struct {
@@ -279,9 +273,6 @@ func connect(postgresURI string) (*sqlx.DB, error) {
 
 //queries the db and adds returned values in array
 func getUserData(u_id string) {
-	inspectionCounter = 0
-	roleCounter = 0
-	reportCounter = 0
 
 	postgresURI := formURI()
 	if postgresURI == "" {
@@ -299,142 +290,66 @@ func getUserData(u_id string) {
 
 	//fetching most recent (5) inspections for the user within the last 30 days.
 
-	err1 := db.Select(&inspectionsArray, "SELECT folders.business,folders.user,folders.role ,folders.folder_id,folders.folder_name,i.created_at as created_at,i.template_name,i.id,i.status,i.location FROM (SELECT businesses.business_id as business,businesses.user_id as user,role_id as role,folder_id as folder_id,folder_name as folder_name FROM (SELECT bm.business_id as business_id,bm.user_id as user_id,bm.business_role_id as role_id,f.id as folder_id,f.name as folder_name FROM business_membership as bm JOIN portfolios as f ON bm.business_id = f.business_id WHERE bm.user_id = $1 AND bm.inactivated_at IS NULL AND f.inactivated_at IS NULL) as businesses GROUP BY businesses.business_id,businesses.role_id,businesses.user_id,folder_id,folder_name ORDER BY businesses.business_id ) as folders JOIN inspections as i ON folders.folder_id = i.folder_id WHERE i.user_id = $1::varchar AND i.archived_at IS NULL AND i.created_at > (CURRENT_DATE- interval '30 day') ORDER BY i.created_at DESC LIMIT $2", u_id, 5)
-	if err1 != nil {
-		panic(err1)
+	err = db.Select(&inspectionsArray, "SELECT folders.business,folders.user,folders.role ,folders.folder_id,folders.folder_name,i.created_at as created_at,i.template_name,i.id,i.status,i.location FROM (SELECT businesses.business_id as business,businesses.user_id as user,role_id as role,folder_id as folder_id,folder_name as folder_name FROM (SELECT bm.business_id as business_id,bm.user_id as user_id,bm.business_role_id as role_id,f.id as folder_id,f.name as folder_name FROM business_membership as bm JOIN portfolios as f ON bm.business_id = f.business_id WHERE bm.user_id = $1 AND bm.inactivated_at IS NULL AND f.inactivated_at IS NULL) as businesses GROUP BY businesses.business_id,businesses.role_id,businesses.user_id,folder_id,folder_name ORDER BY businesses.business_id ) as folders JOIN inspections as i ON folders.folder_id = i.folder_id WHERE i.user_id = $1::varchar AND i.archived_at IS NULL AND i.created_at > (CURRENT_DATE- interval '30 day') ORDER BY i.created_at DESC LIMIT $2", u_id, 5)
+	if err != nil {
+		panic(err)
 	}
 
-	rows1, err1 := db.Queryx("SELECT folders.business,folders.user,folders.role,folders.folder_id,folders.folder_name,r.created_at as created_at,r.name,r.public_id,r.location FROM (SELECT businesses.business_id as business,businesses.user_id as user,role_id as role,folder_id as folder_id,folder_name as folder_name FROM (SELECT bm.business_id as business_id,bm.user_id as user_id,bm.business_role_id as role_id,f.id as folder_id,f.name as folder_name FROM business_membership as bm JOIN portfolios as f ON bm.business_id = f.business_id WHERE bm.user_id = $1 AND bm.inactivated_at IS NULL AND f.inactivated_at IS NULL) as businesses GROUP BY businesses.business_id,businesses.role_id,businesses.user_id,folder_id,folder_name ORDER BY businesses.business_id ) as folders JOIN reports_v3 as r ON folders.folder_id = r.folder_id WHERE r.user_id = $3 AND r.archived_at IS NULL AND r.created_at > (CURRENT_DATE- interval '30 day') ORDER BY r.created_at DESC LIMIT $2", u_id, 5, u_id)
-	if err1 != nil {
-		panic(err1)
-	}
-	// fetching all the records
-	for rows1.Next() {
+	//fetching most recent (5) reports for the user within the last 30 days.
 
-		err1 = rows1.Scan(&business_R, &user_id_R, &role_R, &folder_id_R, &folder_name_R, &created_at_R, &name_R, &public_id_R, &location_R)
-		//err1 = rows1.StructScan(&data1)
-		//fmt.Println(data1)
-		if err1 != nil {
-			panic(err1)
-		}
-		r[reportCounter].report = public_id_R + " " + created_at_R + " " + name_R
-		//r[count].inspection = data1.id_I+ " " + data1.folder_id_I+ " " + data1.created_at_I+ " " + data1.template_name_I
-		reportCounter++
+	err = db.Select(&reportsRec, "SELECT folders.business,folders.user,folders.role,folders.folder_id,folders.folder_name,r.created_at as created_at,r.name,r.public_id,r.location FROM (SELECT businesses.business_id as business,businesses.user_id as user,role_id as role,folder_id as folder_id,folder_name as folder_name FROM (SELECT bm.business_id as business_id,bm.user_id as user_id,bm.business_role_id as role_id,f.id as folder_id,f.name as folder_name FROM business_membership as bm JOIN portfolios as f ON bm.business_id = f.business_id WHERE bm.user_id = $1 AND bm.inactivated_at IS NULL AND f.inactivated_at IS NULL) as businesses GROUP BY businesses.business_id,businesses.role_id,businesses.user_id,folder_id,folder_name ORDER BY businesses.business_id ) as folders JOIN reports_v3 as r ON folders.folder_id = r.folder_id WHERE r.user_id = $1::varchar AND r.archived_at IS NULL AND r.created_at > (CURRENT_DATE- interval '30 day') ORDER BY r.created_at DESC LIMIT $2", u_id, 5)
+	if err != nil {
+		panic(err)
 	}
-	err1 = rows1.Err()
-	if err1 != nil {
-		panic(err1)
+	// fetching business id and role id for user role in this business
+
+	err = db.Select(&businessRec, "SELECT business_id,business_role_id FROM business_membership WHERE user_id = $1 AND inactivated_at IS NULL", u_id)
+	if err != nil {
+		panic(err)
+	}
+	// checking if the business is on IAP get the expiry date
+	err = db.Select(&iapRec, "SELECT expires_at FROM iap_receipts WHERE company_id IN (SELECT business_id FROM business_membership WHERE user_id = $1) ORDER BY expires_at DESC limit 1", u_id)
+	if err != nil {
+		panic(err)
 	}
 
-	rows2, err2 := db.Queryx("SELECT business_id,business_role_id FROM business_membership WHERE user_id = $1 AND inactivated_at IS NULL", u_id)
-	if err2 != nil {
-		panic(err2)
+	// Check if the business has integration w/Yardi
+	err = db.Select(&integrationRec, "Select id FROM integration_yardi_properties WHERE business_id IN (SELECT business_id from business_membership WHERE user_id = $1 AND inactivated_at IS NULL)", u_id)
+	if err != nil {
+		panic(err)
 	}
-	for rows2.Next() {
-		err2 = rows2.Scan(&business_ro, &role_ro)
-		if err2 != nil {
-			panic(err2)
-		}
-		r[roleCounter].role = business_ro + " " + role_ro
-		roleCounter++
-	}
-	err2 = rows2.Err()
-	if err2 != nil {
-		panic(err2)
-	}
-
-	rows3, err3 := db.Queryx("SELECT expires_at FROM iap_receipts WHERE company_id IN (SELECT business_id FROM business_membership WHERE user_id = $1) ORDER BY expires_at DESC limit 1", u_id)
-	if err3 != nil {
-		panic(err3)
-	}
-	for rows3.Next() {
-		err3 = rows3.Scan(&expires_at_iap)
-		if err3 != nil {
-			panic(err3)
-		}
-		r[0].iap = expires_at_iap
-	}
-	err3 = rows3.Err()
-	if err3 != nil {
-		panic(err3)
-	}
-
-	//Yardi
-	rows4, err4 := db.Queryx("Select count(id) FROM integration_yardi_properties WHERE business_id IN (SELECT business_id from business_membership WHERE user_id = $1 AND inactivated_at IS NULL)", u_id)
-	if err4 != nil {
-		panic(err4)
-	}
-	for rows4.Next() {
-		err4 = rows4.Scan(&business_integration)
-		if err4 != nil {
-			panic(err4)
-		}
-		if business_integration > 0 {
-			integration = "Yardi"
-			business_integration = 0
+	for _, integration := range integrationRec {
+		if integration.ID > 0 {
+			integrationName = "Yardi"
 		}
 	}
-	err4 = rows4.Err()
-	if err4 != nil {
-		panic(err4)
-	}
-
 	// MRI
-	rows5, err5 := db.Queryx("Select count(id) FROM integration_mri_properties WHERE business_id IN (SELECT business_id from business_membership WHERE user_id = $1 AND inactivated_at IS NULL)", u_id)
-	if err5 != nil {
-		panic(err5)
+	err = db.Select(&integrationRec, "Select id FROM integration_mri_properties WHERE business_id IN (SELECT business_id from business_membership WHERE user_id = $1 AND inactivated_at IS NULL)", u_id)
+	if err != nil {
+		panic(err)
 	}
-	for rows5.Next() {
-		err5 = rows5.Scan(&business_integration)
-		if err5 != nil {
-			panic(err5)
-		}
-		if business_integration > 0 {
-			integration = "MRI"
-			business_integration = 0
-		}
-	}
-	err5 = rows5.Err()
-	if err5 != nil {
-		panic(err5)
-	}
+	for _, integration := range integrationRec {
+		if integration.ID > 0 {
+			integrationName = "MRI"
 
+		}
+	}
 	// Resman
-	rows6, err6 := db.Queryx("Select count(id) FROM integration_resman_properties WHERE business_id IN (SELECT business_id from business_membership WHERE user_id = $1 AND inactivated_at IS NULL)", u_id)
-	if err6 != nil {
-		panic(err6)
+	err = db.Select(&integrationRec, "Select id FROM integration_resman_properties WHERE business_id IN (SELECT business_id from business_membership WHERE user_id = $1 AND inactivated_at IS NULL)", u_id)
+	if err != nil {
+		panic(err)
 	}
-	for rows6.Next() {
-		err6 = rows6.Scan(&business_integration)
-		if err6 != nil {
-			panic(err6)
+	for _, integration := range integrationRec {
+		if integration.ID > 0 {
+			integrationName = "Resman"
 		}
-		if business_integration > 0 {
-			integration = "Resman"
-			business_integration = 0
-		}
-	}
-	err6 = rows6.Err()
-	if err6 != nil {
-		panic(err6)
 	}
 
 	// DD/buildium/mri
-	rows7, err7 := db.Queryx("Select plan_type FROM subscriptions WHERE business_id IN (SELECT business_id from business_membership WHERE user_id = $1 AND inactivated_at IS NULL)", u_id)
-	if err7 != nil {
-		panic(err7)
+	err = db.Select(&planRec, "Select plan_type FROM subscriptions WHERE business_id IN (SELECT business_id from business_membership WHERE user_id = $1 AND inactivated_at IS NULL)", u_id)
+	if err != nil {
+		panic(err)
 	}
-	for rows7.Next() {
-		err7 = rows7.Scan(&plan_type)
-		if err7 != nil {
-			panic(err7)
-		}
-	}
-	err7 = rows7.Err()
-	if err7 != nil {
-		panic(err7)
-	}
-
 	defer db.Close()
 
 }
@@ -445,8 +360,6 @@ func getUserData(u_id string) {
 // build the note in a string format
 // should be called when a new intercom message is received
 func noteBuilder(us_id string) string {
-	//note = "";
-
 	var note string
 
 	// p:= fmt.Println
@@ -461,55 +374,58 @@ func noteBuilder(us_id string) string {
 	// 1, 2, 3, 4 = Constant Admin, PM, Inspector, Limited Inspector
 	// 8, 9 = Basic Admin, PM
 	var roles = [10]string{"", "Admin", "Process Manger", "Inspector", "Limited Inspector", "", "", "", "Admin", "Process Manager"}
-	for i := 0; i < roleCounter; i++ {
-		split := strings.Fields(r[i].role)
-		permission, err := strconv.Atoi(split[1])
 
-		if split[1] == "1" || split[1] == "2" || split[1] == "3" || split[1] == "4" {
-			note += " The business is on Constant/full Permissions \n"
-		}
+	for _, business := range businessRec {
 
-		if split[1] == "8" || split[1] == "9" {
-			note += " The business is on Basic Permissions \n"
-		}
-
+		permission, err := strconv.Atoi(business.Role)
 		if err != nil {
 			panic(err)
 		}
+		var roleID = business.Role
+
+		if roleID == "1" || roleID == "2" || roleID == "3" || roleID == "4" {
+			note += " The business is on Constant/full Permissions \n"
+		}
+
+		if roleID == "8" || roleID == "9" {
+			note += " The business is on Basic Permissions \n"
+		}
+
 		note += roles[permission] + " for "
-		var text = "https://manage.happyco.com/admin/businesses/" + split[0]
+		var text = "https://manage.happyco.com/admin/businesses/" + business.ID
 		note += text + "<br/><br/>"
 	}
-
 	note += "\n"
 
 	//******************constructing integration string******************
-	if integration != "" {
+	if integrationName != "" {
 		note += "\n"
 		note += "\n"
-		note += "The business is " + integration
+		note += "The business is " + integrationName
 	}
-	integration = ""
+	integrationName = ""
 
 	//******************constructing plan_type string******************
 
-	if plan_type == "due_diligence" {
-		note += "\n"
-		note += "\n"
-		note += "Plan: " + plan_type
+	for _, plan := range planRec {
+		
+		if plan.Type == "due_diligence" {
+			note += "\n"
+			note += "\n"
+			note += "Plan: " + "Due Diligence"
+		}
+		if plan.Type == "buildium" {
+			note += "\n"
+			note += "\n"
+			note += "Plan: " + "Buildium"
+		}
+		if plan.Type == "mri" {
+			note += "\n"
+			note += "\n"
+			note += "Plan: " + "MRI"
+		}
+		plan_type_replica = plan.Type
 	}
-	if plan_type == "buildium" {
-		note += "\n"
-		note += "\n"
-		note += "Plan: " + plan_type
-	}
-	if plan_type == "mri" {
-		note += "\n"
-		note += "\n"
-		note += "Plan: " + plan_type
-	}
-	plan_type_replica = plan_type
-	plan_type = ""
 	note += "\n"
 	note += "\n"
 
@@ -535,34 +451,31 @@ func noteBuilder(us_id string) string {
 	note += "\n"
 	note += "<b>✅   Yumi found these recent (max: 5) <em>Reports in last 30 days:</em></b><br/>"
 	note += "\n"
+	for _, report := range reportsRec {
 
-	for i := 0; i < reportCounter; i++ {
+		var url = "https://manage.happyco.com/reports/" + report.PublicID
 
-		split := strings.Fields(r[i].report)
-		var url = "https://manage.happyco.com/reports/" + split[0]
-		var name string
-		for i := 2; i < len(split); i++ {
-			name += split[i]
-			name += " "
-		}
-
-		var date, _ = time.Parse(time.RFC3339, split[1])
+		var date, _ = time.Parse(time.RFC3339, report.CreatedAt)
 		formattedDate = date.Format("02 Jan 2006 3:04PM")
-		note += "<a href=" + url + ">" + name + "</a>" + " " + formattedDate
+
+		note += "<a href=" + url + ">" + report.Name + "</a>" + " " + formattedDate
 		note += "\n"
 		formattedDate = ""
+		url = ""
 	}
 
 	//******************constructing iap string******************
-	if expires_at_iap != "" {
-		var date, _ = time.Parse(time.RFC3339, expires_at_iap)
-		formattedDate = date.Format("02 Jan 2006 3:04PM")
-		note += "\n"
-		note += "\n"
-		note += "<b>The business is on IAP. It expires on </b>" + formattedDate
+
+	for _, iap := range iapRec {
+		if iap.Expiry != "" {
+			var date, _ = time.Parse(time.RFC3339, iap.Expiry)
+			formattedDate = date.Format("02 Jan 2006 3:04PM")
+			note += "\n"
+			note += "\n"
+			note += "<b>The business is on IAP. It expires on </b>" + formattedDate
+		}
 	}
 	formattedDate = ""
-	expires_at_iap = ""
 
 	return note
 }
