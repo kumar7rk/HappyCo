@@ -27,6 +27,7 @@ import (
 //********************************************Variable declaration********************************************
 
 //main attributes
+//we might get rid of this too
 type row struct {
 	inspection string
 	report     string
@@ -46,18 +47,6 @@ type Inspection struct {
 	Status       string
 	Location     string
 }
-
-//db variables for inspections query
-var business_I string
-var user_id_I string
-var role_I string
-var folder_id_I string
-var folder_name_I string
-var created_at_I string
-var template_name_I string
-var id_I string
-var status_I string
-var location_I string
 
 //db variables for report query
 var business_R string
@@ -307,41 +296,13 @@ func getUserData(u_id string) {
 	if err != nil {
 		fmt.Println("Error connecting")
 	}
-	// data1:=data{}
-	//var data1 data
-	//var d[10] data
 
 	//fetching most recent (5) inspections for the user within the last 30 days.
 
 	err1 := db.Select(&inspectionsArray, "SELECT folders.business,folders.user,folders.role ,folders.folder_id,folders.folder_name,i.created_at as created_at,i.template_name,i.id,i.status,i.location FROM (SELECT businesses.business_id as business,businesses.user_id as user,role_id as role,folder_id as folder_id,folder_name as folder_name FROM (SELECT bm.business_id as business_id,bm.user_id as user_id,bm.business_role_id as role_id,f.id as folder_id,f.name as folder_name FROM business_membership as bm JOIN portfolios as f ON bm.business_id = f.business_id WHERE bm.user_id = $1 AND bm.inactivated_at IS NULL AND f.inactivated_at IS NULL) as businesses GROUP BY businesses.business_id,businesses.role_id,businesses.user_id,folder_id,folder_name ORDER BY businesses.business_id ) as folders JOIN inspections as i ON folders.folder_id = i.folder_id WHERE i.user_id = $1::varchar AND i.archived_at IS NULL AND i.created_at > (CURRENT_DATE- interval '30 day') ORDER BY i.created_at DESC LIMIT $2", u_id, 5)
-	/*
-		rows, err := db.Queryx("SELECT folders.business,folders.user,folders.role ,folders.folder_id,folders.folder_name,i.created_at as created_at,i.template_name,i.id,i.status,i.location FROM (SELECT businesses.business_id as business,businesses.user_id as user,role_id as role,folder_id as folder_id,folder_name as folder_name FROM (SELECT bm.business_id as business_id,bm.user_id as user_id,bm.business_role_id as role_id,f.id as folder_id,f.name as folder_name FROM business_membership as bm JOIN portfolios as f ON bm.business_id = f.business_id WHERE bm.user_id = $1 AND bm.inactivated_at IS NULL AND f.inactivated_at IS NULL) as businesses GROUP BY businesses.business_id,businesses.role_id,businesses.user_id,folder_id,folder_name ORDER BY businesses.business_id ) as folders JOIN inspections as i ON folders.folder_id = i.folder_id WHERE i.user_id = $3 AND i.archived_at IS NULL AND i.created_at > (CURRENT_DATE- interval '30 day') ORDER BY i.created_at DESC LIMIT $2", u_id, 5, u_id)
-
-	*/
 	if err1 != nil {
 		panic(err1)
 	}
-	// fetching all the records
-	/*
-		for rows.Next() {
-
-			err = rows.Scan(&business_I, &user_id_I, &role_I, &folder_id_I, &folder_name_I, &created_at_I, &template_name_I, &id_I, &status_I, &location_I)
-			// err = rows.StructScan(&data1)
-			// fmt.Println(data1)
-			if err != nil {
-				panic(err)
-			}
-
-			r[inspectionCounter].inspection = id_I + " " + folder_id_I + " " + created_at_I + " " + template_name_I
-			// r[count].inspection = data1.id_I+ " " + data1.folder_id_I+ " " + data1.created_at_I+ " " + data1.template_name_I
-			inspectionCounter++
-		}
-
-		err = rows.Err()
-		if err != nil {
-			panic(err)
-		}
-	*/
 
 	rows1, err1 := db.Queryx("SELECT folders.business,folders.user,folders.role,folders.folder_id,folders.folder_name,r.created_at as created_at,r.name,r.public_id,r.location FROM (SELECT businesses.business_id as business,businesses.user_id as user,role_id as role,folder_id as folder_id,folder_name as folder_name FROM (SELECT bm.business_id as business_id,bm.user_id as user_id,bm.business_role_id as role_id,f.id as folder_id,f.name as folder_name FROM business_membership as bm JOIN portfolios as f ON bm.business_id = f.business_id WHERE bm.user_id = $1 AND bm.inactivated_at IS NULL AND f.inactivated_at IS NULL) as businesses GROUP BY businesses.business_id,businesses.role_id,businesses.user_id,folder_id,folder_name ORDER BY businesses.business_id ) as folders JOIN reports_v3 as r ON folders.folder_id = r.folder_id WHERE r.user_id = $3 AND r.archived_at IS NULL AND r.created_at > (CURRENT_DATE- interval '30 day') ORDER BY r.created_at DESC LIMIT $2", u_id, 5, u_id)
 	if err1 != nil {
