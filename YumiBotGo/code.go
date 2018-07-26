@@ -143,8 +143,7 @@ func newConversation(w http.ResponseWriter, r *http.Request) {
 		http.Error(w, err.Error(), http.StatusBadRequest)
 		return
 	}
-	w.WriteHeader(http.StatusOK)
-	w.Write([]byte("Received"))
+	
 
 	/* getting attributes from the received json
 	user type - lead/user
@@ -155,8 +154,9 @@ func newConversation(w http.ResponseWriter, r *http.Request) {
 	userType := msg.Data.Item.User.Type
 	userId := msg.Data.Item.User.UserID            //65135
 	conversationId := msg.Data.Item.ConversationID //15363702969
-	intercomStuff(userType, userId, conversationId)
-
+	go intercomStuff(userType, userId, conversationId)
+	w.WriteHeader(http.StatusOK)
+	w.Write([]byte("Received"))
 }
 
 func intercomStuff(userType string, userId string, conversationId string) {
