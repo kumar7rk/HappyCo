@@ -193,7 +193,7 @@ func makeAndSendNote(ID string, conversationID string) {
 	admin := admins[13] 
 
 	// calling the method to compile the note with all the required information
-	note := noteBuilder(ID)
+	note := makeNote(ID)
 
 	ic.Conversations.Reply(conversationID, &admin, intercom.CONVERSATION_NOTE, note)
 
@@ -347,7 +347,7 @@ func getUserData(u_id string) {
 // code starts running from here.
 // build the note in a string format
 // should be called when a new intercom message is received
-func noteBuilder(us_id string) string {
+func makeNote(us_id string) string {
 	var note string
 
 	// p:= fmt.Println
