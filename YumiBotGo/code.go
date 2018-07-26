@@ -123,14 +123,14 @@ func main() {
 		fmt.Println("URI error")
 	}
 
-	db, err = connect(postgresURI)
+	db, err = sqlx.Connect("postgres", postgresURI)
 
 	if err == nil {
 		fmt.Println("DB Connected")
 	}
 	if err != nil {
-		fmt.Fprintf(os.Stderr, "Error connecting to DB%v: %v\n","", err)
-	   	return
+		fmt.Fprintf(os.Stderr, "Error connecting to DB%v: %v\n", "", err)
+		return
 	}
 
 	//handling every new convesations in newConversation method
@@ -172,7 +172,7 @@ func newConversation(w http.ResponseWriter, r *http.Request) {
 	conversationId := msg.Data.Item.ConversationID //15363702969
 
 	//only run the following code when the received message is from a HappyCo user
-	if userType == "user" {	
+	if userType == "user" {
 		go makeAndSendNote(userId, conversationId)
 	}
 	w.WriteHeader(http.StatusOK)
@@ -188,11 +188,11 @@ func makeAndSendNote(ID string, conversationID string) {
 
 	user, err := ic.Users.FindByUserID(ID)
 	if err != nil {
-	   fmt.Fprintf(os.Stderr, "Error while finding user ID %v: %v\n", ID, err)
-	   return
- 	}	
- 
- 	//testing prints
+		fmt.Fprintf(os.Stderr, "Error while finding user ID %v: %v\n", ID, err)
+		return
+	}
+
+	//testing prints
 	p("Conversation id: " + conversationID)
 	p("User id: " + ID)
 	p("User name: " + user.Name)
@@ -200,14 +200,14 @@ func makeAndSendNote(ID string, conversationID string) {
 	// getting admin list from Intercom
 	adminList, err := ic.Admins.List()
 	if err != nil {
-	   fmt.Fprintf(os.Stderr, "Error while loading admin list %v: %v\n", "", err)
-	   return
- 	}
+		fmt.Fprintf(os.Stderr, "Error while loading admin list %v: %v\n", "", err)
+		return
+	}
 	admins := adminList.Admins
 
 	// setting admin to HappyBot
 	// Adds the note from admin HappyBot
-	admin := admins[13] 
+	admin := admins[13]
 
 	// calling the method to compile the note with all the required information
 	note := makeNote(ID)
@@ -216,7 +216,7 @@ func makeAndSendNote(ID string, conversationID string) {
 	//copied and pasted from api-docs
 	if herr, ok := err.(intercom.IntercomError); ok && herr.GetCode() == "not_found" {
 		fmt.Fprintf(os.Stderr, "Error from Intercom when replying %v: %v\n", "", err)
-	   	return
+		return
 	}
 	var buildiumMessage string
 	//extracting firstName from the user name.
@@ -229,7 +229,7 @@ func makeAndSendNote(ID string, conversationID string) {
 		plan_type_replica = buildiumMessage //fun stuff
 		plan_type_replica = ""
 	}
-	
+
 }
 
 //********************************************Loading Enviornment Variables********************************************
@@ -265,19 +265,6 @@ func formURI() (str string) {
 	return postgresURI
 }
 
-//********************************************Connecting with DB********************************************
-
-//connecting to the database
-//returne db- sqlx
-func connect(postgresURI string) (*sqlx.DB, error) {
-	//opening connection using sqlx package
-	db, err := sqlx.Connect("postgres", postgresURI)
-	if err != nil {
-		return nil, err
-	}
-	return db, nil
-}
-
 //********************************************Getting UserData********************************************
 
 //queries the db and adds returned values in array
@@ -287,8 +274,8 @@ func getUserData(u_id string) {
 
 	err := db.Select(&inspectionsRec, "SELECT folders.business,folders.user,folders.role ,folders.folder_id,folders.folder_name,i.created_at as created_at,i.template_name,i.id,i.status,i.location FROM (SELECT businesses.business_id as business,businesses.user_id as user,role_id as role,folder_id as folder_id,folder_name as folder_name FROM (SELECT bm.business_id as business_id,bm.user_id as user_id,bm.business_role_id as role_id,f.id as folder_id,f.name as folder_name FROM business_membership as bm JOIN portfolios as f ON bm.business_id = f.business_id WHERE bm.user_id = $1 AND bm.inactivated_at IS NULL AND f.inactivated_at IS NULL) as businesses GROUP BY businesses.business_id,businesses.role_id,businesses.user_id,folder_id,folder_name ORDER BY businesses.business_id ) as folders JOIN inspections as i ON folders.folder_id = i.folder_id WHERE i.user_id = $1::varchar AND i.archived_at IS NULL AND i.created_at > (CURRENT_DATE- interval '30 day') ORDER BY i.created_at DESC LIMIT $2", u_id, 5)
 	if err != nil {
-	   fmt.Fprintf(os.Stderr, "Error in inspection query %v: %v\n", u_id, err)
-	   	return
+		fmt.Fprintf(os.Stderr, "Error in inspection query %v: %v\n", u_id, err)
+		return
 	}
 
 	//fetching most recent (5) reports for the user within the last 30 days.
@@ -296,27 +283,27 @@ func getUserData(u_id string) {
 	err = db.Select(&reportsRec, "SELECT folders.business,folders.user,folders.role,folders.folder_id,folders.folder_name,r.created_at as created_at,r.name,r.public_id,r.location FROM (SELECT businesses.business_id as business,businesses.user_id as user,role_id as role,folder_id as folder_id,folder_name as folder_name FROM (SELECT bm.business_id as business_id,bm.user_id as user_id,bm.business_role_id as role_id,f.id as folder_id,f.name as folder_name FROM business_membership as bm JOIN portfolios as f ON bm.business_id = f.business_id WHERE bm.user_id = $1 AND bm.inactivated_at IS NULL AND f.inactivated_at IS NULL) as businesses GROUP BY businesses.business_id,businesses.role_id,businesses.user_id,folder_id,folder_name ORDER BY businesses.business_id ) as folders JOIN reports_v3 as r ON folders.folder_id = r.folder_id WHERE r.user_id = $1::varchar AND r.archived_at IS NULL AND r.created_at > (CURRENT_DATE- interval '30 day') ORDER BY r.created_at DESC LIMIT $2", u_id, 5)
 	if err != nil {
 		fmt.Fprintf(os.Stderr, "Error in reoprt query %v: %v\n", u_id, err)
-	   	return
+		return
 	}
 	// fetching business id and role id for user role in this business
 
 	err = db.Select(&businessRec, "SELECT business_id,business_role_id FROM business_membership WHERE user_id = $1 AND inactivated_at IS NULL", u_id)
 	if err != nil {
 		fmt.Fprintf(os.Stderr, "Error in business query %v: %v\n", u_id, err)
-	   	return
+		return
 	}
 	// checking if the business is on IAP get the expiry date
 	err = db.Select(&iapRec, "SELECT expires_at FROM iap_receipts WHERE company_id IN (SELECT business_id FROM business_membership WHERE user_id = $1) ORDER BY expires_at DESC limit 1", u_id)
 	if err != nil {
 		fmt.Fprintf(os.Stderr, "Error in inspection query %v: %v\n", u_id, err)
-	   	return
+		return
 	}
 
 	// Check if the business has integration w/Yardi
 	err = db.Select(&integrationRec, "Select id FROM integration_yardi_properties WHERE business_id IN (SELECT business_id from business_membership WHERE user_id = $1 AND inactivated_at IS NULL)", u_id)
 	if err != nil {
 		fmt.Fprintf(os.Stderr, "Error in integration query-Yardi %v: %v\n", u_id, err)
-	   	return
+		return
 	}
 	for _, integration := range integrationRec {
 		if integration.ID > 0 {
@@ -327,7 +314,7 @@ func getUserData(u_id string) {
 	err = db.Select(&integrationRec, "Select id FROM integration_mri_properties WHERE business_id IN (SELECT business_id from business_membership WHERE user_id = $1 AND inactivated_at IS NULL)", u_id)
 	if err != nil {
 		fmt.Fprintf(os.Stderr, "Error in integration query-MRI %v: %v\n", u_id, err)
-	   	return
+		return
 	}
 	for _, integration := range integrationRec {
 		if integration.ID > 0 {
@@ -339,7 +326,7 @@ func getUserData(u_id string) {
 	err = db.Select(&integrationRec, "Select id FROM integration_resman_properties WHERE business_id IN (SELECT business_id from business_membership WHERE user_id = $1 AND inactivated_at IS NULL)", u_id)
 	if err != nil {
 		fmt.Fprintf(os.Stderr, "Error in integration query-Resman %v: %v\n", u_id, err)
-	   	return
+		return
 	}
 	for _, integration := range integrationRec {
 		if integration.ID > 0 {
@@ -351,7 +338,7 @@ func getUserData(u_id string) {
 	err = db.Select(&planRec, "Select plan_type FROM subscriptions WHERE business_id IN (SELECT business_id from business_membership WHERE user_id = $1 AND inactivated_at IS NULL)", u_id)
 	if err != nil {
 		fmt.Fprintf(os.Stderr, "Error in plan query %v: %v\n", u_id, err)
-	   	return
+		return
 	}
 	defer db.Close()
 
