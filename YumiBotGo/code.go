@@ -59,7 +59,7 @@ type IAP struct {
 	Expiry string `db:"expires_at"`
 }
 
-var plan_type_replica string
+//var plan_type_replica string
 
 var db *sqlx.DB
 
@@ -167,7 +167,7 @@ func makeAndSendNote(ID string, conversationID string) {
 	p("User name: " + user.Name)
 
 	// calling the method to compile the note with all the required information
-	note := makeNote(ID)
+	note, plan_type_replica := makeNote(ID)
 	ic.Conversations.Reply(conversationID, intercom.Admin{ID: "207278"}, intercom.CONVERSATION_NOTE, note)
 	//copied and pasted from api-docs
 	if herr, ok := err.(intercom.IntercomError); ok && herr.GetCode() == "not_found" {
@@ -181,8 +181,7 @@ func makeAndSendNote(ID string, conversationID string) {
 	buildiumMessage = "Hi " + firstName[0] + "  \n \n Buildium Support team are the best place to help you with this query as they understand your unique workflow and are trained in Happy Inspector 💫  \n <b>Our friends at Buildium support your Happy Inspector subscription and mobile app and can be reached at 888-414-1988, or by submitting a ticket through your Buildium account.</b>   \n Please also feel free to take a look through our FAQ on the Buildium integration:  \n https://intercom.help/happyco/frequently-asked-questions/buildium-integration-faq/faq-buildium-integration  \n Thanks!  \n HappyCo team ☺"
 
 	if plan_type_replica == "buildium" {
-		ic.Conversations.Reply(conversationID, intercom.Admin{ID: "207278"}, intercom.CONVERSATION_COMMENT, "Testing on internal plan \n "+buildiumMessage)
-		plan_type_replica = ""
+		ic.Conversations.Reply(conversationID, intercom.Admin{ID: "207278"}, intercom.CONVERSATION_COMMENT, buildiumMessage)
 	}
 }
 
@@ -285,7 +284,7 @@ func getUserData(ID string) (inspectionsRec []Inspection, reportsRec []Report, b
 // code starts running from here.
 // build the note in a string format
 // should be called when a new intercom message is received
-func makeNote(us_id string) string {
+func makeNote(us_id string) (string, string) {
 	var note string
 	var formattedDate string
 
@@ -331,7 +330,7 @@ func makeNote(us_id string) string {
 	}
 
 	//******************constructing plan type string******************
-
+		
 	if planType == "due_diligence" {
 		note += "\n"
 		note += "\n"
@@ -341,7 +340,6 @@ func makeNote(us_id string) string {
 		note += "\n"
 		note += "\n"
 		note += "Plan: " + "Buildium"
-		plan_type_replica = planType // for sending automatic tier2 message to Buildium users
 	}
 	if planType == "mri" {
 		note += "\n"
@@ -392,5 +390,5 @@ func makeNote(us_id string) string {
 		note += "\n"
 		note += "<b>The business is on IAP. It expires on </b>" + formattedDate
 	}
-	return note
+	return note, planType
 }
