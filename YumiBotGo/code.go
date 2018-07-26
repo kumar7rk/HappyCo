@@ -181,13 +181,16 @@ func makeAndSendNote(ID string, conversationID string) {
 	p("User name: " + user.Name)
 
 	// getting admin list from Intercom
-	adminList, err1 := ic.Admins.List()
-	_ = err1
+	adminList, err := ic.Admins.List()
+	if err != nil {
+	   fmt.Fprintf(os.Stderr, "Error while loading admin list %v: %v\n", "", err)
+	   return
+ 	}
 	admins := adminList.Admins
 
 	// setting admin to HappyBot
-	// Adds the note from admin - HappyBot
-	admin := admins[13] // change [0]
+	// Adds the note from admin HappyBot
+	admin := admins[13] 
 
 	// calling the method to compile the note with all the required information
 	note := noteBuilder(ID)
