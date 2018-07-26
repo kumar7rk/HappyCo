@@ -127,7 +127,7 @@ func main() {
 
 //gets intercom token, admin list, reads the payload, and post note as a reply in the conversation
 func newConversation(w http.ResponseWriter, r *http.Request) {
-	
+
 	// Read body/payload
 	b, err := ioutil.ReadAll(r.Body)
 	defer r.Body.Close()
@@ -143,7 +143,6 @@ func newConversation(w http.ResponseWriter, r *http.Request) {
 		http.Error(w, err.Error(), http.StatusBadRequest)
 		return
 	}
-	
 
 	/* getting attributes from the received json
 	user type - lead/user
@@ -154,12 +153,12 @@ func newConversation(w http.ResponseWriter, r *http.Request) {
 	userType := msg.Data.Item.User.Type
 	userId := msg.Data.Item.User.UserID            //65135
 	conversationId := msg.Data.Item.ConversationID //15363702969
-	go intercomStuff(userType, userId, conversationId)
+	go makeAndSendNote(userType, userId, conversationId)
 	w.WriteHeader(http.StatusOK)
 	w.Write([]byte("Received"))
 }
 
-func intercomStuff(userType string, userId string, conversationId string) {
+func makeAndSendNote(userType string, userId string, conversationId string) {
 	p := fmt.Println
 
 	// gets intercom access token
