@@ -153,53 +153,55 @@ func newConversation(w http.ResponseWriter, r *http.Request) {
 	userType := msg.Data.Item.User.Type
 	userId := msg.Data.Item.User.UserID            //65135
 	conversationId := msg.Data.Item.ConversationID //15363702969
-	go makeAndSendNote(userType, userId, conversationId)
+
+	//only run the following code when the received message is from a HappyCo user
+	if userType == "user" {	
+		go makeAndSendNote(userId, conversationId)
+	}
 	w.WriteHeader(http.StatusOK)
 	w.Write([]byte("Received"))
 }
 
-func makeAndSendNote(userType string, ID string, conversationID string) {
+func makeAndSendNote(ID string, conversationID string) {
 	p := fmt.Println
 
 	// gets intercom access token
-	accessToken := os.Getenv("INTERCOM_ACCESS_TOKEN") // change INTERCOM_ACCESS_TOKEN_TEST
+	accessToken := os.Getenv("INTERCOM_ACCESS_TOKEN")
 	ic := intercom.NewClient(accessToken, "")
 
-	//only run the following code when the received message is from a HappyCo user
-	if userType == "user" {
-		user, err := ic.Users.FindByUserID(ID)
-		_ = err
-		//testing prints
-		p("Conversation id: " + conversationID)
-		p("User id: " + ID)
-		p("User name: " + user.Name)
+	user, err := ic.Users.FindByUserID(ID)
+	_ = err
+	//testing prints
+	p("Conversation id: " + conversationID)
+	p("User id: " + ID)
+	p("User name: " + user.Name)
 
-		// getting admin list from Intercom
-		adminList, err1 := ic.Admins.List()
-		_ = err1
-		admins := adminList.Admins
+	// getting admin list from Intercom
+	adminList, err1 := ic.Admins.List()
+	_ = err1
+	admins := adminList.Admins
 
-		// setting admin to HappyBot
-		// Adds the note from admin - HappyBot
-		admin := admins[13] // change [0]
+	// setting admin to HappyBot
+	// Adds the note from admin - HappyBot
+	admin := admins[13] // change [0]
 
-		// calling the method to compile the note with all the required information
-		note := noteBuilder(ID)
+	// calling the method to compile the note with all the required information
+	note := noteBuilder(ID)
 
-		ic.Conversations.Reply(conversationID, &admin, intercom.CONVERSATION_NOTE, note)
+	ic.Conversations.Reply(conversationID, &admin, intercom.CONVERSATION_NOTE, note)
 
-		var buildiumMessage string
-		//extracting firstName from the user name.
-		firstName := strings.Fields(user.Name)
+	var buildiumMessage string
+	//extracting firstName from the user name.
+	firstName := strings.Fields(user.Name)
 
-		buildiumMessage = "Hi " + firstName[0] + "  \n \n Buildium Support team are the best place to help you with this query as they understand your unique workflow and are trained in Happy Inspector 💫  \n <b>Our friends at Buildium support your Happy Inspector subscription and mobile app and can be reached at 888-414-1988, or by submitting a ticket through your Buildium account.</b>   \n Please also feel free to take a look through our FAQ on the Buildium integration:  \n https://intercom.help/happyco/frequently-asked-questions/buildium-integration-faq/faq-buildium-integration  \n Thanks!  \n HappyCo team ☺"
+	buildiumMessage = "Hi " + firstName[0] + "  \n \n Buildium Support team are the best place to help you with this query as they understand your unique workflow and are trained in Happy Inspector 💫  \n <b>Our friends at Buildium support your Happy Inspector subscription and mobile app and can be reached at 888-414-1988, or by submitting a ticket through your Buildium account.</b>   \n Please also feel free to take a look through our FAQ on the Buildium integration:  \n https://intercom.help/happyco/frequently-asked-questions/buildium-integration-faq/faq-buildium-integration  \n Thanks!  \n HappyCo team ☺"
 
-		if plan_type_replica == "buildium" {
-			//ic.Conversations.Reply(conversationID,&admin,intercom.CONVERSATION_COMMENT,"Testing on internal plan \n " +buildiumMessage)
-			plan_type_replica = buildiumMessage //fun stuff
-			plan_type_replica = ""
-		}
+	if plan_type_replica == "buildium" {
+		//ic.Conversations.Reply(conversationID,&admin,intercom.CONVERSATION_COMMENT,"Testing on internal plan \n " +buildiumMessage)
+		plan_type_replica = buildiumMessage //fun stuff
+		plan_type_replica = ""
 	}
+	
 }
 
 //********************************************Loading Enviornment Variables********************************************
