@@ -58,8 +58,6 @@ type IAP struct {
 	Expiry string `db:"expires_at"`
 }
 
-//var plan_type_replica string
-
 var db *sqlx.DB
 
 // structs for reading payload in json received from Intercom
