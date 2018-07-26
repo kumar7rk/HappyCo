@@ -69,9 +69,6 @@ type Plan struct {
 
 var plan_type_replica string
 
-// note string to be displayed in intercom
-var note string
-
 // date and time formatted string
 var formattedDate string
 
