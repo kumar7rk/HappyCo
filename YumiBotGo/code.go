@@ -184,7 +184,6 @@ func makeAndSendNote(ID string, conversationID string) {
 		ic.Conversations.Reply(conversationID, intercom.Admin{ID: "207278"}, intercom.CONVERSATION_COMMENT, "Testing on internal plan \n "+buildiumMessage)
 		plan_type_replica = ""
 	}
-
 }
 
 //********************************************Loading Enviornment Variables********************************************
@@ -342,6 +341,7 @@ func makeNote(us_id string) string {
 		note += "\n"
 		note += "\n"
 		note += "Plan: " + "Buildium"
+		plan_type_replica = planType // for sending automatic tier2 message to Buildium users
 	}
 	if planType == "mri" {
 		note += "\n"
