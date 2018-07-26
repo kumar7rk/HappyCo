@@ -432,8 +432,8 @@ func makeNote(us_id string) string {
 
 		note += "<a href=" + url + ">" + url + "</a>" + " " + formattedDate
 		note += "\n"
-		formattedDate = ""
-		url = ""
+		//formattedDate = ""
+		//url = ""
 	}
 	//******************constructing report string******************
 
@@ -450,8 +450,8 @@ func makeNote(us_id string) string {
 
 		note += "<a href=" + url + ">" + report.Name + "</a>" + " " + formattedDate
 		note += "\n"
-		formattedDate = ""
-		url = ""
+		//formattedDate = ""
+		//url = ""
 	}
 
 	//******************constructing iap string******************
@@ -465,7 +465,7 @@ func makeNote(us_id string) string {
 			note += "<b>The business is on IAP. It expires on </b>" + formattedDate
 		}
 	}
-	formattedDate = ""
+	//formattedDate = ""
 
 	return note
 }
