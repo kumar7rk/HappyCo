@@ -164,8 +164,7 @@ func makeAndSendNote(ID string, conversationID string) {
 	p("User name: " + user.Name)
 
 	// calling the method to compile the note with all the required information
-	note, plan_type_replica := makeNote(ID)
-	ic.Conversations.Reply(conversationID, intercom.Admin{ID: "207278"}, intercom.CONVERSATION_NOTE, note)
+	note, plan_type := makeNote(ID)
 	//copied and pasted from api-docs
 	if herr, ok := err.(intercom.IntercomError); ok && herr.GetCode() == "not_found" {
 		fmt.Fprintf(os.Stderr, "Error from Intercom when replying %v: %v\n", "", err)
@@ -177,7 +176,7 @@ func makeAndSendNote(ID string, conversationID string) {
 
 	buildiumMessage = "Hi " + firstName[0] + "  \n \n Buildium Support team are the best place to help you with this query as they understand your unique workflow and are trained in Happy Inspector 💫  \n <b>Our friends at Buildium support your Happy Inspector subscription and mobile app and can be reached at 888-414-1988, or by submitting a ticket through your Buildium account.</b>   \n Please also feel free to take a look through our FAQ on the Buildium integration:  \n https://intercom.help/happyco/frequently-asked-questions/buildium-integration-faq/faq-buildium-integration  \n Thanks!  \n HappyCo team ☺"
 
-	if plan_type_replica == "buildium" {
+	if plan_type == "buildium" {
 		ic.Conversations.Reply(conversationID, intercom.Admin{ID: "207278"}, intercom.CONVERSATION_COMMENT, buildiumMessage)
 	}
 }
