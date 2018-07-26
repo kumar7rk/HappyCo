@@ -137,8 +137,8 @@ func newConversation(w http.ResponseWriter, r *http.Request) {
 	*/
 
 	userType := msg.Data.Item.User.Type
-	userId := msg.Data.Item.User.UserID            
-	conversationId := msg.Data.Item.ConversationID 
+	userId := msg.Data.Item.User.UserID
+	conversationId := msg.Data.Item.ConversationID
 
 	//only run the following code when the received message is from a HappyCo user
 	if userType == "user" {
@@ -168,7 +168,7 @@ func makeAndSendNote(ID string, conversationID string) {
 
 	// calling the method to compile the note with all the required information
 	note := makeNote(ID)
-	ic.Conversations.Reply(conversationID, intercom.Admin{ID:"207278"}, intercom.CONVERSATION_NOTE, note)
+	ic.Conversations.Reply(conversationID, intercom.Admin{ID: "207278"}, intercom.CONVERSATION_NOTE, note)
 	//copied and pasted from api-docs
 	if herr, ok := err.(intercom.IntercomError); ok && herr.GetCode() == "not_found" {
 		fmt.Fprintf(os.Stderr, "Error from Intercom when replying %v: %v\n", "", err)
@@ -181,7 +181,7 @@ func makeAndSendNote(ID string, conversationID string) {
 	buildiumMessage = "Hi " + firstName[0] + "  \n \n Buildium Support team are the best place to help you with this query as they understand your unique workflow and are trained in Happy Inspector 💫  \n <b>Our friends at Buildium support your Happy Inspector subscription and mobile app and can be reached at 888-414-1988, or by submitting a ticket through your Buildium account.</b>   \n Please also feel free to take a look through our FAQ on the Buildium integration:  \n https://intercom.help/happyco/frequently-asked-questions/buildium-integration-faq/faq-buildium-integration  \n Thanks!  \n HappyCo team ☺"
 
 	if plan_type_replica == "buildium" {
-		ic.Conversations.Reply(conversationID,intercom.Admin{ID:"207278"},intercom.CONVERSATION_COMMENT,"Testing on internal plan \n " +buildiumMessage)
+		ic.Conversations.Reply(conversationID, intercom.Admin{ID: "207278"}, intercom.CONVERSATION_COMMENT, "Testing on internal plan \n "+buildiumMessage)
 		plan_type_replica = ""
 	}
 
@@ -212,7 +212,7 @@ func formURI() (str string) {
 //********************************************Getting UserData********************************************
 
 //queries the db and adds returned values in array
-func getUserData(ID string) (inspectionsRec []Inspection, reportsRec []Report, businessRec []Business, iapExpiry string, integrationName string, planType string){
+func getUserData(ID string) (inspectionsRec []Inspection, reportsRec []Report, businessRec []Business, iapExpiry string, integrationName string, planType string) {
 
 	//fetching most recent (5) inspections for the user within the last 30 days.
 	err := db.Select(&inspectionsRec, "SELECT folders.business,folders.user,folders.role ,folders.folder_id,folders.folder_name,i.created_at as created_at,i.template_name,i.id,i.status,i.location FROM (SELECT businesses.business_id as business,businesses.user_id as user,role_id as role,folder_id as folder_id,folder_name as folder_name FROM (SELECT bm.business_id as business_id,bm.user_id as user_id,bm.business_role_id as role_id,f.id as folder_id,f.name as folder_name FROM business_membership as bm JOIN portfolios as f ON bm.business_id = f.business_id WHERE bm.user_id = $1 AND bm.inactivated_at IS NULL AND f.inactivated_at IS NULL) as businesses GROUP BY businesses.business_id,businesses.role_id,businesses.user_id,folder_id,folder_name ORDER BY businesses.business_id ) as folders JOIN inspections as i ON folders.folder_id = i.folder_id WHERE i.user_id = $1::varchar AND i.archived_at IS NULL AND i.created_at > (CURRENT_DATE- interval '30 day') ORDER BY i.created_at DESC LIMIT $2", ID, 5)
@@ -225,7 +225,7 @@ func getUserData(ID string) (inspectionsRec []Inspection, reportsRec []Report, b
 	err = db.Select(&reportsRec, "SELECT folders.business,folders.user,folders.role,folders.folder_id,folders.folder_name,r.created_at as created_at,r.name,r.public_id,r.location FROM (SELECT businesses.business_id as business,businesses.user_id as user,role_id as role,folder_id as folder_id,folder_name as folder_name FROM (SELECT bm.business_id as business_id,bm.user_id as user_id,bm.business_role_id as role_id,f.id as folder_id,f.name as folder_name FROM business_membership as bm JOIN portfolios as f ON bm.business_id = f.business_id WHERE bm.user_id = $1 AND bm.inactivated_at IS NULL AND f.inactivated_at IS NULL) as businesses GROUP BY businesses.business_id,businesses.role_id,businesses.user_id,folder_id,folder_name ORDER BY businesses.business_id ) as folders JOIN reports_v3 as r ON folders.folder_id = r.folder_id WHERE r.user_id = $1::varchar AND r.archived_at IS NULL AND r.created_at > (CURRENT_DATE- interval '30 day') ORDER BY r.created_at DESC LIMIT $2", ID, 5)
 	if err != nil {
 		fmt.Fprintf(os.Stderr, "Error in reoprt query %v: %v\n", ID, err)
-	 	return
+		return
 
 	}
 	// fetching business id and role id for user role in this business
@@ -258,7 +258,7 @@ func getUserData(ID string) (inspectionsRec []Inspection, reportsRec []Report, b
 		fmt.Fprintf(os.Stderr, "Error in integration query-MRI %v: %v\n", ID, err)
 		return
 	}
-	
+
 	if integrationCount > 0 {
 		integrationName = "MRI"
 	}
@@ -276,7 +276,7 @@ func getUserData(ID string) (inspectionsRec []Inspection, reportsRec []Report, b
 	err = db.Get(&planType, "Select plan_type FROM current_subscriptions WHERE business_id IN (SELECT business_id from business_membership WHERE user_id = $1 AND inactivated_at IS NULL)", ID)
 	if err != nil {
 		fmt.Fprintf(os.Stderr, "Error in plan query %v: %v\n", ID, err)
-		return 
+		return
 	}
 	return
 }
@@ -333,22 +333,22 @@ func makeNote(us_id string) string {
 
 	//******************constructing plan type string******************
 
-		if planType == "due_diligence" {
-			note += "\n"
-			note += "\n"
-			note += "Plan: " + "Due Diligence"
-		}
-		if planType == "buildium" {
-			note += "\n"
-			note += "\n"
-			note += "Plan: " + "Buildium"
-		}
-		if planType == "mri" {
-			note += "\n"
-			note += "\n"
-			note += "Plan: " + "MRI"
-		}
-	
+	if planType == "due_diligence" {
+		note += "\n"
+		note += "\n"
+		note += "Plan: " + "Due Diligence"
+	}
+	if planType == "buildium" {
+		note += "\n"
+		note += "\n"
+		note += "Plan: " + "Buildium"
+	}
+	if planType == "mri" {
+		note += "\n"
+		note += "\n"
+		note += "Plan: " + "MRI"
+	}
+
 	note += "\n"
 	note += "\n"
 
@@ -384,7 +384,7 @@ func makeNote(us_id string) string {
 	}
 
 	//******************constructing iap string******************
-	
+
 	if iapExpiry != "" {
 		var date, _ = time.Parse(time.RFC3339, iapExpiry)
 		formattedDate = date.Format("02 Jan 2006 3:04PM")
