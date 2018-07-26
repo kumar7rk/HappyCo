@@ -182,18 +182,6 @@ func makeAndSendNote(ID string, conversationID string) {
 	}
 }
 
-//********************************************Loading Enviornment Variables********************************************
-
-// loading env file to load db parameters
-func loadEnv() error {
-	err := godotenv.Load(".env")
-	if err != nil {
-		return err
-	}
-
-	return nil
-}
-
 //********************************************Forming DB URI********************************************
 
 // forming postgres URI
