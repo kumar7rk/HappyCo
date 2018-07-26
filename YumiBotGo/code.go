@@ -83,7 +83,7 @@ type Message struct {
 func main() {
 	var err error
 
-	postgresURI := formURI()
+	postgresURI := os.Getenv("URL")
 	if postgresURI == "" {
 		fmt.Println("URI error")
 	}
@@ -183,12 +183,11 @@ func makeAndSendNote(ID string, conversationID string) {
 
 //********************************************Forming DB URI********************************************
 
-// forming postgres URI
-// returns string
-func formURI() (str string) {
-	postgresURI := os.Getenv("URL")
-	// returing uri
-	return postgresURI
+		if herr, ok := err.(intercom.IntercomError); ok && herr.GetCode() == "not_found" {
+			fmt.Fprintf(os.Stderr, "Error from Intercom when replying to Buildium %v: %v\n", "", err)
+			return
+	}
+	}
 }
 
 //********************************************Getting UserData********************************************
