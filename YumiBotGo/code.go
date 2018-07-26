@@ -238,18 +238,7 @@ func loadEnv() error {
 // forming postgres URI
 // returns string
 func formURI() (str string) {
-
-	// defining db parameters
-	host := os.Getenv("DB_HOST")
-	user := os.Getenv("DB_USER")
-	password := os.Getenv("DB_PASS")
-	dbname := os.Getenv("DB_NAME")
-
-	// buildiing db connection string
-	postgresURI := fmt.Sprintf("host=%s user=%s "+
-		"password=%s dbname=%s sslmode=disable",
-		host, user, password, dbname)
-
+	postgresURI := os.Getenv("URL")
 	// returing uri
 	return postgresURI
 }
