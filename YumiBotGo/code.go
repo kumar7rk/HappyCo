@@ -129,7 +129,8 @@ func main() {
 		fmt.Println("DB Connected")
 	}
 	if err != nil {
-		fmt.Println("Error connecting")
+		fmt.Fprintf(os.Stderr, "Error connecting to DB%v: %v\n","", err)
+	   	return
 	}
 
 	//handling every new convesations in newConversation method
