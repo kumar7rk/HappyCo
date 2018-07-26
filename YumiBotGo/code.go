@@ -17,7 +17,6 @@ import (
 	"net/http"
 
 	"github.com/jmoiron/sqlx"
-	"github.com/joho/godotenv"
 	_ "github.com/lib/pq"
 
 	intercom "gopkg.in/intercom/intercom-go.v2"
