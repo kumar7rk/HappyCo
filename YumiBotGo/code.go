@@ -363,7 +363,7 @@ func makeNote(us_id string) string {
 
 	// 1, 2, 3, 4 = Constant Admin, PM, Inspector, Limited Inspector
 	// 8, 9 = Basic Admin, PM
-	var roles = [10]string{"", "Admin", "Process Manger", "Inspector", "Limited Inspector", "", "", "", "Admin", "Process Manager"}
+	var roles = []string{"", "Admin", "Process Manger", "Inspector", "Limited Inspector", "", "", "", "Admin", "Process Manager"}
 
 	for _, business := range businessRec {
 
