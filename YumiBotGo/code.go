@@ -109,9 +109,6 @@ type Message struct {
 
 //********************************************Main function********************************************
 
-//starting main function
-// at this moment all of the code is in main function
-// from db connect to displaying results on console
 func main() {
 	// loading .env file
 	err := loadEnv()
