@@ -127,14 +127,12 @@ func main() {
 
 //gets intercom token, admin list, reads the payload, and post note as a reply in the conversation
 func newConversation(w http.ResponseWriter, r *http.Request) {
-	//p:= fmt.Println
-
-	//w.Header().Set("header_name", "header_value")
+	
 	// Read body/payload
 	b, err := ioutil.ReadAll(r.Body)
 	defer r.Body.Close()
 	if err != nil {
-		http.Error(w, err.Error(), 500)
+		http.Error(w, err.Error(), http.StatusInternalServerError)
 		return
 	}
 
@@ -142,7 +140,7 @@ func newConversation(w http.ResponseWriter, r *http.Request) {
 	var msg Message
 	err = json.Unmarshal(b, &msg)
 	if err != nil {
-		http.Error(w, err.Error(), 500)
+		http.Error(w, err.Error(), http.StatusBadRequest)
 		return
 	}
 	w.WriteHeader(http.StatusOK)
