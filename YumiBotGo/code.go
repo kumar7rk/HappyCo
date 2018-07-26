@@ -170,8 +170,12 @@ func makeAndSendNote(ID string, conversationID string) {
 	ic := intercom.NewClient(accessToken, "")
 
 	user, err := ic.Users.FindByUserID(ID)
-	_ = err
-	//testing prints
+	if err != nil {
+	   fmt.Fprintf(os.Stderr, "Error while finding user ID %v: %v\n", ID, err)
+	   return
+ 	}	
+ 
+ 	//testing prints
 	p("Conversation id: " + conversationID)
 	p("User id: " + ID)
 	p("User name: " + user.Name)
