@@ -195,27 +195,22 @@ func getUserData(ID string) (inspectionsRec []Inspection, reportsRec []Report, b
 	err := db.Select(&inspectionsRec, "SELECT folders.business,folders.user,folders.role ,folders.folder_id,folders.folder_name,i.created_at as created_at,i.template_name,i.id,i.status,i.location FROM (SELECT businesses.business_id as business,businesses.user_id as user,role_id as role,folder_id as folder_id,folder_name as folder_name FROM (SELECT bm.business_id as business_id,bm.user_id as user_id,bm.business_role_id as role_id,f.id as folder_id,f.name as folder_name FROM business_membership as bm JOIN portfolios as f ON bm.business_id = f.business_id WHERE bm.user_id = $1 AND bm.inactivated_at IS NULL AND f.inactivated_at IS NULL) as businesses GROUP BY businesses.business_id,businesses.role_id,businesses.user_id,folder_id,folder_name ORDER BY businesses.business_id ) as folders JOIN inspections as i ON folders.folder_id = i.folder_id WHERE i.user_id = $1::varchar AND i.archived_at IS NULL AND i.created_at > (CURRENT_DATE- interval '30 day') ORDER BY i.created_at DESC LIMIT $2", ID, 5)
 	if err != nil {
 		fmt.Fprintf(os.Stderr, "Error in inspection query %v: %v\n", ID, err)
-		return
 	}
 
 	//fetching most recent (5) reports for the user within the last 30 days.
 	err = db.Select(&reportsRec, "SELECT folders.business,folders.user,folders.role,folders.folder_id,folders.folder_name,r.created_at as created_at,r.name,r.public_id,r.location FROM (SELECT businesses.business_id as business,businesses.user_id as user,role_id as role,folder_id as folder_id,folder_name as folder_name FROM (SELECT bm.business_id as business_id,bm.user_id as user_id,bm.business_role_id as role_id,f.id as folder_id,f.name as folder_name FROM business_membership as bm JOIN portfolios as f ON bm.business_id = f.business_id WHERE bm.user_id = $1 AND bm.inactivated_at IS NULL AND f.inactivated_at IS NULL) as businesses GROUP BY businesses.business_id,businesses.role_id,businesses.user_id,folder_id,folder_name ORDER BY businesses.business_id ) as folders JOIN reports_v3 as r ON folders.folder_id = r.folder_id WHERE r.user_id = $1::varchar AND r.archived_at IS NULL AND r.created_at > (CURRENT_DATE- interval '30 day') ORDER BY r.created_at DESC LIMIT $2", ID, 5)
 	if err != nil {
 		fmt.Fprintf(os.Stderr, "Error in reoprt query %v: %v\n", ID, err)
-		return
-
 	}
 	// fetching business id and role id for user role in this business
 	err = db.Select(&businessRec, "SELECT business_id,business_role_id FROM business_membership WHERE user_id = $1 AND inactivated_at IS NULL", ID)
 	if err != nil {
 		fmt.Fprintf(os.Stderr, "Error in business query %v: %v\n", ID, err)
-		return
 	}
 	// checking if the business is on IAP get the expiry date
 	err = db.Get(&iapExpiry, "SELECT expires_at FROM iap_receipts WHERE company_id IN (SELECT business_id FROM business_membership WHERE user_id = $1) ORDER BY expires_at DESC limit 1", ID)
 	if err != nil {
 		fmt.Fprintf(os.Stderr, "Error in inspection query %v: %v\n", ID, err)
-		return
 	}
 
 	// Check if the business has integration w/Yardi
@@ -224,7 +219,6 @@ func getUserData(ID string) (inspectionsRec []Inspection, reportsRec []Report, b
 	err = db.Get(&integrationCount, "Select COUNT(*) FROM integration_yardi_properties WHERE business_id IN (SELECT business_id from business_membership WHERE user_id = $1 AND inactivated_at IS NULL)", ID)
 	if err != nil {
 		fmt.Fprintf(os.Stderr, "Error in integration query-Yardi %v: %v\n", ID, err)
-		return
 	}
 	if integrationCount > 0 {
 		integrationName = "Yardi"
@@ -233,7 +227,6 @@ func getUserData(ID string) (inspectionsRec []Inspection, reportsRec []Report, b
 	err = db.Get(&integrationCount, "Select COUNT(*) FROM integration_mri_properties WHERE business_id IN (SELECT business_id from business_membership WHERE user_id = $1 AND inactivated_at IS NULL)", ID)
 	if err != nil {
 		fmt.Fprintf(os.Stderr, "Error in integration query-MRI %v: %v\n", ID, err)
-		return
 	}
 
 	if integrationCount > 0 {
@@ -243,7 +236,6 @@ func getUserData(ID string) (inspectionsRec []Inspection, reportsRec []Report, b
 	err = db.Get(&integrationCount, "Select COUNT(*) FROM integration_resman_properties WHERE business_id IN (SELECT business_id from business_membership WHERE user_id = $1 AND inactivated_at IS NULL)", ID)
 	if err != nil {
 		fmt.Fprintf(os.Stderr, "Error in integration query-Resman %v: %v\n", ID, err)
-		return
 	}
 	if integrationCount > 0 {
 		integrationName = "Resman"
@@ -253,7 +245,6 @@ func getUserData(ID string) (inspectionsRec []Inspection, reportsRec []Report, b
 	err = db.Get(&planType, "Select plan_type FROM current_subscriptions WHERE business_id IN (SELECT business_id from business_membership WHERE user_id = $1 AND inactivated_at IS NULL)", ID)
 	if err != nil {
 		fmt.Fprintf(os.Stderr, "Error in plan query %v: %v\n", ID, err)
-		return
 	}
 	return
 }
