@@ -340,7 +340,7 @@ func getUserData(u_id string) {
 		fmt.Fprintf(os.Stderr, "Error in plan query %v: %v\n", u_id, err)
 		return
 	}
-	defer db.Close()
+	//defer db.Close()
 
 }
 
