@@ -59,34 +59,7 @@ type IAP struct {
 	Expiry string `db:"expires_at"`
 }
 
-type Integration struct {
-	ID int `db:"id"`
-}
-
-type Plan struct {
-	Type string `db:"plan_type"`
-}
-
 var plan_type_replica string
-
-// date and time formatted string
-var formattedDate string
-
-// integration's name
-var integrationName string
-
-//recs
-var inspectionsRec []Inspection
-
-var reportsRec []Report
-
-var businessRec []Business
-
-var iapRec []IAP
-
-var integrationRec []Integration
-
-var planRec []Plan
 
 var db *sqlx.DB
 
@@ -112,11 +85,7 @@ type Message struct {
 //********************************************Main function********************************************
 
 func main() {
-	// loading .env file
-	err := loadEnv()
-	if err != nil {
-		fmt.Println("Error loading .env file")
-	}
+	var err error
 
 	postgresURI := formURI()
 	if postgresURI == "" {
@@ -168,8 +137,8 @@ func newConversation(w http.ResponseWriter, r *http.Request) {
 	*/
 
 	userType := msg.Data.Item.User.Type
-	userId := msg.Data.Item.User.UserID            //65135
-	conversationId := msg.Data.Item.ConversationID //15363702969
+	userId := msg.Data.Item.User.UserID            
+	conversationId := msg.Data.Item.ConversationID 
 
 	//only run the following code when the received message is from a HappyCo user
 	if userType == "user" {
@@ -199,8 +168,6 @@ func makeAndSendNote(ID string, conversationID string) {
 
 	// calling the method to compile the note with all the required information
 	note := makeNote(ID)
-
-	//ic.Conversations.Reply(conversationID, &admin, intercom.CONVERSATION_NOTE, note)
 	ic.Conversations.Reply(conversationID, intercom.Admin{ID:"207278"}, intercom.CONVERSATION_NOTE, note)
 	//copied and pasted from api-docs
 	if herr, ok := err.(intercom.IntercomError); ok && herr.GetCode() == "not_found" {
@@ -214,8 +181,7 @@ func makeAndSendNote(ID string, conversationID string) {
 	buildiumMessage = "Hi " + firstName[0] + "  \n \n Buildium Support team are the best place to help you with this query as they understand your unique workflow and are trained in Happy Inspector 💫  \n <b>Our friends at Buildium support your Happy Inspector subscription and mobile app and can be reached at 888-414-1988, or by submitting a ticket through your Buildium account.</b>   \n Please also feel free to take a look through our FAQ on the Buildium integration:  \n https://intercom.help/happyco/frequently-asked-questions/buildium-integration-faq/faq-buildium-integration  \n Thanks!  \n HappyCo team ☺"
 
 	if plan_type_replica == "buildium" {
-		//ic.Conversations.Reply(conversationID,&admin,intercom.CONVERSATION_COMMENT,"Testing on internal plan \n " +buildiumMessage)
-		plan_type_replica = buildiumMessage //fun stuff
+		ic.Conversations.Reply(conversationID,intercom.Admin{ID:"207278"},intercom.CONVERSATION_COMMENT,"Testing on internal plan \n " +buildiumMessage)
 		plan_type_replica = ""
 	}
 
@@ -246,78 +212,73 @@ func formURI() (str string) {
 //********************************************Getting UserData********************************************
 
 //queries the db and adds returned values in array
-func getUserData(u_id string) {
+func getUserData(ID string) (inspectionsRec []Inspection, reportsRec []Report, businessRec []Business, iapExpiry string, integrationName string, planType string){
 
 	//fetching most recent (5) inspections for the user within the last 30 days.
-
-	err := db.Select(&inspectionsRec, "SELECT folders.business,folders.user,folders.role ,folders.folder_id,folders.folder_name,i.created_at as created_at,i.template_name,i.id,i.status,i.location FROM (SELECT businesses.business_id as business,businesses.user_id as user,role_id as role,folder_id as folder_id,folder_name as folder_name FROM (SELECT bm.business_id as business_id,bm.user_id as user_id,bm.business_role_id as role_id,f.id as folder_id,f.name as folder_name FROM business_membership as bm JOIN portfolios as f ON bm.business_id = f.business_id WHERE bm.user_id = $1 AND bm.inactivated_at IS NULL AND f.inactivated_at IS NULL) as businesses GROUP BY businesses.business_id,businesses.role_id,businesses.user_id,folder_id,folder_name ORDER BY businesses.business_id ) as folders JOIN inspections as i ON folders.folder_id = i.folder_id WHERE i.user_id = $1::varchar AND i.archived_at IS NULL AND i.created_at > (CURRENT_DATE- interval '30 day') ORDER BY i.created_at DESC LIMIT $2", u_id, 5)
+	err := db.Select(&inspectionsRec, "SELECT folders.business,folders.user,folders.role ,folders.folder_id,folders.folder_name,i.created_at as created_at,i.template_name,i.id,i.status,i.location FROM (SELECT businesses.business_id as business,businesses.user_id as user,role_id as role,folder_id as folder_id,folder_name as folder_name FROM (SELECT bm.business_id as business_id,bm.user_id as user_id,bm.business_role_id as role_id,f.id as folder_id,f.name as folder_name FROM business_membership as bm JOIN portfolios as f ON bm.business_id = f.business_id WHERE bm.user_id = $1 AND bm.inactivated_at IS NULL AND f.inactivated_at IS NULL) as businesses GROUP BY businesses.business_id,businesses.role_id,businesses.user_id,folder_id,folder_name ORDER BY businesses.business_id ) as folders JOIN inspections as i ON folders.folder_id = i.folder_id WHERE i.user_id = $1::varchar AND i.archived_at IS NULL AND i.created_at > (CURRENT_DATE- interval '30 day') ORDER BY i.created_at DESC LIMIT $2", ID, 5)
 	if err != nil {
-		fmt.Fprintf(os.Stderr, "Error in inspection query %v: %v\n", u_id, err)
+		fmt.Fprintf(os.Stderr, "Error in inspection query %v: %v\n", ID, err)
 		return
 	}
 
 	//fetching most recent (5) reports for the user within the last 30 days.
-
-	err = db.Select(&reportsRec, "SELECT folders.business,folders.user,folders.role,folders.folder_id,folders.folder_name,r.created_at as created_at,r.name,r.public_id,r.location FROM (SELECT businesses.business_id as business,businesses.user_id as user,role_id as role,folder_id as folder_id,folder_name as folder_name FROM (SELECT bm.business_id as business_id,bm.user_id as user_id,bm.business_role_id as role_id,f.id as folder_id,f.name as folder_name FROM business_membership as bm JOIN portfolios as f ON bm.business_id = f.business_id WHERE bm.user_id = $1 AND bm.inactivated_at IS NULL AND f.inactivated_at IS NULL) as businesses GROUP BY businesses.business_id,businesses.role_id,businesses.user_id,folder_id,folder_name ORDER BY businesses.business_id ) as folders JOIN reports_v3 as r ON folders.folder_id = r.folder_id WHERE r.user_id = $1::varchar AND r.archived_at IS NULL AND r.created_at > (CURRENT_DATE- interval '30 day') ORDER BY r.created_at DESC LIMIT $2", u_id, 5)
+	err = db.Select(&reportsRec, "SELECT folders.business,folders.user,folders.role,folders.folder_id,folders.folder_name,r.created_at as created_at,r.name,r.public_id,r.location FROM (SELECT businesses.business_id as business,businesses.user_id as user,role_id as role,folder_id as folder_id,folder_name as folder_name FROM (SELECT bm.business_id as business_id,bm.user_id as user_id,bm.business_role_id as role_id,f.id as folder_id,f.name as folder_name FROM business_membership as bm JOIN portfolios as f ON bm.business_id = f.business_id WHERE bm.user_id = $1 AND bm.inactivated_at IS NULL AND f.inactivated_at IS NULL) as businesses GROUP BY businesses.business_id,businesses.role_id,businesses.user_id,folder_id,folder_name ORDER BY businesses.business_id ) as folders JOIN reports_v3 as r ON folders.folder_id = r.folder_id WHERE r.user_id = $1::varchar AND r.archived_at IS NULL AND r.created_at > (CURRENT_DATE- interval '30 day') ORDER BY r.created_at DESC LIMIT $2", ID, 5)
 	if err != nil {
-		fmt.Fprintf(os.Stderr, "Error in reoprt query %v: %v\n", u_id, err)
-		return
+		fmt.Fprintf(os.Stderr, "Error in reoprt query %v: %v\n", ID, err)
+	 	return
+
 	}
 	// fetching business id and role id for user role in this business
-
-	err = db.Select(&businessRec, "SELECT business_id,business_role_id FROM business_membership WHERE user_id = $1 AND inactivated_at IS NULL", u_id)
+	err = db.Select(&businessRec, "SELECT business_id,business_role_id FROM business_membership WHERE user_id = $1 AND inactivated_at IS NULL", ID)
 	if err != nil {
-		fmt.Fprintf(os.Stderr, "Error in business query %v: %v\n", u_id, err)
+		fmt.Fprintf(os.Stderr, "Error in business query %v: %v\n", ID, err)
 		return
 	}
 	// checking if the business is on IAP get the expiry date
-	err = db.Select(&iapRec, "SELECT expires_at FROM iap_receipts WHERE company_id IN (SELECT business_id FROM business_membership WHERE user_id = $1) ORDER BY expires_at DESC limit 1", u_id)
+	err = db.Get(&iapExpiry, "SELECT expires_at FROM iap_receipts WHERE company_id IN (SELECT business_id FROM business_membership WHERE user_id = $1) ORDER BY expires_at DESC limit 1", ID)
 	if err != nil {
-		fmt.Fprintf(os.Stderr, "Error in inspection query %v: %v\n", u_id, err)
+		fmt.Fprintf(os.Stderr, "Error in inspection query %v: %v\n", ID, err)
 		return
 	}
 
 	// Check if the business has integration w/Yardi
-	err = db.Select(&integrationRec, "Select id FROM integration_yardi_properties WHERE business_id IN (SELECT business_id from business_membership WHERE user_id = $1 AND inactivated_at IS NULL)", u_id)
+	var integrationCount int
+
+	err = db.Get(&integrationCount, "Select COUNT(*) FROM integration_yardi_properties WHERE business_id IN (SELECT business_id from business_membership WHERE user_id = $1 AND inactivated_at IS NULL)", ID)
 	if err != nil {
-		fmt.Fprintf(os.Stderr, "Error in integration query-Yardi %v: %v\n", u_id, err)
+		fmt.Fprintf(os.Stderr, "Error in integration query-Yardi %v: %v\n", ID, err)
 		return
 	}
-	for _, integration := range integrationRec {
-		if integration.ID > 0 {
-			integrationName = "Yardi"
-		}
+	if integrationCount > 0 {
+		integrationName = "Yardi"
 	}
 	// MRI
-	err = db.Select(&integrationRec, "Select id FROM integration_mri_properties WHERE business_id IN (SELECT business_id from business_membership WHERE user_id = $1 AND inactivated_at IS NULL)", u_id)
+	err = db.Get(&integrationCount, "Select COUNT(*) FROM integration_mri_properties WHERE business_id IN (SELECT business_id from business_membership WHERE user_id = $1 AND inactivated_at IS NULL)", ID)
 	if err != nil {
-		fmt.Fprintf(os.Stderr, "Error in integration query-MRI %v: %v\n", u_id, err)
+		fmt.Fprintf(os.Stderr, "Error in integration query-MRI %v: %v\n", ID, err)
 		return
 	}
-	for _, integration := range integrationRec {
-		if integration.ID > 0 {
-			integrationName = "MRI"
-
-		}
+	
+	if integrationCount > 0 {
+		integrationName = "MRI"
 	}
 	// Resman
-	err = db.Select(&integrationRec, "Select id FROM integration_resman_properties WHERE business_id IN (SELECT business_id from business_membership WHERE user_id = $1 AND inactivated_at IS NULL)", u_id)
+	err = db.Get(&integrationCount, "Select COUNT(*) FROM integration_resman_properties WHERE business_id IN (SELECT business_id from business_membership WHERE user_id = $1 AND inactivated_at IS NULL)", ID)
 	if err != nil {
-		fmt.Fprintf(os.Stderr, "Error in integration query-Resman %v: %v\n", u_id, err)
+		fmt.Fprintf(os.Stderr, "Error in integration query-Resman %v: %v\n", ID, err)
 		return
 	}
-	for _, integration := range integrationRec {
-		if integration.ID > 0 {
-			integrationName = "Resman"
-		}
+	if integrationCount > 0 {
+		integrationName = "Resman"
 	}
 
 	// DD/buildium/mri
-	err = db.Select(&planRec, "Select plan_type FROM subscriptions WHERE business_id IN (SELECT business_id from business_membership WHERE user_id = $1 AND inactivated_at IS NULL)", u_id)
+	err = db.Get(&planType, "Select plan_type FROM current_subscriptions WHERE business_id IN (SELECT business_id from business_membership WHERE user_id = $1 AND inactivated_at IS NULL)", ID)
 	if err != nil {
-		fmt.Fprintf(os.Stderr, "Error in plan query %v: %v\n", u_id, err)
-		return
+		fmt.Fprintf(os.Stderr, "Error in plan query %v: %v\n", ID, err)
+		return 
 	}
+	return
 }
 
 //********************************************Building note********************************************
@@ -327,9 +288,10 @@ func getUserData(u_id string) {
 // should be called when a new intercom message is received
 func makeNote(us_id string) string {
 	var note string
+	var formattedDate string
 
 	//getting user data from the database
-	getUserData(us_id)
+	inspectionsRec, reportsRec, businessRec, iapExpiry, integrationName, planType := getUserData(us_id)
 
 	//******************constructing business string******************
 	note = "<b>A small note from Yumi 🐶</b><br/><br/>"
@@ -368,29 +330,25 @@ func makeNote(us_id string) string {
 		note += "\n"
 		note += "The business is " + integrationName
 	}
-	integrationName = ""
 
 	//******************constructing plan type string******************
 
-	for _, plan := range planRec {
-
-		if plan.Type == "due_diligence" {
+		if planType == "due_diligence" {
 			note += "\n"
 			note += "\n"
 			note += "Plan: " + "Due Diligence"
 		}
-		if plan.Type == "buildium" {
+		if planType == "buildium" {
 			note += "\n"
 			note += "\n"
 			note += "Plan: " + "Buildium"
 		}
-		if plan.Type == "mri" {
+		if planType == "mri" {
 			note += "\n"
 			note += "\n"
 			note += "Plan: " + "MRI"
 		}
-		plan_type_replica = plan.Type
-	}
+	
 	note += "\n"
 	note += "\n"
 
@@ -407,8 +365,6 @@ func makeNote(us_id string) string {
 
 		note += "<a href=" + url + ">" + url + "</a>" + " " + formattedDate
 		note += "\n"
-		//formattedDate = ""
-		//url = ""
 	}
 	//******************constructing report string******************
 
@@ -425,22 +381,16 @@ func makeNote(us_id string) string {
 
 		note += "<a href=" + url + ">" + report.Name + "</a>" + " " + formattedDate
 		note += "\n"
-		//formattedDate = ""
-		//url = ""
 	}
 
 	//******************constructing iap string******************
-
-	for _, iap := range iapRec {
-		if iap.Expiry != "" {
-			var date, _ = time.Parse(time.RFC3339, iap.Expiry)
-			formattedDate = date.Format("02 Jan 2006 3:04PM")
-			note += "\n"
-			note += "\n"
-			note += "<b>The business is on IAP. It expires on </b>" + formattedDate
-		}
+	
+	if iapExpiry != "" {
+		var date, _ = time.Parse(time.RFC3339, iapExpiry)
+		formattedDate = date.Format("02 Jan 2006 3:04PM")
+		note += "\n"
+		note += "\n"
+		note += "<b>The business is on IAP. It expires on </b>" + formattedDate
 	}
-	//formattedDate = ""
-
 	return note
 }
