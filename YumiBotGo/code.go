@@ -196,7 +196,11 @@ func makeAndSendNote(ID string, conversationID string) {
 	note := makeNote(ID)
 
 	ic.Conversations.Reply(conversationID, &admin, intercom.CONVERSATION_NOTE, note)
-
+	//copied and pasted from api-docs
+	if herr, ok := err.(intercom.IntercomError); ok && herr.GetCode() == "not_found" {
+		fmt.Fprintf(os.Stderr, "Error from Intercom when replying %v: %v\n", "", err)
+	   	return
+	}
 	var buildiumMessage string
 	//extracting firstName from the user name.
 	firstName := strings.Fields(user.Name)
