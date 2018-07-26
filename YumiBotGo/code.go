@@ -4,7 +4,6 @@
 
 package main
 
-//adding import statements
 import (
 	"fmt"
 	"os"
