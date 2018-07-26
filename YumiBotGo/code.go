@@ -197,22 +197,11 @@ func makeAndSendNote(ID string, conversationID string) {
 	p("User id: " + ID)
 	p("User name: " + user.Name)
 
-	// getting admin list from Intercom
-	adminList, err := ic.Admins.List()
-	if err != nil {
-		fmt.Fprintf(os.Stderr, "Error while loading admin list %v: %v\n", "", err)
-		return
-	}
-	admins := adminList.Admins
-
-	// setting admin to HappyBot
-	// Adds the note from admin HappyBot
-	admin := admins[13]
-
 	// calling the method to compile the note with all the required information
 	note := makeNote(ID)
 
-	ic.Conversations.Reply(conversationID, &admin, intercom.CONVERSATION_NOTE, note)
+	//ic.Conversations.Reply(conversationID, &admin, intercom.CONVERSATION_NOTE, note)
+	ic.Conversations.Reply(conversationID, intercom.Admin{ID:"207278"}, intercom.CONVERSATION_NOTE, note)
 	//copied and pasted from api-docs
 	if herr, ok := err.(intercom.IntercomError); ok && herr.GetCode() == "not_found" {
 		fmt.Fprintf(os.Stderr, "Error from Intercom when replying %v: %v\n", "", err)
@@ -340,8 +329,6 @@ func getUserData(u_id string) {
 		fmt.Fprintf(os.Stderr, "Error in plan query %v: %v\n", u_id, err)
 		return
 	}
-	//defer db.Close()
-
 }
 
 //********************************************Building note********************************************
@@ -352,7 +339,6 @@ func getUserData(u_id string) {
 func makeNote(us_id string) string {
 	var note string
 
-	// p:= fmt.Println
 	//getting user data from the database
 	getUserData(us_id)
 
