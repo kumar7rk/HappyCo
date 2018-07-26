@@ -158,7 +158,7 @@ func newConversation(w http.ResponseWriter, r *http.Request) {
 	w.Write([]byte("Received"))
 }
 
-func makeAndSendNote(userType string, userID string, conversationID string) {
+func makeAndSendNote(userType string, ID string, conversationID string) {
 	p := fmt.Println
 
 	// gets intercom access token
@@ -167,11 +167,11 @@ func makeAndSendNote(userType string, userID string, conversationID string) {
 
 	//only run the following code when the received message is from a HappyCo user
 	if userType == "user" {
-		user, err := ic.Users.FindByUserID(userID)
+		user, err := ic.Users.FindByUserID(ID)
 		_ = err
 		//testing prints
 		p("Conversation id: " + conversationID)
-		p("User id: " + userID)
+		p("User id: " + ID)
 		p("User name: " + user.Name)
 
 		// getting admin list from Intercom
@@ -184,7 +184,7 @@ func makeAndSendNote(userType string, userID string, conversationID string) {
 		admin := admins[13] // change [0]
 
 		// calling the method to compile the note with all the required information
-		note := noteBuilder(userID)
+		note := noteBuilder(ID)
 
 		ic.Conversations.Reply(conversationID, &admin, intercom.CONVERSATION_NOTE, note)
 
