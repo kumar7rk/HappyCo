@@ -165,6 +165,7 @@ func makeAndSendNote(ID string, conversationID string) {
 
 	// calling the method to compile the note with all the required information
 	note, plan_type := makeNote(ID)
+	_, err = ic.Conversations.Reply(conversationID, intercom.Admin{ID: "207278"}, intercom.CONVERSATION_NOTE, note)
 	//copied and pasted from api-docs
 	if herr, ok := err.(intercom.IntercomError); ok && herr.GetCode() == "not_found" {
 		fmt.Fprintf(os.Stderr, "Error from Intercom when replying %v: %v\n", "", err)
