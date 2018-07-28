@@ -1,19 +1,24 @@
 
 YumiBot/.env
 YumiBot/myApp/.env
-YumiBotGo/.env
-YumiBotGo/.DS_Store
-YumiBotGo/code
-.DS_Store
-YumiBotGo/YumiBotGo
+YumiBot/.DS_Store
+YumiBot/myApp/.DS_Store
+YumiBot/myApp/public/.DS_Store
 
+YumiBotGo/.env
+YumiBotGo/code
+YumiBotGo/YumiBotGo
 YumiBotGo/server
 YumiBotGo/server.go
 YumiBotGo/.DS_Store
-.DS_Store
 YumiBotGo/Next step
 YumiBotGo/Integration.numbers
 YumiBotGo/intercomAdminIds
-YumiBotGo/push gerrit
 YumiBotGo/push gerrit.txt
+YumiBotGo/.DS_Store
+.DS_Store
+
 *.zip
+
+
+Froso/node_modules/
