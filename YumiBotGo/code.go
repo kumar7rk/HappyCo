@@ -1,6 +1,6 @@
 /* Adding User Data from DB to Intercom as a note for every new conversation
 
- */
+*/
 
 package main
 
