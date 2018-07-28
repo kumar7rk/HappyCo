@@ -1,0 +1,22 @@
+{
+  "name": "froso",
+  "version": "1.0.0",
+  "description": "Project Froso",
+  "main": "example.js",
+  "dependencies": {
+    "puppeteer": "^1.6.1"
+  },
+  "devDependencies": {},
+  "scripts": {
+    "test": "fro"
+  },
+  "repository": {
+    "type": "git",
+    "url": "HappyCo"
+  },
+  "keywords": [
+    "js"
+  ],
+  "author": "Rohit Kumar",
+  "license": "ISC"
+}
