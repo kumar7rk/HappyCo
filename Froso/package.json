@@ -4,7 +4,9 @@
   "description": "Project Froso",
   "main": "example.js",
   "dependencies": {
-    "puppeteer": "^1.6.1"
+    "puppeteer": "^1.6.1",
+    "xlsx": "^0.13.3",
+    "xmlhttprequest": "^1.8.0"
   },
   "devDependencies": {},
   "scripts": {
