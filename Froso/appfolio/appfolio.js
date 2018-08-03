@@ -1,4 +1,6 @@
   const puppeteer = require('puppeteer');
+  const {performance} = require('perf_hooks');
+
 
 (async () => {
 	
@@ -36,28 +38,34 @@ if(typeof require !== 'undefined') XLSX = require('xlsx');
 // worksheet['B2'].v = 'manual';
 //  XLSX.writeFile(workbook ,'Appfolio2.xlsx')
 
-
+  var t0 = performance.now();
+  
   for (var i = 2; i < 246; i++) {
-    if (i==164) continue; //website not found
     address_of_cell = 'A'+i
     var desired_cell = worksheet[address_of_cell];
     var desired_value = (desired_cell ? desired_cell.v : undefined);
     
     await page.goto(desired_value);
 
-    const name = await page.evaluate(() => document.querySelector('.footer__info > p').innerText)
-    const phone = await page.evaluate(() => document.querySelector('.footer__info > a').innerText)
-    const website = await page.evaluate(() => document.querySelector('.footer__info > p > a ').href)
-    var writeCell = 'B'+i
-    worksheet[writeCell].v = name;   
+    if (await page.evaluate(() => document.querySelector('.footer__info > p')) != null) {
+      
+      const name = await page.evaluate(() => document.querySelector('.footer__info > p').innerText)
+      const phone = await page.evaluate(() => document.querySelector('.footer__info > a').innerText)
+      const website = await page.evaluate(() => document.querySelector('.footer__info > p > a ').href)
+      var writeCell = 'B'+i
+      worksheet[writeCell].v = name;   
 
-    var writeCell1 = 'C'+i
-    worksheet[writeCell1].v = website;   
+      var writeCell1 = 'C'+i
+      worksheet[writeCell1].v = website;   
+
+      //console.log(name+ "\n" + phone+ "\n" + website)   
+    }
+  }
     XLSX.writeFile(workbook ,'Appfolio4.xlsx')
 
-    //console.log(name+ "\n" + phone+ "\n" + website)   
+  var t1 = performance.now();
+  console.log((t1-t0)/1000+ " seconds");
 
-  }
   /*var range = {s: {c:0, r:1}, e: {c:0, r:245 }};
   var column = 0;
   for (var R = range.s.r; R < range.e.R; ++R) {
