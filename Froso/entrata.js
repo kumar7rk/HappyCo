@@ -1,8 +1,8 @@
   const puppeteer = require('puppeteer');
 
 (async () => {
-	
-	//const browser = await puppeteer.launch({headless: false}); // default is true
+  
+  //const browser = await puppeteer.launch({headless: false}); // default is true
 
   const browser = await puppeteer.launch({
         ignoreHTTPSErrors: true
@@ -31,8 +31,11 @@ if(typeof require !== 'undefined') XLSX = require('xlsx');
     var desired_value = (desired_cell ? desired_cell.v : undefined);
     var name = "";
     var url = "https://"+desired_value
-    await page.goto(url);
-
+    
+    var marketCellAddress = 'C'+i
+    var marketCell = worksheet[marketCellAddress];
+    var marketValue = (marketCell ? marketCell.v : undefined);
+    
     /*if (await page.evaluate(() => document.querySelector('.corporate_logo.corporate-logo-item > a')) != null) {
       name = await page.evaluate(() => document.querySelector('.corporate_logo.corporate-logo-item > a').href)
       if (name = "http://www.trinity-pm.com/") {
@@ -70,21 +73,23 @@ if(typeof require !== 'undefined') XLSX = require('xlsx');
             worksheet[writeCellMarket].v = "Enterprise";
           }
         }*/
-
-    if (await page.evaluate(() => document.querySelector('.corporate-logo-container.corporate-logo > a')) != null) {
-      name = await page.evaluate(() => document.querySelector('.corporate-logo-container.corporate-logo > a').href)
-      if (name = "http://www.millcreekplaces.com") {
-        console.log("Mill creek: "+i);
-        var writeCell = 'B'+i
-        worksheet[writeCell].v = "Mill Creek";
-        
-        var writeCellMarket = 'C'+i
-        worksheet[writeCellMarket].v = "Enterprise";
+    // console.log(marketValue);
+    if (marketValue =="Market type"){
+        // console.log(marketValue);
+      await page.goto(url); 
+      if (await page.evaluate(() => document.querySelector('.corporate-logo-container.corporate-logo > a')) != null) {
+        name = await page.evaluate(() => document.querySelector('.corporate-logo-container.corporate-logo > a').href)
+        if (name = "http://www.millcreekplaces.com") {
+          console.log("Mill creek: "+i);
+          var writeCell = 'B'+i
+          worksheet[writeCell].v = "Mill Creek";
+          
+          var writeCellMarket = 'C'+i
+          worksheet[writeCellMarket].v = "Enterprise";
+        }
       }
+      XLSX.writeFile(workbook ,'Entrata2.xlsx')
     }
-
-
-   XLSX.writeFile(workbook ,'Entrata2.xlsx')
   }
   await browser.close();
 })();
