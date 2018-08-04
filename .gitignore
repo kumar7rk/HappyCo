@@ -23,3 +23,4 @@ YumiBotGo/.DS_Store
 
 Froso/node_modules/
 *.xlsx
+Froso/creds.js
