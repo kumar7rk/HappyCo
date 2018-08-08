@@ -370,6 +370,8 @@ func makeNote(us_id string) (string, string) {
 	}
 	note +="\n"
 	note +="\n"
+
+	note += "<a href=" + "https://hpy.io/yumi" + ">" + "Feedback/Report issue" + "</a>"
 	return note, planType
 }
 
