@@ -1,25 +1,24 @@
-/* Adding User Data from DB to Intercom as a note for every new conversation
-
-*/
+/* Adding User Data from DB to Intercom as a note for every new conversation */
 
 package main
 
 import (
+	"encoding/json"
+	"errors"
 	"fmt"
+	"io/ioutil"
+	"net/http"
 	"os"
 	"strconv"
 	"strings"
-
 	"time"
-
-	"encoding/json"
-	"io/ioutil"
-	"net/http"
 
 	"github.com/jmoiron/sqlx"
 	_ "github.com/lib/pq"
 
 	intercom "gopkg.in/intercom/intercom-go.v2"
+
+	"happyco/apps/tools/libs/buildvars"
 )
 
 //********************************************Variable declaration********************************************
@@ -56,7 +55,9 @@ type Business struct {
 type IAP struct {
 	Expiry string `db:"expires_at"`
 }
-
+type Plan struct {
+	Type string `db:"plan_type"`
+}
 var db *sqlx.DB
 
 // structs for reading payload in json received from Intercom
@@ -83,7 +84,7 @@ type Message struct {
 func main() {
 	var err error
 
-	postgresURI := os.Getenv("URL")
+	postgresURI := os.Getenv("POSTGRES_URI")
 	if postgresURI == "" {
 		fmt.Println("URI error")
 	}
@@ -100,6 +101,7 @@ func main() {
 
 	//handling every new convesations in newConversation method
 	http.HandleFunc("/", newConversation)
+	http.HandleFunc("/healthcheck", healthcheck)
 	if err := http.ListenAndServe(":8080", nil); err != nil {
 		panic(err)
 	}
@@ -176,7 +178,7 @@ func makeAndSendNote(ID string, conversationID string) {
 		//extracting firstName from the user name.
 		firstName := strings.Fields(user.Name)
 
-		buildiumMessage := "Hi " + firstName[0] + "  \n \n Buildium Support team are the best place to help you with this query as they understand your unique workflow and are trained in Happy Inspector 💫  \n <b>Our friends at Buildium support your Happy Inspector subscription and mobile app and can be reached at 888-414-1988, or by submitting a ticket through your Buildium account.</b>   \n Please also feel free to take a look through our FAQ on the Buildium integration:  \n https://intercom.help/happyco/frequently-asked-questions/buildium-integration-faq/faq-buildium-integration  \n Thanks!  \n HappyCo team ☺"
+		buildiumMessage := "Hi " + firstName[0] + " 👋 \n \n <b>Our friends at Buildium support your Happy Inspector subscription. \n\n They can be reached at 888-414-1988, or by submitting a ticket through your Buildium account.</b>\n\nBuildium Support team are the best place to help you with this query as they understand your unique workflow and are trained in Happy Inspector 💫 \n Please also feel free to take a look through our FAQ on the Buildium integration:  \n https://intercom.help/happyco/frequently-asked-questions/buildium-integration-faq/faq-buildium-integration  \n Thanks!  \n HappyCo team ☺"
 		_, err = ic.Conversations.Reply(conversationID, intercom.Admin{ID: "207278"}, intercom.CONVERSATION_COMMENT, buildiumMessage)
 
 		if herr, ok := err.(intercom.IntercomError); ok && herr.GetCode() == "not_found" {
@@ -189,7 +191,7 @@ func makeAndSendNote(ID string, conversationID string) {
 //********************************************Getting UserData********************************************
 
 //queries the db and adds returned values in array
-func getUserData(ID string) (inspectionsRec []Inspection, reportsRec []Report, businessRec []Business, iapRec []IAP, integrationName string, planType string) {
+func getUserData(ID string) (inspectionsRec []Inspection, reportsRec []Report, businessRec []Business, iapRec []IAP, integrationName string, planTypeRec []Plan) {
 
 	//fetching most recent (5) inspections for the user within the last 30 days.
 	err := db.Select(&inspectionsRec, "SELECT folders.business,folders.user,folders.role ,folders.folder_id,folders.folder_name,i.created_at as created_at,i.template_name,i.id,i.status,i.location FROM (SELECT businesses.business_id as business,businesses.user_id as user,role_id as role,folder_id as folder_id,folder_name as folder_name FROM (SELECT bm.business_id as business_id,bm.user_id as user_id,bm.business_role_id as role_id,f.id as folder_id,f.name as folder_name FROM business_membership as bm JOIN portfolios as f ON bm.business_id = f.business_id WHERE bm.user_id = $1 AND bm.inactivated_at IS NULL AND f.inactivated_at IS NULL) as businesses GROUP BY businesses.business_id,businesses.role_id,businesses.user_id,folder_id,folder_name ORDER BY businesses.business_id ) as folders JOIN inspections as i ON folders.folder_id = i.folder_id WHERE i.user_id = $1::varchar AND i.archived_at IS NULL AND i.created_at > (CURRENT_DATE- interval '30 day') ORDER BY i.created_at DESC LIMIT $2", ID, 5)
@@ -240,9 +242,10 @@ func getUserData(ID string) (inspectionsRec []Inspection, reportsRec []Report, b
 	if integrationCount > 0 {
 		integrationName = "Resman"
 	}
+	var b_id = "36439"
 
 	// DD/buildium/mri
-	err = db.Get(&planType, "Select plan_type FROM current_subscriptions WHERE business_id IN (SELECT business_id from business_membership WHERE user_id = $1 AND inactivated_at IS NULL)", ID)
+	err = db.Select(&planTypeRec, "Select plan_type FROM current_subscriptions WHERE business_id IN (SELECT business_id from business_membership WHERE user_id = $1 AND inactivated_at IS NULL)", b_id)
 	if err != nil {
 		fmt.Fprintf(os.Stderr, "Error in plan query %v: %v\n", ID, err)
 	}
@@ -259,10 +262,11 @@ func makeNote(us_id string) (string, string) {
 	var formattedDate string
 
 	//getting user data from the database
-	inspectionsRec, reportsRec, businessRec, iapRec, integrationName, planType := getUserData(us_id)
+	inspectionsRec, reportsRec, businessRec, iapRec, integrationName, planTypeRec := getUserData(us_id)
 
 	//******************constructing business string******************
 	note = "<b>A small note from Yumi 🐶</b><br/><br/>"
+	note+="\n\n Test Note"
 
 	note += "<b>✅User is associated with the following businesses</b><br/><br/>"
 
@@ -300,22 +304,25 @@ func makeNote(us_id string) (string, string) {
 	}
 
 	//******************constructing plan type string******************
-	if planType == "due_diligence" {
-		note += "\n"
-		note += "\n"
-		note += "Plan: " + "Due Diligence"
+	planType :="plan type"
+	for _, plan := range planTypeRec {
+		if plan.Type == "due_diligence" {
+			note += "\n"
+			note += "\n"
+			note += "Plan: " + "Due Diligence"
+		}
+		if plan.Type == "buildium" {
+			note += "\n"
+			note += "\n"
+			note += "Plan: " + "Buildium"
+			planType = plan.Type
+		}
+		if plan.Type == "mri" {
+			note += "\n"
+			note += "\n"
+			note += "Plan: " + "MRI"
+		}
 	}
-	if planType == "buildium" {
-		note += "\n"
-		note += "\n"
-		note += "Plan: " + "Buildium"
-	}
-	if planType == "mri" {
-		note += "\n"
-		note += "\n"
-		note += "Plan: " + "MRI"
-	}
-
 	note += "\n"
 	note += "\n"
 
@@ -361,5 +368,31 @@ func makeNote(us_id string) (string, string) {
 			note += "<b>The business is on IAP. It expires on </b>" + formattedDate
 		}
 	}
+	note +="\n"
+	note +="\n"
 	return note, planType
+}
+
+func healthcheck(w http.ResponseWriter, r *http.Request) {
+	if ping() != nil {
+		w.WriteHeader(http.StatusServiceUnavailable)
+		w.Write([]byte("Database timeout"))
+		return
+	}
+	w.Write([]byte("OK " + buildvars.BuildScmRevisionShort + " " + buildvars.BuildScmStatus))
+}
+
+func ping() error {
+	ping := make(chan error, 0)
+	timeout := time.After(10 * time.Second)
+	go func() {
+		ping <- db.Ping()
+	}()
+	var err error
+	select {
+	case <-timeout:
+		err = errors.New("Postgres ping timeout error")
+	case err = <-ping:
+	}
+	return err
 }
