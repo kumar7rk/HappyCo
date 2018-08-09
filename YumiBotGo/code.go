@@ -159,15 +159,13 @@ func makeAndSendNote(ID string, conversationID string) {
 		return
 	}
 
-	//testing prints
 	p("Conversation id: " + conversationID)
 	p("User id: " + ID)
 	p("User name: " + user.Name)
 
-	// calling the method to compile the note with all the required information
 	note, plan_type := makeNote(ID)
 	_, err = ic.Conversations.Reply(conversationID, intercom.Admin{ID: "207278"}, intercom.CONVERSATION_NOTE, note)
-	//copied and pasted from api-docs
+
 	if herr, ok := err.(intercom.IntercomError); ok && herr.GetCode() == "not_found" {
 		fmt.Fprintf(os.Stderr, "Error from Intercom when adding note %v: %v\n", "", err)
 		return
@@ -180,6 +178,7 @@ func makeAndSendNote(ID string, conversationID string) {
 
 		buildiumMessage := "Hi " + firstName[0] + " 👋 \n \n <b>Our friends at Buildium support your Happy Inspector subscription. \n\n They can be reached at 888-414-1988, or by submitting a ticket through your Buildium account.</b>\n\nBuildium Support team are the best place to help you with this query as they understand your unique workflow and are trained in Happy Inspector 💫 \n Please also feel free to take a look through our FAQ on the Buildium integration:  \n https://intercom.help/happyco/frequently-asked-questions/buildium-integration-faq/faq-buildium-integration  \n Thanks!  \n HappyCo team ☺"
 		_, err = ic.Conversations.Reply(conversationID, intercom.Admin{ID: "207278"}, intercom.CONVERSATION_COMMENT, buildiumMessage)
+		// _, err = ic.Conversations.Assign(conversationID, intercom.Admin{ID: "207278"}, intercom.Admin{ID: "1615207"})
 
 		if herr, ok := err.(intercom.IntercomError); ok && herr.GetCode() == "not_found" {
 			fmt.Fprintf(os.Stderr, "Error from Intercom when replying to Buildium %v: %v\n", "", err)
@@ -242,10 +241,10 @@ func getUserData(ID string) (inspectionsRec []Inspection, reportsRec []Report, b
 	if integrationCount > 0 {
 		integrationName = "Resman"
 	}
-	var b_id = "36439"
+	// var b_id = "36439"
 
 	// DD/buildium/mri
-	err = db.Select(&planTypeRec, "Select plan_type FROM current_subscriptions WHERE business_id IN (SELECT business_id from business_membership WHERE user_id = $1 AND inactivated_at IS NULL)", b_id)
+	err = db.Select(&planTypeRec, "Select plan_type FROM current_subscriptions WHERE business_id IN (SELECT business_id from business_membership WHERE user_id = $1 AND inactivated_at IS NULL)", ID)
 	if err != nil {
 		fmt.Fprintf(os.Stderr, "Error in plan query %v: %v\n", ID, err)
 	}
@@ -266,7 +265,7 @@ func makeNote(us_id string) (string, string) {
 
 	//******************constructing business string******************
 	note = "<b>A small note from Yumi 🐶</b><br/><br/>"
-	note+="\n\n Test Note"
+	note+="\n\n <h1>Test Note</h1>\n"
 
 	note += "<b>✅User is associated with the following businesses</b><br/><br/>"
 
