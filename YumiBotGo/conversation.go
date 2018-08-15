@@ -53,6 +53,7 @@ type IAP struct {
 
 type ConversationMessage struct{
 	Body string `json:"body"`
+	Subject string `json:"subject"`
 }
 type User struct {
 	UserID 	string `json:"user_id"`
@@ -104,13 +105,14 @@ func newConversation(w http.ResponseWriter, r *http.Request) {
 	user := msg.Data.Item.User
 	conversationId := msg.Data.Item.ConversationID
 	conversationMessage:=msg.Data.Item.ConversationMessage.Body
+	conversationSubject:=msg.Data.Item.ConversationMessage.Subject
 
-	go processNewConversation(user, conversationId, conversationMessage)
+	go processNewConversation(user, conversationId, conversationMessage, conversationSubject)
 	w.WriteHeader(http.StatusOK)
 	w.Write([]byte("Received"))
 }
 
-func processNewConversation(user User, conversationID string, conversationMessage string) {
+func processNewConversation(user User, conversationID string, conversationMessage string, conversationSubject string) {
 	fmt.Println("processNewConversation");
 	// user.type - lead/user
 	if user.Type == "user" {
@@ -119,10 +121,24 @@ func processNewConversation(user User, conversationID string, conversationMessag
 
 		// buildium autoresponder - only if not buildium support
 		buildiumSupport := strings.Contains(user.Email,"@buildium.com")
+		var ignorePhrases []string 
+		var autoReply bool
+
+		ignorePhrases:=["Automatic Reply","Automatic reply",,"automatic reply",,"Auto-reply",,"auto reply",
+		,"Automatic Reply",,"Automatic Reply",,"Automatic Reply"]
+
+		for _, phrase := range ignorePhrases{
+			val:=strings.Contains(conversationSubject, phrase)
+
+			if val {
+				autoReply = true
+				break
+			}
+		}
 
 		planType := getUserPlanType(user.UserID)
 
-		if planType == "buildium" && !buildiumSupport  {
+		if planType == "buildium" && !buildiumSupport && !autoReply {
 			sendBuildiumReply(user, conversationID)
 		}
 	}
