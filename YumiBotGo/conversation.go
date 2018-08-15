@@ -16,65 +16,7 @@ import (
 	// intercom "gopkg.in/intercom/intercom-go.v2"
 )
 
-type Inspection struct {
-	Business     string
-	User         string
-	Role         string
-	FolderID     string `db:"folder_id"`
-	FolderName   string `db:"folder_name"`
-	CreatedAt    string `db:"created_at"`
-	TemplateName string `db:"template_name"`
-	ID           string
-	Status       string
-	Location     string
-}
 
-type Report struct {
-	Business   string
-	User       string
-	Role       string
-	FolderID   string `db:"folder_id"`
-	FolderName string `db:"folder_name"`
-	CreatedAt  string `db:"created_at"`
-	Name       string
-	PublicID   string `db:"public_id"`
-	Location   string
-}
-
-type Business struct {
-	ID	string `db:"business_id"`
-	Role string `db:"business_role_id"`
-}
-type IAP struct {
-	Expiry string `db:"expires_at"`
-}
-
-// structs for reading payload in json received from Intercom
-
-type ConversationMessage struct{
-	Body string `json:"body"`
-	Subject string `json:"subject"`
-}
-type User struct {
-	UserID 	string `json:"user_id"`
-	Type	string `json:"type"`
-	Name string `json:"name"`
-	Email string `json:"email"`
-}
-
-type Item struct {
-	ConversationID 	string `json:"id"`
-	User			User   `json:"user"`
-	ConversationMessage ConversationMessage `json:"conversation_message"`
-}
-
-type Data struct {
-	Item Item `json:"item"`
-}
-
-type Message struct {
-	Data Data `json:"data"`
-}
 //********************************************New Conversation********************************************
 
 //gets intercom token, admin list, reads the payload, and post note as a reply in the conversation
