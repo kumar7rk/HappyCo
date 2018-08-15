@@ -60,7 +60,7 @@ const CREDS = require('./creds');
    //#ember6250 > div.pv-entity__summary-info.pv-entity__summary-info--v2 > h4:nth-child(4) > span.pv-entity__bullet-item-v2
 
   const title4 = await page.evaluate(() => document.querySelector
-   	('div > h4:nth-child(4) > span.pv-entity__bullet-item-v2').textContent)
+   	('div > h4:nth-child(4)	 > span.pv-entity__bullet-item-v2').textContent)
    console.log(title4);
  await browser.close();
 })();
