@@ -4,6 +4,9 @@
   "description": "Project Froso",
   "main": "example.js",
   "dependencies": {
+    "clipboard": "^2.0.1",
+    "clipboardy": "^1.2.3",
+    "npm": "^6.3.0",
     "puppeteer": "^1.6.1",
     "xlsx": "^0.13.3",
     "xmlhttprequest": "^1.8.0"
