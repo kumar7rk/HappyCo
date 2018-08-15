@@ -57,6 +57,8 @@ type ConversationMessage struct{
 type User struct {
 	UserID 	string `json:"user_id"`
 	Type	string `json:"type"`
+	Name string `json:"name"`
+	Email string `json:"email"`
 }
 
 type Item struct {
@@ -76,7 +78,7 @@ type Message struct {
 
 //gets intercom token, admin list, reads the payload, and post note as a reply in the conversation
 func newConversation(w http.ResponseWriter, r *http.Request) {
-
+	fmt.Println("newConversation");
 	// Read body/payload
 	b, err := ioutil.ReadAll(r.Body)
 	defer r.Body.Close()
@@ -94,37 +96,69 @@ func newConversation(w http.ResponseWriter, r *http.Request) {
 	}
 
 	/* getting attributes from the received json
-	user type - lead/user
-	userId - happyCo user id
-	conversationId - Intercom conversation Id
+		user- user's attributes - name id email type
+		conversationId - Intercom conversation ID
+		conversationmessage- user's message
 	*/
 
-	userType := msg.Data.Item.User.Type
-	userId := msg.Data.Item.User.UserID
+	user := msg.Data.Item.User
 	conversationId := msg.Data.Item.ConversationID
 	conversationMessage:=msg.Data.Item.ConversationMessage.Body
 
-
-	//only run the following code when the received message is from a HappyCo user
-	if userType == "user" {
-		go makeAndSendNote(userId, conversationId, conversationMessage)
-	}
+	go processNewConversation(user, conversationId, conversationMessage)
 	w.WriteHeader(http.StatusOK)
 	w.Write([]byte("Received"))
 }
 
-func makeAndSendNote(ID string, conversationID string, conversationMessage string) {
+func processNewConversation(user User, conversationID string, conversationMessage string) {
+	fmt.Println("processNewConversation");
+	// user.type - lead/user
+	if user.Type == "user" {
+		fmt.Println("message from a user. calling makeAndSendNote");
+		makeAndSendNote(user, conversationID)
+
+		// buildium autoresponder - only if not buildium support
+		buildiumSupport := strings.Contains(user.Email,"@buildium.com")
+
+		planType := getUserPlanType(user.UserID)
+
+		if planType == "buildium" && !buildiumSupport  {
+			sendBuildiumReply(user, conversationID)
+		}
+	}
+
+	// change password autoresponder
+	conversationMessage = strings.ToLower(conversationMessage)
+	if strings.Contains(conversationMessage,"change password") {
+		sendPasswordReply(user, conversationID)
+	}
+}
+
+func getUserPlanType(ID string) (planType string) {
+	fmt.Println("getUserPlanType");
+	// DD/buildium/mri
+	err := db.Get(&planType, "Select plan_type FROM current_subscriptions WHERE business_id IN (SELECT business_id from business_membership WHERE user_id = $1 AND inactivated_at IS NULL)", ID)
+	if err != nil {
+		fmt.Fprintf(os.Stderr, "Error in plan query %v: %v\n", ID, err)
+	}
+	return
+}
+
+// TODO move to separate file
+func makeAndSendNote(user User, conversationID string, params... string) {
+	fmt.Println("makeAndSendNote");
+	ID := user.UserID
 	p := fmt.Println
 
-	// gets intercom access token
+	// TODO move to main - gets intercom access token
 	accessToken := os.Getenv("INTERCOM_ACCESS_TOKEN")
 	ic := intercom.NewClient(accessToken, "")
 
-	user, err := ic.Users.FindByUserID(ID)
+	/*user, err := ic.Users.FindByUserID(ID)
 	if err != nil {
 		fmt.Fprintf(os.Stderr, "Error while finding user ID %v: %v\n", ID, err)
 		return
-	}
+	}*/
 
 	//testing prints
 	p("Conversation id: " + conversationID)
@@ -133,25 +167,13 @@ func makeAndSendNote(ID string, conversationID string, conversationMessage strin
 	p("User email: "+ user.Email)
 
 	// calling the method to compile the note with all the required information
-	note, plan_type := makeNote(ID)
-	_, err = ic.Conversations.Reply(conversationID, intercom.Admin{ID: "207278"}, intercom.CONVERSATION_NOTE, note)
+	note, _ := makeNote(ID)
+
+	_, err := ic.Conversations.Reply(conversationID, intercom.Admin{ID: "207278"}, intercom.CONVERSATION_NOTE, note)
 	//copied and pasted from api-docs
 	if herr, ok := err.(intercom.IntercomError); ok && herr.GetCode() == "not_found" {
 		fmt.Fprintf(os.Stderr, "Error from Intercom when adding note %v: %v\n", "", err)
 		return
-	}
-	
-	Name := strings.Fields(user.Name)
-	firstName:=Name[0]
-	
-	buildiumSupport := strings.Contains(user.Email,"@buildium.com")
-	
-	if plan_type == "buildium" && !buildiumSupport  {
-		sendBuildiumReply(firstName, conversationID)
-	}
-	conversationMessage = strings.ToLower(conversationMessage)
-	if strings.Contains(conversationMessage,"change password") {
-		sendPasswordReply(firstName, conversationID)
 	}
 }
 
@@ -159,7 +181,7 @@ func makeAndSendNote(ID string, conversationID string, conversationMessage strin
 
 //queries the db and adds returned values in array
 func getUserData(ID string) (inspectionsRec []Inspection, reportsRec []Report, businessRec []Business, iapRec []IAP, integrationName string, planType string) {
-
+	fmt.Println("getUserData");
 	//fetching most recent (5) inspections for the user within the last 30 days.
 	err := db.Select(&inspectionsRec, "SELECT folders.business,folders.user,folders.role ,folders.folder_id,folders.folder_name,i.created_at as created_at,i.template_name,i.id,i.status,i.location FROM (SELECT businesses.business_id as business,businesses.user_id as user,role_id as role,folder_id as folder_id,folder_name as folder_name FROM (SELECT bm.business_id as business_id,bm.user_id as user_id,bm.business_role_id as role_id,f.id as folder_id,f.name as folder_name FROM business_membership as bm JOIN portfolios as f ON bm.business_id = f.business_id WHERE bm.user_id = $1 AND bm.inactivated_at IS NULL AND f.inactivated_at IS NULL) as businesses GROUP BY businesses.business_id,businesses.role_id,businesses.user_id,folder_id,folder_name ORDER BY businesses.business_id ) as folders JOIN inspections as i ON folders.folder_id = i.folder_id WHERE i.user_id = $1::varchar AND i.archived_at IS NULL AND i.created_at > (CURRENT_DATE- interval '30 day') ORDER BY i.created_at DESC LIMIT $2", ID, 5)
 	if err != nil {
@@ -211,10 +233,7 @@ func getUserData(ID string) (inspectionsRec []Inspection, reportsRec []Report, b
 	}
 
 	// DD/buildium/mri
-	err = db.Get(&planType, "Select plan_type FROM current_subscriptions WHERE business_id IN (SELECT business_id from business_membership WHERE user_id = $1 AND inactivated_at IS NULL)", ID)
-	if err != nil {
-		fmt.Fprintf(os.Stderr, "Error in plan query %v: %v\n", ID, err)
-	}
+	planType = getUserPlanType(ID)
 	return
 }
 
@@ -224,6 +243,7 @@ func getUserData(ID string) (inspectionsRec []Inspection, reportsRec []Report, b
 // build the note in a string format
 // should be called when a new intercom message is received
 func makeNote(us_id string) (string, string) {
+	fmt.Println("makeNote");
 	var note string
 	var formattedDate string
 
@@ -330,5 +350,7 @@ func makeNote(us_id string) (string, string) {
 			note += "<b>The business is on IAP. It expires on </b>" + formattedDate
 		}
 	}
+	note += "\n"
+	note += "<a href=" + "https://hpy.io/yumi" + ">" + "Feedback/Report issue" + "</a>"
 	return note, planType
 }
