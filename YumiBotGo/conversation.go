@@ -118,34 +118,59 @@ func processNewConversation(user User, conversationID string, conversationMessag
 	if user.Type == "user" {
 		fmt.Println("message from a user. calling makeAndSendNote");
 		makeAndSendNote(user, conversationID)
-
-		// buildium autoresponder - only if not buildium support
-		buildiumSupport := strings.Contains(user.Email,"@buildium.com")
-		var ignorePhrases []string 
-		var autoReply bool
-
-		ignorePhrases:=["Automatic Reply","Automatic reply",,"automatic reply",,"Auto-reply",,"auto reply",
-		,"Automatic Reply",,"Automatic Reply",,"Automatic Reply"]
-
-		for _, phrase := range ignorePhrases{
-			val:=strings.Contains(conversationSubject, phrase)
-
-			if val {
-				autoReply = true
-				break
-			}
-		}
-
+		fmt.Println("")
 		planType := getUserPlanType(user.UserID)
+		if planType == "buildium" {
+			fmt.Println("plan type Buildium")
+			
+			if conversationSubject != "" {
+				fmt.Println("conversationSubject not null")
+		
+				conversationSubject = strings.ToLower(conversationSubject)
+			
+				// buildium autoresponder - only if not buildium support
+				buildiumSupport := strings.Contains(user.Email,"@buildium.com")
 
-		if planType == "buildium" && !buildiumSupport && !autoReply {
-			sendBuildiumReply(user, conversationID)
+				var autoRepliedMessage bool
+				var ignorePhrases = []string{"automatic-reply","automatic reply","auto-reply","auto reply", "out of office","out-of-office"}
+				
+				for _, phrase := range ignorePhrases{
+					val:=strings.Contains(conversationSubject, phrase)
+					if val {
+						autoRepliedMessage = true
+						break
+					}
+				}
+				
+				if !buildiumSupport && !autoRepliedMessage {
+					sendBuildiumReply(user, conversationID)
+				}
+			}
 		}
 	}
 
 	// change password autoresponder
 	conversationMessage = strings.ToLower(conversationMessage)
-	if strings.Contains(conversationMessage,"change password") {
+	fmt.Println("this is message in lower case: "+conversationMessage)
+		
+	var passwordPhrases = []string{"change password","change my password","reset password", "reset my password"} 
+	
+	var passwordReply bool
+	
+	for _, phrase := range passwordPhrases{
+			val1:=strings.Contains(conversationMessage, phrase)
+
+			if val1 {
+				fmt.Println("password phrase matched ")
+		
+				passwordReply = true
+				break
+			}
+	}
+	fmt.Println("PasswordReply is:")
+	fmt.Println(passwordReply)
+		
+	if passwordReply {
 		sendPasswordReply(user, conversationID)
 	}
 }
