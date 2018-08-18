@@ -1,4 +1,5 @@
 package main
+
 import (
 	// "encoding/json"
 	//"errors"
@@ -15,6 +16,7 @@ import (
 
 	intercom "gopkg.in/intercom/intercom-go.v2"
 )
+
 type Inspection struct {
 	Business     string
 	User         string
@@ -41,7 +43,7 @@ type Report struct {
 }
 
 type Business struct {
-	ID	string `db:"business_id"`
+	ID   string `db:"business_id"`
 	Role string `db:"business_role_id"`
 }
 type IAP struct {
@@ -53,20 +55,20 @@ type Plan struct {
 
 // structs for reading payload in json received from Intercom
 
-type ConversationMessage struct{
-	Body string `json:"body"`
+type ConversationMessage struct {
+	Body    string `json:"body"`
 	Subject string `json:"subject"`
 }
 type User struct {
-	UserID 	string `json:"user_id"`
-	Type	string `json:"type"`
-	Name string `json:"name"`
-	Email string `json:"email"`
+	UserID string `json:"user_id"`
+	Type   string `json:"type"`
+	Name   string `json:"name"`
+	Email  string `json:"email"`
 }
 
 type Item struct {
-	ConversationID 	string `json:"id"`
-	User			User   `json:"user"`
+	ConversationID      string              `json:"id"`
+	User                User                `json:"user"`
 	ConversationMessage ConversationMessage `json:"conversation_message"`
 }
 
@@ -77,8 +79,9 @@ type Data struct {
 type Message struct {
 	Data Data `json:"data"`
 }
-func makeAndSendNote(user User, conversationID string, params... string) {
-	fmt.Println("makeAndSendNote");
+
+func makeAndSendNote(user User, conversationID string, params ...string) {
+	fmt.Println("makeAndSendNote")
 	ID := user.UserID
 	p := fmt.Println
 
@@ -96,7 +99,7 @@ func makeAndSendNote(user User, conversationID string, params... string) {
 	p("Conversation id: " + conversationID)
 	p("User id: " + ID)
 	p("User name: " + user.Name)
-	p("User email: "+ user.Email)
+	p("User email: " + user.Email)
 
 	// calling the method to compile the note with all the required information
 	note, _ := makeNote(ID)
@@ -113,7 +116,7 @@ func makeAndSendNote(user User, conversationID string, params... string) {
 
 //queries the db and adds returned values in array
 func getUserData(ID string) (inspectionsRec []Inspection, reportsRec []Report, businessRec []Business, iapRec []IAP, integrationName string, planTypeRec []Plan) {
-	fmt.Println("getUserData");
+	fmt.Println("getUserData")
 	//fetching most recent (5) inspections for the user within the last 30 days.
 	err := db.Select(&inspectionsRec, "SELECT folders.business,folders.user,folders.role ,folders.folder_id,folders.folder_name,i.created_at as created_at,i.template_name,i.id,i.status,i.location FROM (SELECT businesses.business_id as business,businesses.user_id as user,role_id as role,folder_id as folder_id,folder_name as folder_name FROM (SELECT bm.business_id as business_id,bm.user_id as user_id,bm.business_role_id as role_id,f.id as folder_id,f.name as folder_name FROM business_membership as bm JOIN portfolios as f ON bm.business_id = f.business_id WHERE bm.user_id = $1 AND bm.inactivated_at IS NULL AND f.inactivated_at IS NULL) as businesses GROUP BY businesses.business_id,businesses.role_id,businesses.user_id,folder_id,folder_name ORDER BY businesses.business_id ) as folders JOIN inspections as i ON folders.folder_id = i.folder_id WHERE i.user_id = $1::varchar AND i.archived_at IS NULL AND i.created_at > (CURRENT_DATE- interval '30 day') ORDER BY i.created_at DESC LIMIT $2", ID, 5)
 	if err != nil {
@@ -175,7 +178,7 @@ func getUserData(ID string) (inspectionsRec []Inspection, reportsRec []Report, b
 // build the note in a string format
 // should be called when a new intercom message is received
 func makeNote(us_id string) (string, string) {
-	fmt.Println("makeNote");
+	fmt.Println("makeNote")
 	var note string
 	var formattedDate string
 
@@ -222,8 +225,7 @@ func makeNote(us_id string) (string, string) {
 
 	//******************constructing plan type string******************
 
-
-	planType :="plan type"
+	planType := "plan type"
 	for _, plan := range planTypeRec {
 		if plan.Type == "due_diligence" {
 			note += "\n"

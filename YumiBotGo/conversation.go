@@ -1,4 +1,5 @@
 package main
+
 import (
 	"encoding/json"
 	//"errors"
@@ -12,16 +13,14 @@ import (
 
 	//"github.com/jmoiron/sqlx"
 	_ "github.com/lib/pq"
-
 	// intercom "gopkg.in/intercom/intercom-go.v2"
 )
-
 
 //********************************************New Conversation********************************************
 
 //gets intercom token, admin list, reads the payload, and post note as a reply in the conversation
 func newConversation(w http.ResponseWriter, r *http.Request) {
-	fmt.Println("newConversation");
+	fmt.Println("newConversation")
 	// Read body/payload
 	b, err := ioutil.ReadAll(r.Body)
 	defer r.Body.Close()
@@ -39,15 +38,15 @@ func newConversation(w http.ResponseWriter, r *http.Request) {
 	}
 
 	/* getting attributes from the received json
-		user- user's attributes - name id email type
-		conversationId - Intercom conversation ID
-		conversationmessage- user's message
+	user- user's attributes - name id email type
+	conversationId - Intercom conversation ID
+	conversationmessage- user's message
 	*/
 
 	user := msg.Data.Item.User
 	conversationId := msg.Data.Item.ConversationID
-	conversationMessage:=msg.Data.Item.ConversationMessage.Body
-	conversationSubject:=msg.Data.Item.ConversationMessage.Subject
+	conversationMessage := msg.Data.Item.ConversationMessage.Body
+	conversationSubject := msg.Data.Item.ConversationMessage.Subject
 
 	go processNewConversation(user, conversationId, conversationMessage, conversationSubject)
 	w.WriteHeader(http.StatusOK)
@@ -55,13 +54,13 @@ func newConversation(w http.ResponseWriter, r *http.Request) {
 }
 
 func processNewConversation(user User, conversationID string, conversationMessage string, conversationSubject string) {
-	fmt.Println("processNewConversation");
+	fmt.Println("processNewConversation")
 	// user.type - lead/user
 	if user.Type == "user" {
-		fmt.Println("message from a user. calling makeAndSendNote");
+		fmt.Println("message from a user. calling makeAndSendNote")
 		makeAndSendNote(user, conversationID)
 		fmt.Println("")
-		planType :="plan type"
+		planType := "plan type"
 		planTypeRec := getUserPlanType(user.UserID)
 		for _, plan := range planTypeRec {
 			if plan.Type == "buildium" {
@@ -71,25 +70,25 @@ func processNewConversation(user User, conversationID string, conversationMessag
 
 		if planType == "buildium" {
 			fmt.Println("plan type Buildium")
-			
-			buildiumSupport := strings.Contains(user.Email,"@buildium.com")
+
+			buildiumSupport := strings.Contains(user.Email, "@buildium.com")
 			fmt.Println("Buildium support?")
 			fmt.Println(buildiumSupport)
-			
+
 			if conversationSubject == "" {
 				fmt.Println("conversationSubject null")
 
 				if !buildiumSupport {
 					sendBuildiumReply(user, conversationID)
 				}
-			}else{
+			} else {
 				conversationSubject = strings.ToLower(conversationSubject)
-		
+
 				var autoRepliedMessage bool
-				var ignorePhrases = []string{"automatic-reply","automatic reply","auto-reply","auto reply", "out of office","out-of-office"}
-			
-				for _, phrase := range ignorePhrases{
-					val:=strings.Contains(conversationSubject, phrase)
+				var ignorePhrases = []string{"automatic-reply", "automatic reply", "auto-reply", "auto reply", "out of office", "out-of-office"}
+
+				for _, phrase := range ignorePhrases {
+					val := strings.Contains(conversationSubject, phrase)
 					if val {
 						autoRepliedMessage = true
 						break
@@ -98,31 +97,31 @@ func processNewConversation(user User, conversationID string, conversationMessag
 				if !buildiumSupport && !autoRepliedMessage {
 					sendBuildiumReply(user, conversationID)
 				}
+			}
 		}
-	}
 
-	// change password autoresponder
-	conversationMessage = strings.ToLower(conversationMessage)		
-	var passwordPhrases = []string{"change password","change my password","reset password", 
-	"reset my password","pasword is incorrect","manage password","forgot password","forgot my password"} 
-	
-	var passwordReply bool
-	
-	for _, phrase := range passwordPhrases{
-			val1:=strings.Contains(conversationMessage, phrase)
+		// change password autoresponder
+		conversationMessage = strings.ToLower(conversationMessage)
+		var passwordPhrases = []string{"change password", "change my password", "reset password",
+			"reset my password", "pasword is incorrect", "manage password", "forgot password", "forgot my password"}
+
+		var passwordReply bool
+
+		for _, phrase := range passwordPhrases {
+			val1 := strings.Contains(conversationMessage, phrase)
 
 			if val1 {
 				passwordReply = true
 				break
 			}
-	}	
-	if passwordReply {
-		sendPasswordReply(user, conversationID)
+		}
+		if passwordReply {
+			sendPasswordReply(user, conversationID)
+		}
 	}
 }
-}
 func getUserPlanType(ID string) (planTypeRec []Plan) {
-	fmt.Println("getUserPlanType");
+	fmt.Println("getUserPlanType")
 	err := db.Select(&planTypeRec, "Select plan_type FROM current_subscriptions WHERE business_id IN (SELECT business_id from business_membership WHERE user_id = $1 AND inactivated_at IS NULL)", ID)
 	if err != nil {
 		fmt.Fprintf(os.Stderr, "Error in plan query %v: %v\n", ID, err)
