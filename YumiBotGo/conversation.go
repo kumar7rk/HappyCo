@@ -61,21 +61,33 @@ func processNewConversation(user User, conversationID string, conversationMessag
 		fmt.Println("message from a user. calling makeAndSendNote");
 		makeAndSendNote(user, conversationID)
 		fmt.Println("")
-		planType := getUserPlanType(user.UserID)
+		planType :="plan type"
+		planTypeRec := getUserPlanType(user.UserID)
+		for _, plan := range planTypeRec {
+			if plan.Type == "buildium" {
+				planType = plan.Type
+			}
+		}
+
 		if planType == "buildium" {
 			fmt.Println("plan type Buildium")
 			
-			if conversationSubject != "" {
-				fmt.Println("conversationSubject not null")
-		
-				conversationSubject = strings.ToLower(conversationSubject)
+			buildiumSupport := strings.Contains(user.Email,"@buildium.com")
+			fmt.Println("Buildium support?")
+			fmt.Println(buildiumSupport)
 			
-				// buildium autoresponder - only if not buildium support
-				buildiumSupport := strings.Contains(user.Email,"@buildium.com")
+			if conversationSubject == "" {
+				fmt.Println("conversationSubject null")
 
+				if !buildiumSupport {
+					sendBuildiumReply(user, conversationID)
+				}
+			}else{
+				conversationSubject = strings.ToLower(conversationSubject)
+		
 				var autoRepliedMessage bool
 				var ignorePhrases = []string{"automatic-reply","automatic reply","auto-reply","auto reply", "out of office","out-of-office"}
-				
+			
 				for _, phrase := range ignorePhrases{
 					val:=strings.Contains(conversationSubject, phrase)
 					if val {
@@ -83,19 +95,16 @@ func processNewConversation(user User, conversationID string, conversationMessag
 						break
 					}
 				}
-				
 				if !buildiumSupport && !autoRepliedMessage {
 					sendBuildiumReply(user, conversationID)
 				}
-			}
 		}
 	}
 
 	// change password autoresponder
-	conversationMessage = strings.ToLower(conversationMessage)
-	fmt.Println("this is message in lower case: "+conversationMessage)
-		
-	var passwordPhrases = []string{"change password","change my password","reset password", "reset my password"} 
+	conversationMessage = strings.ToLower(conversationMessage)		
+	var passwordPhrases = []string{"change password","change my password","reset password", 
+	"reset my password","pasword is incorrect","manage password","forgot password","forgot my password"} 
 	
 	var passwordReply bool
 	
@@ -103,24 +112,18 @@ func processNewConversation(user User, conversationID string, conversationMessag
 			val1:=strings.Contains(conversationMessage, phrase)
 
 			if val1 {
-				fmt.Println("password phrase matched ")
-		
 				passwordReply = true
 				break
 			}
-	}
-	fmt.Println("PasswordReply is:")
-	fmt.Println(passwordReply)
-		
+	}	
 	if passwordReply {
 		sendPasswordReply(user, conversationID)
 	}
 }
-
-func getUserPlanType(ID string) (planType string) {
+}
+func getUserPlanType(ID string) (planTypeRec []Plan) {
 	fmt.Println("getUserPlanType");
-	// DD/buildium/mri
-	err := db.Get(&planType, "Select plan_type FROM current_subscriptions WHERE business_id IN (SELECT business_id from business_membership WHERE user_id = $1 AND inactivated_at IS NULL)", ID)
+	err := db.Select(&planTypeRec, "Select plan_type FROM current_subscriptions WHERE business_id IN (SELECT business_id from business_membership WHERE user_id = $1 AND inactivated_at IS NULL)", ID)
 	if err != nil {
 		fmt.Fprintf(os.Stderr, "Error in plan query %v: %v\n", ID, err)
 	}
