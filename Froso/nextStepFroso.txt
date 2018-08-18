@@ -1,0 +1,22 @@
+play around with the sheetjs
+
+write better code (appfolio example) 
+//- continue if website is not available
+- run for all the rows in a column rather than hardcoding the values
+- if empty cell still add information
+- a better for writeCell values
+
+
+//visit multiple urls hardcoded
+
+//visit multiple urls hardcoded with less/efficient code
+
+//read a cell value from excel
+
+//write company name to column b for the first cell
+
+//add some text in column c and copy website
+
+//check the code ones
+
+//run for the first batch
