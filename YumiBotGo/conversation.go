@@ -96,28 +96,29 @@ func processNewConversation(user User, conversationID string, conversationMessag
 				}
 				if !buildiumSupport && !autoRepliedMessage {
 					sendBuildiumReply(user, conversationID)
+					return
 				}
 			}
 		}
 
-		// change password autoresponder
-		conversationMessage = strings.ToLower(conversationMessage)
-		var passwordPhrases = []string{"change password", "change my password", "reset password",
-			"reset my password", "pasword is incorrect", "manage password", "forgot password", "forgot my password"}
+	}
+	// change password autoresponder
+	conversationMessage = strings.ToLower(conversationMessage)
+	var passwordPhrases = []string{"change password", "change my password", "reset password",
+		"reset my password", "pasword is incorrect", "manage password", "manage my password", "forgot password", "forgot my password"}
 
-		var passwordReply bool
+	var passwordReply bool
 
-		for _, phrase := range passwordPhrases {
-			val1 := strings.Contains(conversationMessage, phrase)
+	for _, phrase := range passwordPhrases {
+		val1 := strings.Contains(conversationMessage, phrase)
 
-			if val1 {
-				passwordReply = true
-				break
-			}
+		if val1 {
+			passwordReply = true
+			break
 		}
-		if passwordReply {
-			sendPasswordReply(user, conversationID)
-		}
+	}
+	if passwordReply {
+		sendPasswordReply(user, conversationID)
 	}
 }
 func getUserPlanType(ID string) (planTypeRec []Plan) {
