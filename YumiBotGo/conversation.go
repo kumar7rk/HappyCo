@@ -46,6 +46,7 @@ func newConversation(w http.ResponseWriter, r *http.Request) {
 	w.WriteHeader(http.StatusOK)
 	w.Write([]byte("Received"))
 }
+//********************************************Checking for different attributes********************************************
 
 func processNewConversation(user User, conversationID string, conversationMessage string, conversationSubject string) {
 	fmt.Println("processNewConversation")
@@ -115,6 +116,8 @@ func processNewConversation(user User, conversationID string, conversationMessag
 		sendPasswordReply(user, conversationID)
 	}
 }
+//********************************************Getting PlanType for Buidlium auto responder********************************************
+
 func getUserPlanType(ID string) (planTypeRec []Plan) {
 	fmt.Println("getUserPlanType")
 	err := db.Select(&planTypeRec, "Select plan_type FROM current_subscriptions WHERE business_id IN (SELECT business_id from business_membership WHERE user_id = $1 AND inactivated_at IS NULL)", ID)

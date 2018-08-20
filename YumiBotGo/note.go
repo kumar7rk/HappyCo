@@ -72,6 +72,7 @@ type Data struct {
 type Message struct {
 	Data Data `json:"data"`
 }
+//********************************************Adding note to conversation********************************************
 
 func makeAndSendNote(user User, conversationID string, params ...string) {
 	fmt.Println("makeAndSendNote")
@@ -160,16 +161,14 @@ func getUserData(ID string) (inspectionsRec []Inspection, reportsRec []Report, b
 		integrationName = "Resman"
 	}
 
-	// DD/buildium/mri
+	// Plan type = DD/Buildium/MRI
 	planTypeRec = getUserPlanType(ID)
 	return
 }
 
 //********************************************Building note********************************************
 
-// code starts running from here.
 // build the note in a string format
-// should be called when a new intercom message is received
 func makeNote(us_id string) (string, string) {
 	fmt.Println("makeNote")
 	var note string

@@ -45,13 +45,14 @@ func main() {
 		return
 	}
 
-	//handling every new convesations in newConversation method
+	//handling every new convesations in newConversation method in conversation.go
 	http.HandleFunc("/", newConversation)
 	http.HandleFunc("/healthcheck", healthcheck)
 	if err := http.ListenAndServe(":8080", nil); err != nil {
 		panic(err)
 	}
 }
+//********************************************Health check********************************************
 
 func healthcheck(w http.ResponseWriter, r *http.Request) {
 	if ping() != nil {
@@ -61,6 +62,7 @@ func healthcheck(w http.ResponseWriter, r *http.Request) {
 	}
 	w.Write([]byte("OK " + buildvars.BuildScmRevisionShort + " " + buildvars.BuildScmStatus))
 }
+//********************************************Ping********************************************
 
 func ping() error {
 	ping := make(chan error, 0)
