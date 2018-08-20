@@ -2,18 +2,12 @@ package main
 
 import (
 	"encoding/json"
-	//"errors"
 	"fmt"
+	_ "github.com/lib/pq"
 	"io/ioutil"
 	"net/http"
 	"os"
-	// "strconv"
 	"strings"
-	// "time"
-
-	//"github.com/jmoiron/sqlx"
-	_ "github.com/lib/pq"
-	// intercom "gopkg.in/intercom/intercom-go.v2"
 )
 
 //********************************************New Conversation********************************************
@@ -55,7 +49,7 @@ func newConversation(w http.ResponseWriter, r *http.Request) {
 
 func processNewConversation(user User, conversationID string, conversationMessage string, conversationSubject string) {
 	fmt.Println("processNewConversation")
-	// user.type - lead/user
+	// user.type = lead/user
 	if user.Type == "user" {
 		fmt.Println("message from a user. calling makeAndSendNote")
 		makeAndSendNote(user, conversationID)
