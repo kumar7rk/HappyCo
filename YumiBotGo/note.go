@@ -63,6 +63,8 @@ type Item struct {
 	ConversationID      string              `json:"id"`
 	User                User                `json:"user"`
 	ConversationMessage ConversationMessage `json:"conversation_message"`
+	ConversationPart	ConversationPart	`json:"conversation_parts"`
+
 }
 
 type Data struct {
