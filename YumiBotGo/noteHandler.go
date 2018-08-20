@@ -9,6 +9,7 @@ import (
 	// "os"
 	// "strings"
 )
+
 type Part struct {
 	Body string `json:"body"`
 }
@@ -43,7 +44,7 @@ func newAdminNote(w http.ResponseWriter, r *http.Request) {
 
 	user := msg.Data.Item.User
 	conversationId := msg.Data.Item.ConversationID
-	note :=msg.Data.Item.ConversationPart.Part[0].Body
+	note := msg.Data.Item.ConversationPart.Part[0].Body
 
 	fmt.Println(user)
 	fmt.Println(note)
@@ -55,15 +56,15 @@ func newAdminNote(w http.ResponseWriter, r *http.Request) {
 
 func processNewAdminNote(user User, conversationID string, note string) {
 	fmt.Println("processNewAdminNote")
-	
-	if note == "<p>yumi run note</p>" {		
+
+	if note == "<p>yumi run note</p>" {
 		makeAndSendNote(user, conversationID)
-	}else if(note == "<p>yumi run buildium</p>") {
-		sendBuildiumReply(user, conversationID)		
-	}else if (note == "<p>yumi run password</p>") {
+	} else if note == "<p>yumi run buildium</p>" {
+		sendBuildiumReply(user, conversationID)
+	} else if note == "<p>yumi run password</p>" {
 		sendPasswordReply(user, conversationID)
-	}else if (note == "<p>yumi help</p>") {
-		
+	} else if note == "<p>yumi help</p>" {
+
 	}
-	
+
 }
