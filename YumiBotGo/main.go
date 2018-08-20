@@ -52,6 +52,7 @@ func main() {
 		panic(err)
 	}
 }
+
 //********************************************Health check********************************************
 
 func healthcheck(w http.ResponseWriter, r *http.Request) {
@@ -62,6 +63,7 @@ func healthcheck(w http.ResponseWriter, r *http.Request) {
 	}
 	w.Write([]byte("OK " + buildvars.BuildScmRevisionShort + " " + buildvars.BuildScmStatus))
 }
+
 //********************************************Ping********************************************
 
 func ping() error {

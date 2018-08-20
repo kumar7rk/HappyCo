@@ -6,6 +6,7 @@ import (
 	"os"
 	"strings"
 )
+
 //********************************************Sending Buildium reply********************************************
 func sendBuildiumReply(user User, conversationID string, params ...string) {
 	accessToken := os.Getenv("INTERCOM_ACCESS_TOKEN")

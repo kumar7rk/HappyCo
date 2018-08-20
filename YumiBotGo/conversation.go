@@ -46,6 +46,7 @@ func newConversation(w http.ResponseWriter, r *http.Request) {
 	w.WriteHeader(http.StatusOK)
 	w.Write([]byte("Received"))
 }
+
 //********************************************Checking for different attributes********************************************
 
 func processNewConversation(user User, conversationID string, conversationMessage string, conversationSubject string) {
@@ -116,6 +117,7 @@ func processNewConversation(user User, conversationID string, conversationMessag
 		sendPasswordReply(user, conversationID)
 	}
 }
+
 //********************************************Getting PlanType for Buidlium auto responder********************************************
 
 func getUserPlanType(ID string) (planTypeRec []Plan) {

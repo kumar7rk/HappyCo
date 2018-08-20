@@ -2,10 +2,10 @@ package main
 
 import (
 	"fmt"
+	_ "github.com/lib/pq"
 	"os"
 	"strconv"
 	"time"
-	_ "github.com/lib/pq"
 
 	intercom "gopkg.in/intercom/intercom-go.v2"
 )
@@ -72,6 +72,7 @@ type Data struct {
 type Message struct {
 	Data Data `json:"data"`
 }
+
 //********************************************Adding note to conversation********************************************
 
 func makeAndSendNote(user User, conversationID string, params ...string) {
