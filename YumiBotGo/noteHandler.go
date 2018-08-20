@@ -6,12 +6,19 @@ import (
 	_ "github.com/lib/pq"
 	"io/ioutil"
 	"net/http"
-	"os"
-	"strings"
+	// "os"
+	// "strings"
 )
+type Part struct {
+	Body string `json:"body"`
+}
+
+type ConversationPart struct {
+	Part []Part `json:"conversation_parts"`
+}
 
 func newAdminNote(w http.ResponseWriter, r *http.Request) {
-	fmt.Println("newConversation")
+	fmt.Println("newAdminNote")
 	// Read body/payload
 	b, err := ioutil.ReadAll(r.Body)
 	defer r.Body.Close()
@@ -36,10 +43,27 @@ func newAdminNote(w http.ResponseWriter, r *http.Request) {
 
 	user := msg.Data.Item.User
 	conversationId := msg.Data.Item.ConversationID
-	conversationMessage := msg.Data.Item.ConversationMessage.Body
-	conversationSubject := msg.Data.Item.ConversationMessage.Subject
+	note :=msg.Data.Item.ConversationPart.Part[0].Body
 
-	go processNewConversation(user, conversationId, conversationMessage, conversationSubject)
+	fmt.Println(user)
+	fmt.Println(note)
+
+	go processNewAdminNote(user, conversationId, note)
 	w.WriteHeader(http.StatusOK)
 	w.Write([]byte("Received"))
+}
+
+func processNewAdminNote(user User, conversationID string, note string) {
+	fmt.Println("processNewAdminNote")
+	
+	if note == "<p>yumi run note</p>" {		
+		makeAndSendNote(user, conversationID)
+	}else if(note == "<p>yumi run buildium</p>") {
+		sendBuildiumReply(user, conversationID)		
+	}else if (note == "<p>yumi run password</p>") {
+		sendPasswordReply(user, conversationID)
+	}else if (note == "<p>yumi help</p>") {
+		
+	}
+	
 }
