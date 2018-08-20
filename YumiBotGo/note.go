@@ -1,17 +1,10 @@
 package main
 
 import (
-	// "encoding/json"
-	//"errors"
 	"fmt"
-	// "io/ioutil"
-	// "net/http"
 	"os"
 	"strconv"
-	// "strings"
 	"time"
-
-	//"github.com/jmoiron/sqlx"
 	_ "github.com/lib/pq"
 
 	intercom "gopkg.in/intercom/intercom-go.v2"
