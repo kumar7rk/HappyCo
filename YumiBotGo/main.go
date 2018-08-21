@@ -13,22 +13,24 @@ import (
 	_ "github.com/lib/pq"
 
 	"happyco/apps/tools/libs/buildvars"
-	// intercom "gopkg.in/intercom/intercom-go.v2"
+	intercom "gopkg.in/intercom/intercom-go.v2"
 )
 
 //********************************************Variable declaration********************************************
 
 var db *sqlx.DB
 
-/*var accessToken string
-var ic */
+var ic *intercom.Client
+
+func init() {
+	accessToken := os.Getenv("INTERCOM_ACCESS_TOKEN")
+	ic = intercom.NewClient(accessToken, "")
+}
+
 //********************************************Main function********************************************
 
 func main() {
 	var err error
-
-	// accessToken = os.Getenv("INTERCOM_ACCESS_TOKEN")
-	// ic := intercom.NewClient(accessToken, "")
 
 	postgresURI := os.Getenv("POSTGRES_URI")
 	if postgresURI == "" {
@@ -46,7 +48,8 @@ func main() {
 	}
 
 	//handling every new convesations in newConversation method in conversation.go
-	http.HandleFunc("/", newConversation)
+	//http.HandleFunc("/", newConversation)
+	http.HandleFunc("/", newAdminNote)
 	http.HandleFunc("/healthcheck", healthcheck)
 	if err := http.ListenAndServe(":8080", nil); err != nil {
 		panic(err)
@@ -79,4 +82,19 @@ func ping() error {
 	case err = <-ping:
 	}
 	return err
+}
+
+//**** Intercom ***
+func AddNote(conversationID, note string) {
+	_, err := ic.Conversations.Reply(conversationID, intercom.Admin{ID: "207278"}, intercom.CONVERSATION_NOTE, note)
+	if err != nil {
+		fmt.Printf("Error from Intercom while adding note: %v\n", err)
+	}
+}
+
+func AddReply(conversationID, reply string) {
+	_, err := ic.Conversations.Reply(conversationID, intercom.Admin{ID: "207278"}, intercom.CONVERSATION_COMMENT, reply)
+	if err != nil {
+		fmt.Printf("Error from Intercom while adding reply: %v\n", err)
+	}
 }
