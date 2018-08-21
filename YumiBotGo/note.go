@@ -46,34 +46,6 @@ type Plan struct {
 	Type string `db:"plan_type"`
 }
 
-// structs for reading payload in json received from Intercom
-
-type ConversationMessage struct {
-	Body    string `json:"body"`
-	Subject string `json:"subject"`
-}
-type User struct {
-	UserID string `json:"user_id"`
-	Type   string `json:"type"`
-	Name   string `json:"name"`
-	Email  string `json:"email"`
-}
-
-type Item struct {
-	ConversationID      string              `json:"id"`
-	User                User                `json:"user"`
-	ConversationMessage ConversationMessage `json:"conversation_message"`
-	ConversationPart    ConversationPart    `json:"conversation_parts"`
-}
-
-type Data struct {
-	Item Item `json:"item"`
-}
-
-type Message struct {
-	Data Data `json:"data"`
-}
-
 //********************************************Adding note to conversation********************************************
 
 func makeAndSendNote(user User, conversationID string, params ...string) {
