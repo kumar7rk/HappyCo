@@ -50,12 +50,10 @@ func newConversation(w http.ResponseWriter, r *http.Request) {
 //********************************************Checking for different attributes********************************************
 
 func processNewConversation(user User, conversationID string, conversationMessage string, conversationSubject string) {
-	fmt.Println("processNewConversation")
 	// user.type = lead/user
 	if user.Type == "user" {
-		fmt.Println("message from a user. calling makeAndSendNote")
 		makeAndSendNote(user, conversationID)
-		fmt.Println("")
+		
 		planType := "plan type"
 		planTypeRec := getUserPlanType(user.UserID)
 		for _, plan := range planTypeRec {
@@ -63,17 +61,12 @@ func processNewConversation(user User, conversationID string, conversationMessag
 				planType = plan.Type
 			}
 		}
-
+		// buildium responder
 		if planType == "buildium" {
-			fmt.Println("plan type Buildium")
-
+			
 			buildiumSupport := strings.Contains(user.Email, "@buildium.com")
-			fmt.Println("Buildium support?")
-			fmt.Println(buildiumSupport)
 
 			if conversationSubject == "" {
-				fmt.Println("conversationSubject null")
-
 				if !buildiumSupport {
 					sendBuildiumReply(user, conversationID)
 				}
@@ -81,7 +74,8 @@ func processNewConversation(user User, conversationID string, conversationMessag
 				conversationSubject = strings.ToLower(conversationSubject)
 
 				var autoRepliedMessage bool
-				var ignorePhrases = []string{"automatic-reply", "automatic reply", "auto-reply", "auto reply", "out of office", "out-of-office"}
+				var ignorePhrases = []string{"automatic-reply", "automatic reply", "auto-reply", "auto reply", "out of office", "out-of-office", "automatic"}
+				//var ignorePhrases = []string{"auto", "out of office", "out-of-office", "automatic"}
 
 				for _, phrase := range ignorePhrases {
 					val := strings.Contains(conversationSubject, phrase)
@@ -121,7 +115,6 @@ func processNewConversation(user User, conversationID string, conversationMessag
 //********************************************Getting PlanType for Buidlium auto responder********************************************
 
 func getUserPlanType(ID string) (planTypeRec []Plan) {
-	fmt.Println("getUserPlanType")
 	err := db.Select(&planTypeRec, "Select plan_type FROM current_subscriptions WHERE business_id IN (SELECT business_id from business_membership WHERE user_id = $1 AND inactivated_at IS NULL)", ID)
 	if err != nil {
 		fmt.Fprintf(os.Stderr, "Error in plan query %v: %v\n", ID, err)
