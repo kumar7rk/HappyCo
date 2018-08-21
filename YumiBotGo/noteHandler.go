@@ -6,12 +6,14 @@ import (
 	_ "github.com/lib/pq"
 	"io/ioutil"
 	"net/http"
-	// "os"
-	// "strings"
 )
 
+type Author struct{
+	Name string `json:"name"`
+}
 type Part struct {
 	Body string `json:"body"`
+	Author Author `json:"author"`
 }
 
 type ConversationPart struct {
@@ -45,16 +47,19 @@ func newAdminNote(w http.ResponseWriter, r *http.Request) {
 	user := msg.Data.Item.User
 	conversationId := msg.Data.Item.ConversationID
 	note := msg.Data.Item.ConversationPart.Part[0].Body
+	author := msg.Data.Item.ConversationPart.Part[0].Author.Name
 
 	fmt.Println(user)
 	fmt.Println(note)
+	fmt.Println(author)
 
-	go processNewAdminNote(user, conversationId, note)
+
+	go processNewAdminNote(user, conversationId, note, author)
 	w.WriteHeader(http.StatusOK)
 	w.Write([]byte("Received"))
 }
 
-func processNewAdminNote(user User, conversationID string, note string) {
+func processNewAdminNote(user User, conversationID string, note string, author string) {
 	fmt.Println("processNewAdminNote")
 
 	if note == "<p>yumi run note</p>" {
@@ -63,8 +68,8 @@ func processNewAdminNote(user User, conversationID string, note string) {
 		sendBuildiumReply(user, conversationID)
 	} else if note == "<p>yumi run password</p>" {
 		sendPasswordReply(user, conversationID)
-	} else if note == "<p>yumi help</p>" {
+	} else if note == "<p>yumi help</p>" || note == "<p>yumi run help</p>"{
+		listRunCommands(author,conversationID)
 
 	}
-
 }
