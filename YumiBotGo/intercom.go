@@ -46,7 +46,6 @@ type Message struct {
 	Data Data `json:"data"`
 }
 
-
 //********************************************Add note********************************************
 func addNote(conversationID, note string) {
 	_, err := ic.Conversations.Reply(conversationID, intercom.Admin{ID: "207278"}, intercom.CONVERSATION_NOTE, note)
@@ -54,6 +53,7 @@ func addNote(conversationID, note string) {
 		fmt.Printf("Error from Intercom while adding note: %v\n", err)
 	}
 }
+
 //********************************************Reply to user********************************************
 func addReply(conversationID, reply string) {
 	_, err := ic.Conversations.Reply(conversationID, intercom.Admin{ID: "207278"}, intercom.CONVERSATION_COMMENT, reply)

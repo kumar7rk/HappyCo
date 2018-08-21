@@ -36,7 +36,7 @@ func newAdminNote(w http.ResponseWriter, r *http.Request) {
 	user := msg.Data.Item.User
 	conversationId := msg.Data.Item.ConversationID
 	note := msg.Data.Item.ConversationPart.Part[0].Body
-	author := msg.Data.Item.ConversationPart.Part[0].Author.Name	
+	author := msg.Data.Item.ConversationPart.Part[0].Author.Name
 
 	go processNewAdminNote(user, conversationId, note, author)
 	w.WriteHeader(http.StatusOK)
