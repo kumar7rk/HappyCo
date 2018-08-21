@@ -50,5 +50,7 @@ func processNewAdminNote(user User, conversationID string, note string, author s
 		sendBuildiumReply(user, conversationID)
 	} else if note == "<p>yumi run password</p>" {
 		sendPasswordReply(user, conversationID)
+	} else if note == "<p>yumi help</p>" || note == "<p>yumi run help</p>" || note == "<p>yumi</p>" {
+		listRunCommands(author, conversationID)
 	}
 }
