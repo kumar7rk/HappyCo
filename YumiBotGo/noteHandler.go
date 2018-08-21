@@ -2,14 +2,12 @@ package main
 
 import (
 	"encoding/json"
-	"fmt"
 	_ "github.com/lib/pq"
 	"io/ioutil"
 	"net/http"
 )
 
 func newAdminNote(w http.ResponseWriter, r *http.Request) {
-	fmt.Println("newAdminNote")
 	// Read body/payload
 	b, err := ioutil.ReadAll(r.Body)
 	defer r.Body.Close()
