@@ -12,8 +12,8 @@ import (
 	"github.com/jmoiron/sqlx"
 	_ "github.com/lib/pq"
 
-	"happyco/apps/tools/libs/buildvars"
 	intercom "gopkg.in/intercom/intercom-go.v2"
+	"happyco/apps/tools/libs/buildvars"
 )
 
 //********************************************Variable declaration********************************************

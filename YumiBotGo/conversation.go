@@ -53,7 +53,7 @@ func processNewConversation(user User, conversationID string, conversationMessag
 	// user.type = lead/user
 	if user.Type == "user" {
 		makeAndSendNote(user, conversationID)
-		
+
 		planType := "plan type"
 		planTypeRec := getUserPlanType(user.UserID)
 		for _, plan := range planTypeRec {
@@ -63,7 +63,7 @@ func processNewConversation(user User, conversationID string, conversationMessag
 		}
 		// buildium responder
 		if planType == "buildium" {
-			
+
 			buildiumSupport := strings.Contains(user.Email, "@buildium.com")
 
 			if conversationSubject == "" {
