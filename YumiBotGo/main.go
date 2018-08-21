@@ -83,18 +83,3 @@ func ping() error {
 	}
 	return err
 }
-
-//**** Intercom ***
-func AddNote(conversationID, note string) {
-	_, err := ic.Conversations.Reply(conversationID, intercom.Admin{ID: "207278"}, intercom.CONVERSATION_NOTE, note)
-	if err != nil {
-		fmt.Printf("Error from Intercom while adding note: %v\n", err)
-	}
-}
-
-func AddReply(conversationID, reply string) {
-	_, err := ic.Conversations.Reply(conversationID, intercom.Admin{ID: "207278"}, intercom.CONVERSATION_COMMENT, reply)
-	if err != nil {
-		fmt.Printf("Error from Intercom while adding reply: %v\n", err)
-	}
-}
