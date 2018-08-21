@@ -6,8 +6,6 @@ import (
 	"os"
 	"strconv"
 	"time"
-
-	intercom "gopkg.in/intercom/intercom-go.v2"
 )
 
 type Inspection struct {
@@ -53,16 +51,6 @@ func makeAndSendNote(user User, conversationID string, params ...string) {
 	ID := user.UserID
 	p := fmt.Println
 
-	// TODO move to main - gets intercom access token
-	accessToken := os.Getenv("INTERCOM_ACCESS_TOKEN")
-	ic := intercom.NewClient(accessToken, "")
-
-	/*user, err := ic.Users.FindByUserID(ID)
-	if err != nil {
-		fmt.Fprintf(os.Stderr, "Error while finding user ID %v: %v\n", ID, err)
-		return
-	}*/
-
 	//testing prints
 	p("Conversation id: " + conversationID)
 	p("User id: " + ID)
@@ -72,12 +60,7 @@ func makeAndSendNote(user User, conversationID string, params ...string) {
 	// calling the method to compile the note with all the required information
 	note, _ := makeNote(ID)
 
-	_, err := ic.Conversations.Reply(conversationID, intercom.Admin{ID: "207278"}, intercom.CONVERSATION_NOTE, note)
-	//copied and pasted from api-docs
-	if herr, ok := err.(intercom.IntercomError); ok && herr.GetCode() == "not_found" {
-		fmt.Fprintf(os.Stderr, "Error from Intercom when adding note %v: %v\n", "", err)
-		return
-	}
+	addReply(conversationID, note)
 }
 
 //********************************************Getting UserData********************************************
