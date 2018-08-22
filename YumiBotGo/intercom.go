@@ -69,3 +69,11 @@ func addReply(conversationID, reply string) {
 		fmt.Printf("Error from Intercom while adding reply: %v\n", err)
 	}
 }
+
+//********************************************Assign conversation********************************************
+func assignConversation(conversationID string, inboxTo *intercom.Admin) {
+	_, err := ic.Conversations.Assign(conversationID, &intercom.Admin{ID: "207278"}, inboxTo)
+	if err != nil {
+		fmt.Printf("Error from Intercom while assigning conversation: %v\n", err)
+	}
+}
