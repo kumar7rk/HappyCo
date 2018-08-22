@@ -1,0 +1,100 @@
+~/go/bin/godotenv go run *.go 
+
+Run Buildium reply if the note added equals run yumi Buildium (something like this)
+
+check some preset values (photo inline...) and message user if turned off when closing a conversation
+
+Make note look better
+	Add company name in the top line of the note
+		- This business is on Basic Permissions- Mark-Taylor 
+
+
+modify query to show address for inspections as well like report
+
+
+Note command
+ -follow up at a specific time
+
+Automatic reply in non-working hours
+
+
+
+
+Create a new user YumiBot
+
+Business query- Role id can be null
+-------------------------Done-------------------------
+
+//Use .env
+
+//Set sql query for where
+
+//Use package sqlx
+
+//put the code in a method and pass userId as parameter
+
+//put values in a variable and not print them- already in a var using global now and printing from another func --> it took like what 20 secs to get this done. :D
+
+//build notesBuilder method
+
+//write a complex sql
+
+//sql query fetching inspection in the last 30 days
+
+//complete the noteBuilder method
+
+//rename posturi variable
+
+//iap query
+
+//write new conversation method using intercom api
+
+//Post request
+
+//check for user/lead
+
+//not fetching reports
+- seems like it is ; more testing
+- closing probably the bug which didn't let access files table. Isn't happening anymore
+
+//Show inspection/report address instead of urls
+- report done 
+- inspection a bit cumbersome. May be later if required
+
+//Make sense of variable names- reward underneath :)
+
+//Due diligence - show 
+
+//print --> log or something else
+- no print statement in use
+
+//Change query as per sqlx - go through https://github.com/jmoiron/sqlx
+
+//test queries:
+- iap
+- integration 
+- buildium message 
+- plan type
+
+//Rather than running for loop for recs find a way to check for only for one value
+
+//running twice
+- might've something to do w/ngrok
+- Michael T confirms to some extent will probably be sure after this review
+
+//fetch inspections report from unarchived folders only
+- we're; more testing or something
+
+//modify play type query to check if any of the business is a Buildium/DD....
+
+//exclude buildium support
+
+//Solve a bug where B auto responder doesn't run when on a trial account too
+
+//Ignore buildium emails for keywords
+Automatic
+Automatic reply
+Auto-reply
+auto reply
+
+//phrases for password reset
