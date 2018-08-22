@@ -54,15 +54,18 @@ func processNewConversation(user User, conversationID string, conversationMessag
 	if user.Type == "user" {
 		makeAndSendNote(user, conversationID)
 
-		planType := "plan type"
+		//planType := "plan type"
+		var isBuildiumUser bool
 		planTypeRec := getUserPlanType(user.UserID)
 		for _, plan := range planTypeRec {
 			if plan.Type == "buildium" {
-				planType = plan.Type
+				//planType = plan.Type
+				isBuildiumUser = true
+				break
 			}
 		}
 		// buildium responder
-		if planType == "buildium" {
+		if isBuildiumUser {
 
 			buildiumSupport := strings.Contains(user.Email, "@buildium.com")
 
@@ -74,12 +77,11 @@ func processNewConversation(user User, conversationID string, conversationMessag
 				conversationSubject = strings.ToLower(conversationSubject)
 
 				var autoRepliedMessage bool
-				var ignorePhrases = []string{"automatic-reply", "automatic reply", "auto-reply", "auto reply", "out of office", "out-of-office", "automatic"}
-				//var ignorePhrases = []string{"auto", "out of office", "out-of-office", "automatic"}
+				var ignorePhrases = []string{"auto", "out of office", "out-of-office"}
 
 				for _, phrase := range ignorePhrases {
-					val := strings.Contains(conversationSubject, phrase)
-					if val {
+					// val := 
+					if strings.Contains(conversationSubject, phrase) {
 						autoRepliedMessage = true
 						break
 					}
@@ -95,14 +97,13 @@ func processNewConversation(user User, conversationID string, conversationMessag
 	// change password autoresponder
 	conversationMessage = strings.ToLower(conversationMessage)
 	var passwordPhrases = []string{"change password", "change my password", "reset password",
-		"reset my password", "pasword is incorrect", "manage password", "manage my password", "forgot password", "forgot my password"}
+		"reset my password", "password is incorrect", "manage password", "manage my password", "forgot password", "forgot my password"}
 
 	var passwordReply bool
 
 	for _, phrase := range passwordPhrases {
-		val1 := strings.Contains(conversationMessage, phrase)
 
-		if val1 {
+		if strings.Contains(conversationMessage, phrase) {
 			passwordReply = true
 			break
 		}
