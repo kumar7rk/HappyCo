@@ -46,6 +46,10 @@ type Plan struct {
 
 //********************************************Adding note to conversation********************************************
 
+func init() {
+	commands["note"] = makeAndSendNote
+}
+
 func makeAndSendNote(user User, conversationID string, params ...string) {
 	fmt.Println("makeAndSendNote")
 	ID := user.UserID
@@ -60,7 +64,7 @@ func makeAndSendNote(user User, conversationID string, params ...string) {
 	// calling the method to compile the note with all the required information
 	note, _ := makeNote(ID)
 
-	addReply(conversationID, note)
+	addNote(conversationID, note)
 }
 
 //********************************************Getting UserData********************************************
