@@ -54,12 +54,10 @@ func processNewConversation(user User, conversationID string, conversationMessag
 	if user.Type == "user" {
 		makeAndSendNote(user, conversationID)
 
-		//planType := "plan type"
 		var isBuildiumUser bool
 		planTypeRec := getUserPlanType(user.UserID)
 		for _, plan := range planTypeRec {
 			if plan.Type == "buildium" {
-				//planType = plan.Type
 				isBuildiumUser = true
 				break
 			}
@@ -80,7 +78,6 @@ func processNewConversation(user User, conversationID string, conversationMessag
 				var ignorePhrases = []string{"auto", "out of office", "out-of-office"}
 
 				for _, phrase := range ignorePhrases {
-					// val :=
 					if strings.Contains(conversationSubject, phrase) {
 						autoRepliedMessage = true
 						break
