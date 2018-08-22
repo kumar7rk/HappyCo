@@ -12,7 +12,6 @@ import (
 	"github.com/jmoiron/sqlx"
 	_ "github.com/lib/pq"
 
-	intercom "gopkg.in/intercom/intercom-go.v2"
 	"happyco/apps/tools/libs/buildvars"
 )
 
@@ -20,12 +19,6 @@ import (
 
 var db *sqlx.DB
 
-var ic *intercom.Client
-
-func init() {
-	accessToken := os.Getenv("INTERCOM_ACCESS_TOKEN")
-	ic = intercom.NewClient(accessToken, "")
-}
 
 //********************************************Main function********************************************
 
@@ -48,8 +41,8 @@ func main() {
 	}
 
 	//handling every new convesations in newConversation method in conversation.go
-	//http.HandleFunc("/", newConversation)
-	http.HandleFunc("/", newAdminNote)
+	http.HandleFunc("/conversation", newConversation)
+	http.HandleFunc("/note", newAdminNote)
 	http.HandleFunc("/healthcheck", healthcheck)
 	if err := http.ListenAndServe(":8080", nil); err != nil {
 		panic(err)
