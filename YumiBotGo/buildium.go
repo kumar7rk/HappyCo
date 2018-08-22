@@ -1,8 +1,8 @@
 package main
 
 import (
-	"strings"
 	intercom "gopkg.in/intercom/intercom-go.v2"
+	"strings"
 )
 
 //********************************************Sending Buildium reply********************************************
@@ -11,11 +11,10 @@ func init() {
 	commands["buildium"] = sendBuildiumReply
 }
 
-
 func sendBuildiumReply(user User, conversationID string, params ...string) {
 	// if you don't give a name use the name user have in his account
 
-	if len(params) == 0 && user.Email !=""{
+	if len(params) == 0 && user.Email != "" {
 		params = strings.Split(user.Name, " ")
 	}
 	name := "there"
@@ -26,5 +25,5 @@ func sendBuildiumReply(user User, conversationID string, params ...string) {
 
 	addReply(conversationID, message)
 
-	ic.Conversations.Assign(conversationID, &intercom.Admin{ID: "207278"}, &intercom.Admin{ID: "931140"}) 
+	ic.Conversations.Assign(conversationID, &intercom.Admin{ID: "207278"}, &intercom.Admin{ID: "1615207"})
 }

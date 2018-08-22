@@ -80,7 +80,7 @@ func processNewConversation(user User, conversationID string, conversationMessag
 				var ignorePhrases = []string{"auto", "out of office", "out-of-office"}
 
 				for _, phrase := range ignorePhrases {
-					// val := 
+					// val :=
 					if strings.Contains(conversationSubject, phrase) {
 						autoRepliedMessage = true
 						break

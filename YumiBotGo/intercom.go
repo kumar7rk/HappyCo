@@ -2,8 +2,8 @@ package main
 
 import (
 	"fmt"
-	"os"
 	intercom "gopkg.in/intercom/intercom-go.v2"
+	"os"
 )
 
 var ic *intercom.Client
@@ -12,6 +12,7 @@ func init() {
 	accessToken := os.Getenv("INTERCOM_ACCESS_TOKEN")
 	ic = intercom.NewClient(accessToken, "")
 }
+
 // structs for reading payload in json received from Intercom
 type Author struct {
 	Name string `json:"name"`

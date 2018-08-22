@@ -2,10 +2,10 @@ package main
 
 import (
 	"encoding/json"
-	"strings"
 	"fmt"
 	"io/ioutil"
 	"net/http"
+	"strings"
 )
 
 func newAdminNote(w http.ResponseWriter, r *http.Request) {
