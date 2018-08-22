@@ -2,7 +2,8 @@ package main
 
 import (
 	"encoding/json"
-	_ "github.com/lib/pq"
+	"strings"
+	"fmt"
 	"io/ioutil"
 	"net/http"
 )
@@ -42,13 +43,23 @@ func newAdminNote(w http.ResponseWriter, r *http.Request) {
 }
 
 func processNewAdminNote(user User, conversationID string, note string, author string) {
-	if note == "<p>yumi run note</p>" {
-		makeAndSendNote(user, conversationID)
-	} else if note == "<p>yumi run buildium</p>" {
-		sendBuildiumReply(user, conversationID)
-	} else if note == "<p>yumi run password</p>" {
-		sendPasswordReply(user, conversationID)
-	} else if note == "<p>yumi help</p>" || note == "<p>yumi run help</p>" || note == "<p>yumi</p>" {
+	if note == "<p>yumi help</p>" || note == "<p>yumi run help</p>" || note == "<p>yumi</p>" {
 		listRunCommands(author, conversationID)
+		return
+	}
+
+	if strings.HasPrefix(note, "<p>yumi run ") {
+		note = strings.TrimSuffix(note[12:], "</p>")
+		params := strings.Split(note, " ")
+		if cmd, ok := commands[params[0]]; ok {
+			cmd(user, conversationID, params[1:]...)
+		} else {
+			fmt.Println("Unable to run", params)
+			listRunCommands(author, conversationID)
+		}
 	}
 }
+
+type CommandFunc func(user User, conversationID string, params ...string)
+
+var commands map[string]CommandFunc = make(map[string]CommandFunc)
