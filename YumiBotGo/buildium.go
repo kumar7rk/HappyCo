@@ -13,7 +13,6 @@ func init() {
 
 func sendBuildiumReply(user User, conversationID string, params ...string) {
 	// if you don't give a name use the name user have in his account
-
 	if len(params) == 0 && user.Email != "" {
 		params = strings.Split(user.Name, " ")
 	}
@@ -25,5 +24,5 @@ func sendBuildiumReply(user User, conversationID string, params ...string) {
 
 	addReply(conversationID, message)
 
-	ic.Conversations.Assign(conversationID, &intercom.Admin{ID: "207278"}, &intercom.Admin{ID: "1615207"})
+	assignConversation(conversationID, &intercom.Admin{ID: "1615207"})
 }
