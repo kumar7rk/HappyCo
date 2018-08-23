@@ -47,14 +47,7 @@ var range = XLSX.utils.decode_range(worksheet['!ref']); // get the range
       const website = await page.evaluate(() => document.querySelector('.footer__info > p > a ').href)
       
       var writeCellName = XLSX.utils.encode_cell({c:range.s.c+1, r:R}); //B1..
-      var writeCellWebsite = XLSX.utils.encode_cell({c:range.s.c+3, r:R}); //C1..
-// for(var i = 0; i != json.length; ++i) for(var j = 0; j != json[i].length; ++j) if(typeof json[i][j] === 'undefined') json[i][j] = "";
-
-
-    if (typeof writeCellWebsite.v === 'undefined') {
-      console.log("typeof: "+ typeof writeCellWebsite.v)
-      writeCellWebsite.v ="";
-    }
+      var writeCellWebsite = XLSX.utils.encode_cell({c:range.s.c+2, r:R}); //C1..
     
       worksheet[writeCellName].v = name;   
       worksheet[writeCellWebsite].v = website;   
