@@ -13,50 +13,58 @@ if(typeof require !== 'undefined') XLSX = require('xlsx');
 
 
   var workbook = XLSX.readFile('Appfolio.xlsx');
-  var first_sheet_name = workbook.SheetNames[0];
-  var worksheet = workbook.Sheets[first_sheet_name];
+  var worksheet = workbook.Sheets[workbook.SheetNames[0]];
   
-  var address_of_cell = 'A2';
-  var desired_cell = worksheet[address_of_cell];
-  var url = (desired_cell ? desired_cell.v : undefined);
-
   var t0 = performance.now();
-
-  for (var i = 2; i < 4; i++) {
-    address_of_cell = 'A'+i
-    desired_cell = worksheet[address_of_cell];
-    url = (desired_cell ? desired_cell.v : undefined);
-    
-    await page.goto(url);
-
-    if (await page.evaluate(() => document.querySelector('.footer__info > p')) != null) {
+ /*
+  kind of like saying which columns do you want to go through
+  range.s.c is first column
+  range.e.c is last
+  instead of looping through all I'm saying take first column which should be indexed 0 and go until range.s.c which is again the first column
+  doing this means I don't have to hardcode the rows value
+  All I need to know is which column has the urls
+  and also what rows does the urls start from - excluding headers
+*/
+var range = XLSX.utils.decode_range(worksheet['!ref']); // get the range
+  
+ for(var R = range.s.r+1; R <= range.e.r; ++R){
+      console.log("Row: "+R)
+      var cellref = XLSX.utils.encode_cell({c:range.s.c, r:R}); //A1..
+      if(!worksheet[cellref]) continue; //[object Object]
+      var cell = worksheet[cellref] //[object Object]
+      console.log("cell value "+cell.v);
+      try{
+        await page.goto(cell.v);
+      }
+      catch(error){
+        console.log(error);
+      }
+     
+      if (await page.evaluate(() => document.querySelector('.footer__info > p')) != null) {
       
       const name = await page.evaluate(() => document.querySelector('.footer__info > p').innerText)
       const phone = await page.evaluate(() => document.querySelector('.footer__info > a').innerText)
       const website = await page.evaluate(() => document.querySelector('.footer__info > p > a ').href)
       
-      var writeCell = 'B'+i
-      worksheet[writeCell].v = name;   
+      var writeCellName = XLSX.utils.encode_cell({c:range.s.c+1, r:R}); //B1..
+      var writeCellWebsite = XLSX.utils.encode_cell({c:range.s.c+3, r:R}); //C1..
+// for(var i = 0; i != json.length; ++i) for(var j = 0; j != json[i].length; ++j) if(typeof json[i][j] === 'undefined') json[i][j] = "";
 
-      writeCell = 'C'+i
-      worksheet[writeCell].v = website;   
 
-      console.log(name+ "\n" + phone+ "\n" + website+ "\n")   
+    if (typeof writeCellWebsite.v === 'undefined') {
+      console.log("typeof: "+ typeof writeCellWebsite.v)
+      writeCellWebsite.v ="";
     }
-  }
+    
+      worksheet[writeCellName].v = name;   
+      worksheet[writeCellWebsite].v = website;   
+
+    }
     XLSX.writeFile(workbook ,'Appfolio1.xlsx')
+  }
 
   var t1 = performance.now();
-  // console.log((t1-t0)/1000+ " seconds");
-
-  var range = XLSX.utils.decode_range(worksheet['!ref']); // get the range
-  console.log(range)
-  for (var R = range.s.r; R < range.e.R; ++R) {
-      console.log("Stuff");
-    for(var C = range.s.c; C <= range.e.c; ++C) {
-      console.log("More Stuff");
-    }
-  }
+  console.log((t1-t0)/1000+ " seconds");
 
   await browser.close();
 })();
