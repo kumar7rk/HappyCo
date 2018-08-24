@@ -19,7 +19,7 @@ func sendPasswordReply(user User, conversationID string, params ...string) {
 	if len(params) > 0 {
 		name = params[0]
 	}
-	message := "Hi " + name + " 👋 \n \n It looks like you might be having trouble logging in? \n\n You can reset your password by entering your email <a href='https://manage.happyco.com/password/forgot'> here </a> \n \n Thanks!  \n HappyBot ☺ \n\n <i>Need to contact to a human....... just reply</i>"
+	message := "Hi " + name + " 👋 \n \n It looks like you might be having trouble logging in? \n\n You can reset your password by entering your email <a href='https://manage.happyco.com/password/forgot'> here </a> \n \n Thanks!  \n HappyBot ☺ \n\n <i>Wanting to contact a human....... just reply</i>"
 
 	addReply(conversationID, message)
 	assignConversation(conversationID, "1398520")
