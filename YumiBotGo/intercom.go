@@ -2,6 +2,7 @@ package main
 
 import (
 	"fmt"
+	"encoding/json"
 	intercom "gopkg.in/intercom/intercom-go.v2"
 	"os"
 )
@@ -71,8 +72,9 @@ func addReply(conversationID, reply string) {
 }
 
 //********************************************Assign conversation********************************************
-func assignConversation(conversationID string, inboxTo *intercom.Admin) {
-	_, err := ic.Conversations.Assign(conversationID, &intercom.Admin{ID: "207278"}, inboxTo)
+
+func assignConversation(conversationID string, inboxTo string) {
+	_, err := ic.Conversations.Assign(conversationID, &intercom.Admin{ID: "207278"}, &intercom.Admin{ID: json.Number(inboxTo)})
 	if err != nil {
 		fmt.Printf("Error from Intercom while assigning conversation: %v\n", err)
 	}
