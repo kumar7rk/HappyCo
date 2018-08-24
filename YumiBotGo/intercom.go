@@ -1,8 +1,8 @@
 package main
 
 import (
-	"fmt"
 	"encoding/json"
+	"fmt"
 	intercom "gopkg.in/intercom/intercom-go.v2"
 	"os"
 )
