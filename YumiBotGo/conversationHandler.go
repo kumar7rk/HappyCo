@@ -6,8 +6,8 @@ import (
 	_ "github.com/lib/pq"
 	"io/ioutil"
 	"net/http"
-	"os"
 	"strings"
+	//"os"
 )
 
 //********************************************New Conversation********************************************
@@ -108,14 +108,4 @@ func processNewConversation(user User, conversationID string, conversationMessag
 	if passwordReply {
 		sendPasswordReply(user, conversationID)
 	}
-}
-
-//********************************************Getting PlanType for Buidlium auto responder********************************************
-
-func getUserPlanType(ID string) (planTypeRec []Plan) {
-	err := db.Select(&planTypeRec, "Select plan_type FROM current_subscriptions WHERE business_id IN (SELECT business_id from business_membership WHERE user_id = $1 AND inactivated_at IS NULL)", ID)
-	if err != nil {
-		fmt.Fprintf(os.Stderr, "Error in plan query %v: %v\n", ID, err)
-	}
-	return
 }
