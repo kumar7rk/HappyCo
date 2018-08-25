@@ -4,8 +4,8 @@ import (
 	"fmt"
 	_ "github.com/lib/pq"
 	"strconv"
-	"time"
 	"strings"
+	"time"
 )
 
 //********************************************Adding note to conversation********************************************
@@ -41,7 +41,7 @@ func getUserData(ID string) (businessRec []Business, iapRec []IAP, integrationNa
 	iapRec = getIAP(ID)
 
 	// Check if the business has integration w/Yardi
-	integrationName = getIntegration(ID)	
+	integrationName = getIntegration(ID)
 
 	// Plan type = DD/Buildium/MRI
 	planTypeRec = getUserPlanType(ID)
@@ -80,11 +80,11 @@ func makeNote(us_id string) (string, string) {
 		if roleID == "8" || roleID == "9" {
 			BusinessPermission = "Basic"
 		}
-		note+="<b>Business: </b>" + business.Name +"\n"
-		note+="<b>BusinessID:</b>" + business.ID +"\n"
-		note+="<b>Permissions:</b>" + BusinessPermission +"\n"
-		note+="<b>Role:</b>" + roles[permission] +"\n"
-	}	
+		note += "<b>Business: </b>" + business.Name + "\n"
+		note += "<b>BusinessID:</b>" + business.ID + "\n"
+		note += "<b>Permissions:</b>" + BusinessPermission + "\n"
+		note += "<b>Role:</b>" + roles[permission] + "\n"
+	}
 	//******************constructing plan type string******************
 
 	planType := "plan type"
@@ -92,15 +92,15 @@ func makeNote(us_id string) (string, string) {
 		if plan.Type == "buildium" {
 			planType = plan.Type
 		}
-		plan.Type = strings.Replace(plan.Type,"_"," ",-1)
-		note += "<b>Plan: </b>" + strings.Title(plan.Type) +"\n"
+		plan.Type = strings.Replace(plan.Type, "_", " ", -1)
+		note += "<b>Plan: </b>" + strings.Title(plan.Type) + "\n"
 	}
-	
-	note+="<b>MRR:</b>" + "None" +"\n"
-	note+="<b><h2>Support Level:</b>" + "None"+"</h2>\n"
+
+	note += "<b>MRR:</b>" + "None" + "\n"
+	note += "<b><h2>Support Level:</b>" + "None" + "</h2>\n"
 	// note+="<b>:</b>"
 	//******************constructing integration string******************
-	
+
 	if integrationName != "" {
 		note += "<b>Integration: </b>" + integrationName
 	}

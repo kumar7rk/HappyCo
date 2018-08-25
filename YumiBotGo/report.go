@@ -1,21 +1,23 @@
 package main
 
 import (
-	"time"
 	"strconv"
+	"time"
 )
+
 func init() {
 	commands["report"] = showRecentReports
 }
+
 //********************************************Adding commands********************************************
 func showRecentReports(user User, conversationID string, params ...string) {
 	var limit = 5
 	if len(params) > 0 {
-		limit, _ = strconv.Atoi(params[0])	
+		limit, _ = strconv.Atoi(params[0])
 	}
 	reportsRec := getReports(user.UserID, limit)
-	s:= strconv.Itoa(limit)
-	message := "<b>Showing "+s +" recent reports created by "+ user.Name+" in last 30 days</b>"
+	s := strconv.Itoa(limit)
+	message := "<b>Showing " + s + " recent reports created by " + user.Name + " in last 30 days</b>"
 	message += "\n"
 	for _, report := range reportsRec {
 		var url = "https://manage.happyco.com/reports/" + report.PublicID

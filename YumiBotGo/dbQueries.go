@@ -101,6 +101,7 @@ func getIntegration(ID string) (integrationName string) {
 	}
 	return
 }
+
 //********************************************Getting PlanType for Buidlium auto responder********************************************
 
 func getUserPlanType(ID string) (planTypeRec []Plan) {
