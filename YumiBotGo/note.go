@@ -95,10 +95,6 @@ func makeNote(us_id string) (string, string) {
 		plan.Type = strings.Replace(plan.Type, "_", " ", -1)
 		note += "<b>Plan: </b>" + strings.Title(plan.Type) + "\n"
 	}
-
-	note += "<b>MRR:</b>" + "None" + "\n"
-	note += "<b><h2>Support Level:</b>" + "None" + "</h2>\n"
-	// note+="<b>:</b>"
 	//******************constructing integration string******************
 
 	if integrationName != "" {
