@@ -8,8 +8,6 @@ import (
 	"strings"
 )
 
-
-
 //********************************************Adding note to conversation********************************************
 
 func init() {
@@ -35,13 +33,7 @@ func makeAndSendNote(user User, conversationID string, params ...string) {
 //********************************************Getting UserData********************************************
 
 //queries the db and adds returned values in array
-func getUserData(ID string) (inspectionsRec []Inspection, reportsRec []Report, businessRec []Business, iapRec []IAP, integrationName string, planTypeRec []Plan) {
-	//fetching most recent (5) inspections for the user within the last 30 days.
-	inspectionsRec = getInspections(ID,5)
-
-	//fetching most recent (5) reports for the user within the last 30 days.
-	reportsRec = getReports(ID,5)
-
+func getUserData(ID string) (businessRec []Business, iapRec []IAP, integrationName string, planTypeRec []Plan) {
 	// fetching business id and role id for user role in this business
 	businessRec = getBusiness(ID)
 
@@ -64,7 +56,7 @@ func makeNote(us_id string) (string, string) {
 	var formattedDate string
 
 	//getting user data from the database
-	_, _, businessRec, iapRec, integrationName, planTypeRec := getUserData(us_id)
+	businessRec, iapRec, integrationName, planTypeRec := getUserData(us_id)
 
 	//******************constructing business string******************
 	note = "<b>🐶Note</b><br/><br/>"
