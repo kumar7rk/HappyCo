@@ -73,6 +73,7 @@ func getIAP(ID string) (iapRec []IAP) {
 	}
 	return
 }
+
 func getIntegration(ID string) (integrationName string) {
 	var integrationCount int
 	err := db.Get(&integrationCount, "Select COUNT(*) FROM integration_yardi_properties WHERE business_id IN (SELECT business_id from business_membership WHERE user_id = $1 AND inactivated_at IS NULL)", ID)
@@ -101,8 +102,6 @@ func getIntegration(ID string) (integrationName string) {
 	}
 	return
 }
-
-//********************************************Getting PlanType for Buidlium auto responder********************************************
 
 func getUserPlanType(ID string) (planTypeRec []Plan) {
 	err := db.Select(&planTypeRec, "Select plan_type FROM current_subscriptions WHERE business_id IN (SELECT business_id from business_membership WHERE user_id = $1 AND inactivated_at IS NULL)", ID)
