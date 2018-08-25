@@ -17,7 +17,6 @@ func init() {
 }
 
 func makeAndSendNote(user User, conversationID string, params ...string) {
-	fmt.Println("makeAndSendNote")
 	ID := user.UserID
 	p := fmt.Println
 
@@ -37,7 +36,6 @@ func makeAndSendNote(user User, conversationID string, params ...string) {
 
 //queries the db and adds returned values in array
 func getUserData(ID string) (inspectionsRec []Inspection, reportsRec []Report, businessRec []Business, iapRec []IAP, integrationName string, planTypeRec []Plan) {
-	fmt.Println("getUserData")
 	//fetching most recent (5) inspections for the user within the last 30 days.
 	inspectionsRec = getInspections(ID)
 
@@ -62,7 +60,7 @@ func getUserData(ID string) (inspectionsRec []Inspection, reportsRec []Report, b
 
 // build the note in a string format
 func makeNote(us_id string) (string, string) {
-	fmt.Println("makeNote")
+
 	var note string
 	var formattedDate string
 
