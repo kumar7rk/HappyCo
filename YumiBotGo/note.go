@@ -60,7 +60,6 @@ func getUserData(ID string) (inspectionsRec []Inspection, reportsRec []Report, b
 
 // build the note in a string format
 func makeNote(us_id string) (string, string) {
-
 	var note string
 	var formattedDate string
 
@@ -101,6 +100,7 @@ func makeNote(us_id string) (string, string) {
 		if plan.Type == "buildium" {
 			planType = plan.Type
 		}
+		plan.Type = strings.Replace(plan.Type,"_"," ",-1)
 		note += "<b>Plan: </b>" + strings.Title(plan.Type) +"\n"
 	}
 	
