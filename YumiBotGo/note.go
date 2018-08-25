@@ -3,46 +3,12 @@ package main
 import (
 	"fmt"
 	_ "github.com/lib/pq"
-	"os"
 	"strconv"
 	"time"
+	// "os"
 )
 
-type Inspection struct {
-	Business     string
-	User         string
-	Role         string
-	FolderID     string `db:"folder_id"`
-	FolderName   string `db:"folder_name"`
-	CreatedAt    string `db:"created_at"`
-	TemplateName string `db:"template_name"`
-	ID           string
-	Status       string
-	Location     string
-}
 
-type Report struct {
-	Business   string
-	User       string
-	Role       string
-	FolderID   string `db:"folder_id"`
-	FolderName string `db:"folder_name"`
-	CreatedAt  string `db:"created_at"`
-	Name       string
-	PublicID   string `db:"public_id"`
-	Location   string
-}
-
-type Business struct {
-	ID   string `db:"business_id"`
-	Role string `db:"business_role_id"`
-}
-type IAP struct {
-	Expiry string `db:"expires_at"`
-}
-type Plan struct {
-	Type string `db:"plan_type"`
-}
 
 //********************************************Adding note to conversation********************************************
 
@@ -73,52 +39,19 @@ func makeAndSendNote(user User, conversationID string, params ...string) {
 func getUserData(ID string) (inspectionsRec []Inspection, reportsRec []Report, businessRec []Business, iapRec []IAP, integrationName string, planTypeRec []Plan) {
 	fmt.Println("getUserData")
 	//fetching most recent (5) inspections for the user within the last 30 days.
-	
 	inspectionsRec = getInspections(ID)
 
 	//fetching most recent (5) reports for the user within the last 30 days.
-	err := db.Select(&reportsRec, "SELECT folders.business,folders.user,folders.role,folders.folder_id,folders.folder_name,r.created_at as created_at,r.name,r.public_id,r.location FROM (SELECT businesses.business_id as business,businesses.user_id as user,role_id as role,folder_id as folder_id,folder_name as folder_name FROM (SELECT bm.business_id as business_id,bm.user_id as user_id,bm.business_role_id as role_id,f.id as folder_id,f.name as folder_name FROM business_membership as bm JOIN portfolios as f ON bm.business_id = f.business_id WHERE bm.user_id = $1 AND bm.inactivated_at IS NULL AND f.inactivated_at IS NULL) as businesses GROUP BY businesses.business_id,businesses.role_id,businesses.user_id,folder_id,folder_name ORDER BY businesses.business_id ) as folders JOIN reports_v3 as r ON folders.folder_id = r.folder_id WHERE r.user_id = $1::varchar AND r.archived_at IS NULL AND r.created_at > (CURRENT_DATE- interval '30 day') ORDER BY r.created_at DESC LIMIT $2", ID, 5)
-	if err != nil {
-		fmt.Fprintf(os.Stderr, "Error in reoprt query %v: %v\n", ID, err)
-	}
+	reportsRec = getReports(ID)
+
 	// fetching business id and role id for user role in this business
-	err = db.Select(&businessRec, "SELECT business_id,business_role_id FROM business_membership WHERE user_id = $1 AND inactivated_at IS NULL", ID)
-	if err != nil {
-		fmt.Fprintf(os.Stderr, "Error in business query %v: %v\n", ID, err)
-	}
+	businessRec = getBusiness(ID)
+
 	// checking if the business is on IAP get the expiry date
-	err = db.Select(&iapRec, "SELECT expires_at FROM iap_receipts WHERE company_id IN (SELECT business_id FROM business_membership WHERE user_id = $1) ORDER BY expires_at DESC limit 1", ID)
-	if err != nil {
-		fmt.Fprintf(os.Stderr, "Error in iap query %v: %v\n", ID, err)
-	}
+	iapRec = getIAP(ID)
 
 	// Check if the business has integration w/Yardi
-	var integrationCount int
-
-	err = db.Get(&integrationCount, "Select COUNT(*) FROM integration_yardi_properties WHERE business_id IN (SELECT business_id from business_membership WHERE user_id = $1 AND inactivated_at IS NULL)", ID)
-	if err != nil {
-		fmt.Fprintf(os.Stderr, "Error in integration query-Yardi %v: %v\n", ID, err)
-	}
-	if integrationCount > 0 {
-		integrationName = "Yardi"
-	}
-	// MRI
-	err = db.Get(&integrationCount, "Select COUNT(*) FROM integration_mri_properties WHERE business_id IN (SELECT business_id from business_membership WHERE user_id = $1 AND inactivated_at IS NULL)", ID)
-	if err != nil {
-		fmt.Fprintf(os.Stderr, "Error in integration query-MRI %v: %v\n", ID, err)
-	}
-
-	if integrationCount > 0 {
-		integrationName = "MRI"
-	}
-	// Resman
-	err = db.Get(&integrationCount, "Select COUNT(*) FROM integration_resman_properties WHERE business_id IN (SELECT business_id from business_membership WHERE user_id = $1 AND inactivated_at IS NULL)", ID)
-	if err != nil {
-		fmt.Fprintf(os.Stderr, "Error in integration query-Resman %v: %v\n", ID, err)
-	}
-	if integrationCount > 0 {
-		integrationName = "Resman"
-	}
+	integrationName = getIntegration(ID)	
 
 	// Plan type = DD/Buildium/MRI
 	planTypeRec = getUserPlanType(ID)
