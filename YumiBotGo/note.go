@@ -5,7 +5,7 @@ import (
 	_ "github.com/lib/pq"
 	"strconv"
 	"time"
-	// "os"
+	"strings"
 )
 
 
@@ -103,12 +103,12 @@ func makeNote(us_id string) (string, string) {
 		if plan.Type == "buildium" {
 			planType = plan.Type
 		}
-		note += "<b>Plan: </b>" + plan.Type +"\n"
+		note += "<b>Plan: </b>" + strings.Title(plan.Type) +"\n"
 	}
 	
 	note+="<b>MRR:</b>" + "None" +"\n"
 	note+="<b><h2>Support Level:</b>" + "None"+"</h2>\n"
-	note+="<b>:</b>"
+	// note+="<b>:</b>"
 	//******************constructing integration string******************
 	
 	if integrationName != "" {
