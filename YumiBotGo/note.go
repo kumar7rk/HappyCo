@@ -67,12 +67,10 @@ func makeNote(us_id string) (string, string) {
 	var formattedDate string
 
 	//getting user data from the database
-	inspectionsRec, reportsRec, businessRec, iapRec, integrationName, planTypeRec := getUserData(us_id)
+	_, _, businessRec, iapRec, integrationName, planTypeRec := getUserData(us_id)
 
 	//******************constructing business string******************
-	note = "<b>A small note from Yumi 🐶</b><br/><br/>"
-
-	note += "<b>✅User is associated with the following businesses</b><br/><br/>"
+	note = "<b>🐶Note</b><br/><br/>"
 
 	// 1, 2, 3, 4 = Constant Admin, PM, Inspector, Limited Inspector
 	// 8, 9 = Basic Admin, PM
@@ -85,82 +83,36 @@ func makeNote(us_id string) (string, string) {
 			panic(err)
 		}
 		var roleID = business.Role
-
+		var BusinessPermission string
 		if roleID == "1" || roleID == "2" || roleID == "3" || roleID == "4" {
-			note += " The business is on Constant/full Permissions \n"
+			BusinessPermission = "Contant/Full"
 		}
 
 		if roleID == "8" || roleID == "9" {
-			note += " The business is on Basic Permissions \n"
+			BusinessPermission = "Basic"
 		}
-
-		note += roles[permission] + " for "
-		var text = "https://manage.happyco.com/admin/businesses/" + business.ID
-		note += text + "<br/><br/>"
-	}
-	note += "\n"
-
-	//******************constructing integration string******************
-	if integrationName != "" {
-		note += "\n"
-		note += "\n"
-		note += "The business is " + integrationName
-	}
-
+		note+="<b>Business: </b>" + business.Name +"\n"
+		note+="<b>BusinessID:</b>" + business.ID +"\n"
+		note+="<b>Permissions:</b>" + BusinessPermission +"\n"
+		note+="<b>Role:</b>" + roles[permission] +"\n"
+	}	
 	//******************constructing plan type string******************
 
 	planType := "plan type"
 	for _, plan := range planTypeRec {
-		if plan.Type == "due_diligence" {
-			note += "\n"
-			note += "\n"
-			note += "Plan: " + "Due Diligence"
-		}
 		if plan.Type == "buildium" {
-			note += "\n"
-			note += "\n"
-			note += "Plan: " + "Buildium"
 			planType = plan.Type
 		}
-		if plan.Type == "mri" {
-			note += "\n"
-			note += "\n"
-			note += "Plan: " + "MRI"
-		}
+		note += "<b>Plan: </b>" + plan.Type +"\n"
 	}
-
-	note += "\n"
-	note += "\n"
-
-	//******************constructing inspection string******************
-	note += "<b>✅   Yumi found these recent (max: 5) <em>Inspections in last 30 days:</em></b><br/>"
-	note += "\n"
-	var url string
-	for _, inspection := range inspectionsRec {
-
-		url = "https://manage.happyco.com/folder/" + inspection.FolderID + "/inspections/" + inspection.ID
-
-		var date, _ = time.Parse(time.RFC3339, inspection.CreatedAt)
-		formattedDate = date.Format("02 Jan 2006 3:04PM")
-
-		note += "<a href=" + url + ">" + url + "</a>" + " " + formattedDate
-		note += "\n"
-	}
-	//******************constructing report string******************
-
-	note += "\n"
-	note += "\n"
-	note += "<b>✅   Yumi found these recent (max: 5) <em>Reports in last 30 days:</em></b><br/>"
-	note += "\n"
-	for _, report := range reportsRec {
-
-		var url = "https://manage.happyco.com/reports/" + report.PublicID
-
-		var date, _ = time.Parse(time.RFC3339, report.CreatedAt)
-		formattedDate = date.Format("02 Jan 2006 3:04PM")
-
-		note += "<a href=" + url + ">" + report.Name + "</a>" + " " + formattedDate
-		note += "\n"
+	
+	note+="<b>MRR:</b>" + "None" +"\n"
+	note+="<b><h2>Support Level:</b>" + "None"+"</h2>\n"
+	note+="<b>:</b>"
+	//******************constructing integration string******************
+	
+	if integrationName != "" {
+		note += "<b>Integration: </b>" + integrationName
 	}
 
 	//******************constructing iap string******************
