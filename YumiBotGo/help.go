@@ -14,6 +14,7 @@ func listRunCommands(author string, conversationID string, params ...string) {
 		message += "\n\n yumi run " + cmd
 	}
 	message += "\n\n"
-	message += "<a href=" + "https://hpy.io/yumi" + ">" + "Feedback/Report incorrect information" + "</a>"
+	message += "<a href=\"https://hpy.io/yumi\">Feedback/Report incorrect information</a>"
+
 	addNote(conversationID, message)
 }
