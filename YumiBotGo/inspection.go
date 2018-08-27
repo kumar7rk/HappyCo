@@ -23,7 +23,7 @@ func showRecentInspections(user User, conversationID string, params ...string) {
 		var date, _ = time.Parse(time.RFC3339, inspection.CreatedAt)
 		var formattedDate = date.Format("02 Jan 2006 3:04PM")
 
-		message += "<a href=" + url + ">" + url + "</a>" + " " + formattedDate
+		message += "<a href=\"" + url + "\">" + url + "</a>" + " " + formattedDate
 		message += "\n"
 	}
 	addNote(conversationID, message)
