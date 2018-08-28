@@ -3,6 +3,7 @@ package main
 import (
 	"strings"
 )
+
 //********************************************Init********************************************
 func init() {
 	commands["password"] = sendPasswordReply

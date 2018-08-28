@@ -7,6 +7,7 @@ import (
 	"strings"
 	"time"
 )
+
 //********************************************Init********************************************
 func init() {
 	commands["note"] = makeAndSendNote
@@ -45,7 +46,7 @@ func getUserData(ID string) (businessRec []Business, iapRec []IAP, integrationNa
 }
 
 //********************************************Building note********************************************
-func makeNote(us_id string) (string) {
+func makeNote(us_id string) string {
 	var note string
 	var formattedDate string
 

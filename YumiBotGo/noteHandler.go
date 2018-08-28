@@ -7,6 +7,7 @@ import (
 	"net/http"
 	"strings"
 )
+
 //********************************************New adming note********************************************
 func newAdminNote(w http.ResponseWriter, r *http.Request) {
 	// Read body/payload
@@ -41,6 +42,7 @@ func newAdminNote(w http.ResponseWriter, r *http.Request) {
 	w.WriteHeader(http.StatusOK)
 	w.Write([]byte("Received"))
 }
+
 //********************************************Processing new note********************************************
 func processNewAdminNote(user User, conversationID string, note string, author string) {
 	if note == "<p>yumi help</p>" || note == "<p>yumi run help</p>" || note == "<p>yumi</p>" {
