@@ -10,10 +10,15 @@ base('scraped_data').select({
     view: "Grid view"
 }).eachPage(function page(records, fetchNextPage) {
     // This function (`page`) will get called for each page of records.
-
     records.forEach(function(record) {
+        base('scraped_data').update(record.getId(),{
+            "phone": "test" 
+        },function(err, record) {
+            if (err) {console.error(err);return;}
+            console.log("Phone updated");
+        });
         console.log('Retrieved', record.get('linkedin_url'));
-        (async () => {
+        /*(async () => {
           const browser = await puppeteer.launch({
                 headless: false
             });
@@ -37,7 +42,7 @@ base('scraped_data').select({
           var name = await page.evaluate(() => document.querySelector('div.pv-top-card-v2-section__info.mr5 > div.display-flex.align-items-center > h1').textContent);
           console.log("The person's who profile you visited is:"+ name);
           await browser.close();
-        })();
+        })();*/
     });
 
     fetchNextPage();
