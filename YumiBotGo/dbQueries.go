@@ -43,6 +43,7 @@ type Plan struct {
 	Type string `db:"plan_type"`
 	Status string `db:"status"`
 }
+//********************************************Inspection********************************************
 
 func getInspections(ID string, limit int) (inspectionsRec []Inspection) {
 	err := db.Select(&inspectionsRec, "SELECT folders.business,folders.user,folders.role ,folders.folder_id,folders.folder_name,i.created_at as created_at,i.template_name,i.id,i.status,i.location FROM (SELECT businesses.business_id as business,businesses.user_id as user,role_id as role,folder_id as folder_id,folder_name as folder_name FROM (SELECT bm.business_id as business_id,bm.user_id as user_id,bm.business_role_id as role_id,f.id as folder_id,f.name as folder_name FROM business_membership as bm JOIN portfolios as f ON bm.business_id = f.business_id WHERE bm.user_id = $1 AND bm.inactivated_at IS NULL AND f.inactivated_at IS NULL) as businesses GROUP BY businesses.business_id,businesses.role_id,businesses.user_id,folder_id,folder_name ORDER BY businesses.business_id ) as folders JOIN inspections as i ON folders.folder_id = i.folder_id WHERE i.user_id = $1::varchar AND i.archived_at IS NULL AND i.created_at > (CURRENT_DATE- interval '30 day') ORDER BY i.created_at DESC LIMIT $2", ID, limit)
@@ -51,7 +52,7 @@ func getInspections(ID string, limit int) (inspectionsRec []Inspection) {
 	}
 	return
 }
-
+//********************************************Report********************************************
 func getReports(ID string, limit int) (reportsRec []Report) {
 	err := db.Select(&reportsRec, "SELECT folders.business,folders.user,folders.role,folders.folder_id,folders.folder_name,r.created_at as created_at,r.name,r.public_id,r.location FROM (SELECT businesses.business_id as business,businesses.user_id as user,role_id as role,folder_id as folder_id,folder_name as folder_name FROM (SELECT bm.business_id as business_id,bm.user_id as user_id,bm.business_role_id as role_id,f.id as folder_id,f.name as folder_name FROM business_membership as bm JOIN portfolios as f ON bm.business_id = f.business_id WHERE bm.user_id = $1 AND bm.inactivated_at IS NULL AND f.inactivated_at IS NULL) as businesses GROUP BY businesses.business_id,businesses.role_id,businesses.user_id,folder_id,folder_name ORDER BY businesses.business_id ) as folders JOIN reports_v3 as r ON folders.folder_id = r.folder_id WHERE r.user_id = $1::varchar AND r.archived_at IS NULL AND r.created_at > (CURRENT_DATE- interval '30 day') ORDER BY r.created_at DESC LIMIT $2", ID, limit)
 	if err != nil {
@@ -59,7 +60,7 @@ func getReports(ID string, limit int) (reportsRec []Report) {
 	}
 	return
 }
-
+//********************************************Business********************************************
 func getBusiness(ID string) (businessRec []Business) {
 
 	err := db.Select(&businessRec, "SELECT b.id, b.name, bm.business_role_id, bc.permissions_model FROM businesses b INNER JOIN business_membership bm ON b.id = bm.business_id INNER JOIN business_customizations bc ON bc.business_id = bm.business_id WHERE bm.user_id = $1 AND inactivated_at IS NULL", ID)
@@ -68,7 +69,7 @@ func getBusiness(ID string) (businessRec []Business) {
 	}
 	return
 }
-
+//********************************************IAP********************************************
 func getIAP(ID string) (iapRec []IAP) {
 	err := db.Select(&iapRec, "SELECT expires_at FROM iap_receipts WHERE company_id IN (SELECT business_id FROM business_membership WHERE user_id = $1) ORDER BY expires_at DESC limit 1", ID)
 	if err != nil {
@@ -76,7 +77,7 @@ func getIAP(ID string) (iapRec []IAP) {
 	}
 	return
 }
-
+//********************************************Integration********************************************
 func getIntegration(ID string) (integrationName string) {
 	var integrationCount int
 	err := db.Get(&integrationCount, "Select COUNT(*) FROM integration_yardi_properties WHERE business_id IN (SELECT business_id from business_membership WHERE user_id = $1 AND inactivated_at IS NULL)", ID)
@@ -105,7 +106,7 @@ func getIntegration(ID string) (integrationName string) {
 	}
 	return
 }
-
+//********************************************Plan Type********************************************
 func getUserPlanType(ID string) (planTypeRec []Plan) {
 	err := db.Select(&planTypeRec, "Select plan_type,status FROM current_subscriptions WHERE business_id IN (SELECT business_id from business_membership WHERE user_id = $1 AND inactivated_at IS NULL)", ID)
 	if err != nil {
