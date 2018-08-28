@@ -14,10 +14,9 @@ base('scraped_data').select({
     records.forEach(function(record) {
         console.log('Retrieved', record.get('linkedin_url'));
         (async () => {
-            const browser = await puppeteer.launch({
+          const browser = await puppeteer.launch({
                 headless: false
             });
-
           const page = await browser.newPage();
 
           await page.goto("https://www.linkedin.com");
@@ -34,29 +33,19 @@ base('scraped_data').select({
           
           await page.click(BUTTON_SELECTOR);
           await page.waitForNavigation();
-            await page.goto(record.get('linkedin_url'));
-            var name = await page.evaluate(() => document.querySelector('div.pv-top-card-v2-section__info.mr5 > div.display-flex.align-items-center > h1').textContent)
-            console.log("The person's who profile you visited is:"+ name)
-            await browser.close();
+          await page.goto(record.get('linkedin_url'));
+          var name = await page.evaluate(() => document.querySelector('div.pv-top-card-v2-section__info.mr5 > div.display-flex.align-items-center > h1').textContent);
+          console.log("The person's who profile you visited is:"+ name);
+          await browser.close();
         })();
     });
 
-    // To fetch the next page of records, call `fetchNextPage`.
-    // If there are more records, `page` will get called again.
-    // If there are no more records, `done` will get called.
     fetchNextPage();
 
 }, function done(err) {
     if (err) { console.error(err); return; }
 });
 
-
-/*base('scraped_data').find('recz7ddYYhNCqUL1T', function(err, record) {
-    if (err) { console.error(err); return; }
-    // console.log(record);
-    console.log("Linkedin: "+record.fields.linkedin_url);
-
-});*/
 /*OUTPUT
 {
     "id": "recz7ddYYhNCqUL1T",
