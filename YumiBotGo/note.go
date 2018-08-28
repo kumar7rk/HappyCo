@@ -25,7 +25,7 @@ func makeAndSendNote(user User, conversationID string, params ...string) {
 	p("User email: " + user.Email)
 
 	// calling the method to compile the note with all the required information
-	note, _ := makeNote(ID)
+	note := makeNote(ID)
 
 	addNote(conversationID, note)
 }
@@ -51,7 +51,7 @@ func getUserData(ID string) (businessRec []Business, iapRec []IAP, integrationNa
 //********************************************Building note********************************************
 
 // build the note in a string format
-func makeNote(us_id string) (string, string) {
+func makeNote(us_id string) (string) {
 	var note string
 	var formattedDate string
 
@@ -71,13 +71,13 @@ func makeNote(us_id string) (string, string) {
 		if err != nil {
 			panic(err)
 		}
-		var roleID = business.Role
-		var BusinessPermission string
-		if roleID == "1" || roleID == "2" || roleID == "3" || roleID == "4" {
+		var BusinessPermission = business.PermissionsModel
+
+		if BusinessPermission == "constant-roles" {
 			BusinessPermission = "Contant/Full"
 		}
 
-		if roleID == "8" || roleID == "9" {
+		if BusinessPermission == "basic-roles" {
 			BusinessPermission = "Basic"
 		}
 		note += "<b>Business: </b>" + business.Name + "\n"
@@ -87,11 +87,7 @@ func makeNote(us_id string) (string, string) {
 	}
 	//******************constructing plan type string******************
 
-	planType := "plan type"
 	for _, plan := range planTypeRec {
-		if plan.Type == "buildium" {
-			planType = plan.Type
-		}
 		plan.Type = strings.Replace(plan.Type, "_", " ", -1)
 		note += "<b>Plan: </b>" + strings.Title(plan.Type) + "\n"
 	}
@@ -114,5 +110,5 @@ func makeNote(us_id string) (string, string) {
 	}
 	note += "\n"
 	note += "<a href=" + "https://hpy.io/yumi" + ">" + "Feedback/Report incorrect information" + "</a>"
-	return note, planType
+	return note
 }
