@@ -8,7 +8,6 @@ import (
 	"time"
 )
 //********************************************Init********************************************
-
 func init() {
 	commands["note"] = makeAndSendNote
 }
@@ -81,7 +80,6 @@ func makeNote(us_id string) (string) {
 		note += "<b>Role:</b>" + roles[permission] + "\n"
 	}
 	//******************constructing plan type string******************
-
 	for _, plan := range planTypeRec {
 		plan.Type = strings.Replace(plan.Type, "_", " ", -1)
 		note += "<b>Plan: </b>" + strings.Title(plan.Type) + "\n"
@@ -91,13 +89,11 @@ func makeNote(us_id string) (string) {
 		}
 	}
 	//******************constructing integration string******************
-
 	if integrationName != "" {
 		note += "<b>Integration: </b>" + integrationName
 	}
 
 	//******************constructing iap string******************
-
 	for _, iap := range iapRec {
 		if iap.Expiry != "" {
 			var date, _ = time.Parse(time.RFC3339, iap.Expiry)
