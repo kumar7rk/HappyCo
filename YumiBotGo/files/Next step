@@ -1,26 +1,24 @@
 ~/go/bin/godotenv go run *.go 
 
-Run Buildium reply if the note added equals run yumi Buildium (something like this)
 
 check some preset values (photo inline...) and message user if turned off when closing a conversation
 
-Make note look better
-	Add company name in the top line of the note
-		- This business is on Basic Permissions- Mark-Taylor 
-
-
 modify query to show address for inspections as well like report
-
 
 Note command
  -follow up at a specific time
 
-Automatic reply in non-working hours
+Automatic reply for all messages
+-
+
+snooze conversation after password reply
+- can only do through post request
 
 
 
 
-Create a new user YumiBot
+
+/Create a new user YumiBot
 
 Business query- Role id can be null
 -------------------------Done-------------------------
@@ -98,3 +96,9 @@ Auto-reply
 auto reply
 
 //phrases for password reset
+
+//Run Buildium reply if the note added equals run yumi Buildium (something like this)
+
+//Make note look better
+	Add company name in the top line of the note
+		- This business is on Basic Permissions- Mark-Taylor 
