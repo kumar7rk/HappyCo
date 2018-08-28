@@ -72,7 +72,6 @@ func addReply(conversationID, reply string) {
 }
 
 //********************************************Assign conversation********************************************
-
 func assignConversation(conversationID string, inboxTo string) {
 	_, err := ic.Conversations.Assign(conversationID, &intercom.Admin{ID: "207278"}, &intercom.Admin{ID: json.Number(inboxTo)})
 	if err != nil {
