@@ -7,13 +7,13 @@ import (
 	"strings"
 	"time"
 )
-
-//********************************************Adding note to conversation********************************************
+//********************************************Init********************************************
 
 func init() {
 	commands["note"] = makeAndSendNote
 }
 
+//********************************************Adding note to conversation********************************************
 func makeAndSendNote(user User, conversationID string, params ...string) {
 	ID := user.UserID
 	p := fmt.Println
@@ -24,15 +24,12 @@ func makeAndSendNote(user User, conversationID string, params ...string) {
 	p("User name: " + user.Name)
 	p("User email: " + user.Email)
 
-	// calling the method to compile the note with all the required information
 	note := makeNote(ID)
 
 	addNote(conversationID, note)
 }
 
 //********************************************Getting UserData********************************************
-
-//queries the db and adds returned values in array
 func getUserData(ID string) (businessRec []Business, iapRec []IAP, integrationName string, planTypeRec []Plan) {
 	// fetching business id and role id for user role in this business
 	businessRec = getBusiness(ID)
@@ -43,14 +40,12 @@ func getUserData(ID string) (businessRec []Business, iapRec []IAP, integrationNa
 	// Check if the business has integration w/Yardi
 	integrationName = getIntegration(ID)
 
-	// Plan type = DD/Buildium/MRI
+	// Getting Plan type - Admin tags
 	planTypeRec = getUserPlanType(ID)
 	return
 }
 
 //********************************************Building note********************************************
-
-// build the note in a string format
 func makeNote(us_id string) (string) {
 	var note string
 	var formattedDate string
@@ -58,9 +53,9 @@ func makeNote(us_id string) (string) {
 	//getting user data from the database
 	businessRec, iapRec, integrationName, planTypeRec := getUserData(us_id)
 
-	//******************constructing business string******************
 	note = "<b>🐶Note</b><br/><br/>"
 
+	//******************constructing business string******************
 	// 1, 2, 3, 4 = Constant Admin, PM, Inspector, Limited Inspector
 	// 8, 9 = Basic Admin, PM
 	var roles = []string{"", "Admin", "Process Manger", "Inspector", "Limited Inspector", "", "", "", "Admin", "Process Manager"}
