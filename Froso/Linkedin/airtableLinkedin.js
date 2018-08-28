@@ -9,7 +9,6 @@ base('scraped_data').select({
     view: "Grid view"
 }).eachPage(function page(records, fetchNextPage) {
     records.forEach(function(record) {
-        console.log('Retrieved', record.get('linkedin_url'));
         (async () => {
           const browser = await puppeteer.launch({
                 headless: false
@@ -36,7 +35,7 @@ base('scraped_data').select({
             "phone": name 
         },function(err, record) {
             if (err) {console.error(err);return;}
-            console.log("Phone updated for "+record.get('full_name'));
+            console.log("Phone updated for:"+record.get('full_name'));
         });
           console.log("The person's who profile you visited is:"+ name);
           await browser.close();
