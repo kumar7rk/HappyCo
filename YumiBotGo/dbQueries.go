@@ -41,6 +41,7 @@ type IAP struct {
 }
 type Plan struct {
 	Type string `db:"plan_type"`
+	Status string `db:"status"`
 }
 
 func getInspections(ID string, limit int) (inspectionsRec []Inspection) {
@@ -106,7 +107,7 @@ func getIntegration(ID string) (integrationName string) {
 }
 
 func getUserPlanType(ID string) (planTypeRec []Plan) {
-	err := db.Select(&planTypeRec, "Select plan_type FROM current_subscriptions WHERE business_id IN (SELECT business_id from business_membership WHERE user_id = $1 AND inactivated_at IS NULL)", ID)
+	err := db.Select(&planTypeRec, "Select plan_type,status FROM current_subscriptions WHERE business_id IN (SELECT business_id from business_membership WHERE user_id = $1 AND inactivated_at IS NULL)", ID)
 	if err != nil {
 		fmt.Fprintf(os.Stderr, "Error in plan query %v: %v\n", ID, err)
 	}
