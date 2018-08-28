@@ -1,5 +1,3 @@
-/* Adding User Data from DB to Intercom as a note for every new conversation */
-
 package main
 
 import (
@@ -15,12 +13,9 @@ import (
 	"happyco/apps/tools/libs/buildvars"
 )
 
-//********************************************Variable declaration********************************************
-
 var db *sqlx.DB
 
 //********************************************Main function********************************************
-
 func main() {
 	var err error
 
@@ -49,7 +44,6 @@ func main() {
 }
 
 //********************************************Health check********************************************
-
 func healthcheck(w http.ResponseWriter, r *http.Request) {
 	if ping() != nil {
 		w.WriteHeader(http.StatusServiceUnavailable)
@@ -60,7 +54,6 @@ func healthcheck(w http.ResponseWriter, r *http.Request) {
 }
 
 //********************************************Ping********************************************
-
 func ping() error {
 	ping := make(chan error, 0)
 	timeout := time.After(10 * time.Second)
