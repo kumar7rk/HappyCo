@@ -4,7 +4,7 @@ import (
 	"strconv"
 	"time"
 )
-
+//********************************************Init********************************************
 func init() {
 	commands["inspection"] = showRecentInspections
 }
