@@ -9,12 +9,6 @@ base('scraped_data').select({
     view: "Grid view"
 }).eachPage(function page(records, fetchNextPage) {
     records.forEach(function(record) {
-        base('scraped_data').update(record.getId(),{
-            "phone": "test" 
-        },function(err, record) {
-            if (err) {console.error(err);return;}
-            console.log("Phone updated");
-        });
         console.log('Retrieved', record.get('linkedin_url'));
         (async () => {
           const browser = await puppeteer.launch({
@@ -38,6 +32,12 @@ base('scraped_data').select({
           await page.waitForNavigation();
           await page.goto(record.get('linkedin_url'));
           var name = await page.evaluate(() => document.querySelector('div.pv-top-card-v2-section__info.mr5 > div.display-flex.align-items-center > h1').textContent);
+          base('scraped_data').update(record.getId(),{
+            "phone": name 
+        },function(err, record) {
+            if (err) {console.error(err);return;}
+            console.log("Phone updated for "+record.get('full_name'));
+        });
           console.log("The person's who profile you visited is:"+ name);
           await browser.close();
         })();
