@@ -34,6 +34,7 @@ type Business struct {
 	ID   string `db:"id"`
 	Name string `db:"name"`
 	Role string `db:"business_role_id"`
+	PermissionsModel string `db:"permissions_model"`
 }
 type IAP struct {
 	Expiry string `db:"expires_at"`
@@ -59,7 +60,8 @@ func getReports(ID string, limit int) (reportsRec []Report) {
 }
 
 func getBusiness(ID string) (businessRec []Business) {
-	err := db.Select(&businessRec, "SELECT b.id, b.name, bm.business_role_id FROM businesses b JOIN business_membership bm ON b.id = bm.business_id WHERE bm.user_id = $1 AND inactivated_at IS NULL", ID)
+
+	err := db.Select(&businessRec, "SELECT b.id, b.name, bm.business_role_id, bc.permissions_model FROM businesses b INNER JOIN business_membership bm ON b.id = bm.business_id INNER JOIN business_customizations bc ON bc.business_id = bm.business_id WHERE bm.user_id = $1 AND inactivated_at IS NULL", ID)
 	if err != nil {
 		fmt.Fprintf(os.Stderr, "Error in business query %v: %v\n", ID, err)
 	}
