@@ -3,13 +3,12 @@ package main
 import (
 	"strings"
 )
-
-//********************************************Sending password reply********************************************
-
+//********************************************Init********************************************
 func init() {
 	commands["password"] = sendPasswordReply
 }
 
+//********************************************Sending password reply********************************************
 func sendPasswordReply(user User, conversationID string, params ...string) {
 	// if you don't give a name use the name user have in his account
 	if len(params) == 0 && user.Email != "" {
