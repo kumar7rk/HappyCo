@@ -90,6 +90,10 @@ func makeNote(us_id string) (string) {
 	for _, plan := range planTypeRec {
 		plan.Type = strings.Replace(plan.Type, "_", " ", -1)
 		note += "<b>Plan: </b>" + strings.Title(plan.Type) + "\n"
+
+		if plan.Status != "active" {
+			note += "<b><h3>Status:</b>" + plan.Status + "</h3>\n"
+		}
 	}
 	//******************constructing integration string******************
 
