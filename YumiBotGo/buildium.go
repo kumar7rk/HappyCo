@@ -4,12 +4,12 @@ import (
 	"strings"
 )
 
-//********************************************Sending Buildium reply********************************************
-
+//********************************************Init********************************************
 func init() {
 	commands["buildium"] = sendBuildiumReply
 }
 
+//********************************************Sending Buildium reply********************************************
 func sendBuildiumReply(user User, conversationID string, params ...string) {
 	// if you don't give a name use the name user have in his account
 	if len(params) == 0 && user.Email != "" {
