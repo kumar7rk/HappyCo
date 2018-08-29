@@ -48,9 +48,14 @@ var range = XLSX.utils.decode_range(worksheet['!ref']); // get the range
       
       var writeCellName = XLSX.utils.encode_cell({c:range.s.c+1, r:R}); //B1..
       var writeCellWebsite = XLSX.utils.encode_cell({c:range.s.c+2, r:R}); //C1..
-    
+      var writeCellUnits = XLSX.utils.encode_cell({c:range.s.c+3, r:R}); //D1..
+      
+      if (!worksheet[writeCellUnits]) {
+        worksheet[writeCellUnits] = {}
+      }
       worksheet[writeCellName].v = name;   
       worksheet[writeCellWebsite].v = website;   
+      worksheet[writeCellUnits].v = "Test";   
 
     }
     XLSX.writeFile(workbook ,'Appfolio1.xlsx')
