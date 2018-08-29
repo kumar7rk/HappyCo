@@ -1,5 +1,6 @@
 const puppeteer = require('puppeteer');
 const CREDS = require('./creds');
+const player = require('play-sound')(opts = {});
 
 (async () => {
   const browser = await puppeteer.launch({
@@ -35,32 +36,10 @@ if(typeof require !== 'undefined') XLSX = require('xlsx');
 
 try{  
 
-  for (var i = 16; i < 6180; i++) {
+  for (var i = 2; i < 4; i++) {
+
     console.log("Row: "+i);
-    var audioElement;
-    if(!audioElement) {
-      audioElement = await page.evaluate(() => document.createElement('audio'));
-      audioElement.innerHTML = '<source src="' + '/audio.mp3'+ '" type="audio/mpeg" />'
-      audioElement.play();
-    }
-    /*var audio = await page.evaluate(() => document.createElement('audio'));
-    console.log("LOC: "+46)
-    audio.src = '/audio.mp3';
-    audio.autoplay = true;
-    audio.onended = function(){
-    audio.remove() //Remove when played.
-    await page.evaluate(() => document.body.appendChild(audio));
-    audio.style.display = "none";
-    };*/
-    //playSound('/Users/Rohit/Documents/GitHub/HappyCo/Froso/audio.mp3')
-    /*var c = await page.evaluate(() => document.createElement('audio')); 
-    var snd = '/Users/Rohit/Documents/GitHub/HappyCo/Froso/audio.mp3';
-    c.src=snd; 
-    c.play();*/
-
-    /*var snd = new Audio('/Users/Rohit/Documents/GitHub/HappyCo/Froso/audio.mp3');
-    snd.play();*/
-
+    
     address_of_cell = 'A'+i;
     desired_cell = worksheet[address_of_cell];
     var desired_value = (desired_cell ? desired_cell.v : undefined);
@@ -202,6 +181,12 @@ try{
 }
 catch(error){
       console.log(error);
+      player.play('error.mp3', function(err){
+      if (err) throw err
+    })
     }
   await browser.close();
+  player.play('completed.mp3', function(err){
+      if (err) throw err
+    })
 })();
