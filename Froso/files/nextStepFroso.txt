@@ -1,9 +1,9 @@
 play around with the sheetjs
 
-write better code (appfolio example) 
+//write better code (appfolio example) 
 //- continue if website is not available
 //- run for all the rows in a column rather than hardcoding the values
-- if empty cell still add information
+//- if empty cell still add information
 //- a better for writeCell values
 
 
