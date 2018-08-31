@@ -9,12 +9,7 @@ import (
     "os"
 )
 
-func snoozeConversation(conversationID string, params ...string) {
-    days:=int64(3)
-    if len(params) > 0 {
-        days, _ = strconv.ParseInt(params[0], 10, 64)
-    }
-
+func snoozeConversation(conversationID string, days int64) {
 	currentTimeInSec := int64(time.Now().Unix())
 	secInADay := int64(86400)
 	snoozeTimeInSec := int64(secInADay*days)
