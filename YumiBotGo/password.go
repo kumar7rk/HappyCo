@@ -2,6 +2,7 @@ package main
 
 import (
 	"strings"
+	"strconv"
 )
 
 //********************************************Init********************************************
@@ -16,12 +17,20 @@ func sendPasswordReply(user User, conversationID string, params ...string) {
 		params = strings.Split(user.Name, " ")
 	}
 	name := "there"
+	snoozeDays := int64(3)
+
 	if len(params) > 0 {
-		name = params[0]
+		val, err := strconv.Atoi(params[0])
+		if  err !=nil {
+			name = params[0]
+        } else{
+			name = strings.Split(user.Name, " ")[0]
+			snoozeDays = int64(val)
+        }
 	}
 	message := "Hi " + name + " 👋 \n \n It looks like you might be having trouble logging in? \n\n You can reset your password by entering your email <a href='https://manage.happyco.com/password/forgot'> here </a> \n \n Thanks!  \n HappyBot ☺ \n\n <i>Need to contact a human....... just reply</i>"
 
 	addReply(conversationID, message)
 	assignConversation(conversationID, "1398520")
-	snoozeConversation(conversationID)
+	snoozeDaysConversation(conversationID, snoozeDays)
 }
