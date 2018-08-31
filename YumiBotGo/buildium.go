@@ -23,4 +23,5 @@ func sendBuildiumReply(user User, conversationID string, params ...string) {
 
 	addReply(conversationID, message)
 	assignConversation(conversationID, "1615207")
+	snoozeConversation(conversationID)
 }
