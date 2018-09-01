@@ -32,5 +32,5 @@ func sendPasswordReply(user User, conversationID string, params ...string) {
 
 	addReply(conversationID, message)
 	assignConversation(conversationID, "1398520")
-	snoozeDaysConversation(conversationID, snoozeDays)
+	snoozeConversation(conversationID, snoozeDays)
 }
