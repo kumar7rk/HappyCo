@@ -2,6 +2,7 @@ package main
 
 import (
 	"strings"
+	"strconv"
 )
 
 //********************************************Init********************************************
@@ -32,5 +33,5 @@ func sendBuildiumReply(user User, conversationID string, params ...string) {
 
 	addReply(conversationID, message)
 	assignConversation(conversationID, "1615207")
-	snoozeConversation(conversationID, int64(3))
+	snoozeConversation(conversationID, snoozeDays)
 }
