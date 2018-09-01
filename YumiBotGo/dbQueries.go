@@ -43,6 +43,9 @@ type Plan struct {
 	Type   string `db:"plan_type"`
 	Status string `db:"status"`
 }
+type Admin struct {
+	Detail string 
+}
 
 //********************************************Inspection********************************************
 
@@ -115,6 +118,14 @@ func getIntegration(ID string) (integrationName string) {
 //********************************************Plan Type********************************************
 func getUserPlanType(ID string) (planTypeRec []Plan) {
 	err := db.Select(&planTypeRec, "Select plan_type,status FROM current_subscriptions WHERE business_id IN (SELECT business_id from business_membership WHERE user_id = $1 AND inactivated_at IS NULL)", ID)
+	if err != nil {
+		fmt.Fprintf(os.Stderr, "Error in plan query %v: %v\n", ID, err)
+	}
+	return
+}
+//********************************************Business's Admins********************************************
+func getAdmins(ID string) (AdminRec []Admin) {
+	err := db.Select(&AdminRec, "SELECT CONCAT(first_name, ' ', last_name, ' ', email) as detail FROM users WHERE id IN (SELECT user_id FROM business_membership WHERE business_id IN (SELECT business_id FROM business_membership WHERE user_id = $1) AND inactivated_at IS NULL AND business_role_id IN (8, 1))", ID)
 	if err != nil {
 		fmt.Fprintf(os.Stderr, "Error in plan query %v: %v\n", ID, err)
 	}
