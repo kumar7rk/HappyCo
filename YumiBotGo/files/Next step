@@ -1,20 +1,15 @@
 ~/go/bin/godotenv go run *.go 
 
-
-check some preset values (photo inline...) and message user if turned off when closing a conversation
-
 modify query to show address for inspections as well like report
 
 Note command
- -follow up at a specific time
+- follow up at a specific time
+- Spit out account admins' name (SQL)
 
 Automatic reply for all messages
 -
 
-snooze conversation after password reply
-- can only do through post request
-
-
+check some preset values (photo inline...) and message user if turned off when closing a conversation
 
 
 
@@ -102,3 +97,8 @@ auto reply
 //Make note look better
 	Add company name in the top line of the note
 		- This business is on Basic Permissions- Mark-Taylor 
+
+//snooze conversation after password reply
+- can only do through post request
+
+
