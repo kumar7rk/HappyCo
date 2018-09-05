@@ -69,7 +69,7 @@ func makeNote(us_id string) string {
 		var BusinessPermission = business.PermissionsModel
 
 		if BusinessPermission == "constant-roles" {
-			BusinessPermission = "Contant/Full"
+			BusinessPermission = "Constant/Full"
 		}
 
 		if BusinessPermission == "basic-roles" {
