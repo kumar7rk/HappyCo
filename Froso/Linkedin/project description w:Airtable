@@ -1,0 +1,59 @@
+play around with airtable api
+
+so basically we are keeping the data in db later on but using airtable api to scrape?
+
+
+****************Big Picture****************
+manually get linkedin urls from website
+add them into outreach
+then visit these urls every 2/3 months manually
+if any change email them
+
+****************What's in the project****************
+automation
+visit the urls automatically
+make an app
+which can be hosted on the platform
+Rob and Laura can run every now and then
+if there's a change in the profile (name, job title, new position etc.)
+send them a notification 
+Rob can then send an email based on what's changed
+
+****************Why DB****************
+some people don't update promotion but simply change their job title
+e.g. Current title - ABC
+promoted to XYZ
+instead of adding XYZ as promotion people rename ABC to XYZ
+so if they're working in a company for a year and half as ABC
+their profile will now read as if they're woking in a company as XYZ for last year and a half
+
+which means the logic for checking if their job changed in last x months fails in these cases
+and also if someone change their name
+
+so the idea is to visit these profiles ones
+store the data in DB
+and then when you run it the next time compare the values with the previous values stored in DB.
+
+Need to build a DB
+add values to it
+get values from it
+compare value
+if some change detected send a notification or print this information on an excel
+
+
+
+looks like a simple app
+where is the airtable api coming in ??
+
+to pull the fresh data from outreach
+but seriously do we need to use this api
+
+I think we can do it without this api
+
+sql
+maybe i can use go
+and then Rob can schedule it to run everyday
+and send himself a report or something.
+
+But can we scrapte the web with go.
+How to integrate js and go
