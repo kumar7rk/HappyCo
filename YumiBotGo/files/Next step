@@ -1,5 +1,9 @@
 ~/go/bin/godotenv go run *.go 
 
+include phrases- "password was incorrect","password is incorrect"
+
+Exclude @happy.co from b auto responder
+
 modify query to show address for inspections as well like report
 
 Note command
@@ -10,6 +14,11 @@ Automatic reply for all messages
 -
 
 check some preset values (photo inline...) and message user if turned off when closing a conversation
+
+	
+
+struct- remove json...db if same name as struct's value
+
 
 
 
