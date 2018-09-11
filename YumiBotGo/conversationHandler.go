@@ -61,8 +61,9 @@ func processNewConversation(user User, conversationID string, conversationMessag
 		// buildium autoresponder
 		if isBuildiumUser {
 			buildiumSupport := strings.Contains(user.Email, "@buildium.com")
+			happyCoTeam := strings.Contains(user.Email, "@happy.co")
 			if conversationSubject == "" {
-				if !buildiumSupport {
+				if !buildiumSupport && !happyCoTeam{
 					sendBuildiumReply(user, conversationID)
 				}
 			} else {
@@ -77,7 +78,7 @@ func processNewConversation(user User, conversationID string, conversationMessag
 						break
 					}
 				}
-				if !buildiumSupport && !autoRepliedMessage {
+				if !buildiumSupport && !happyCoTeam && !autoRepliedMessage {
 					sendBuildiumReply(user, conversationID)
 					return
 				}
