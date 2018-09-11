@@ -3,7 +3,22 @@ package main
 import (
 	"strconv"
 	"time"
+	"encoding/json"
+	// "fmt"
 )
+type Asset struct {
+	EmbeddedAsset EmbeddedAsset
+}
+type EmbeddedAsset struct {
+	Address Address
+	Building string
+}
+type Address struct {
+	Line1 string 
+	Line2 string 
+	Locality string 
+	Province string 
+}
 
 //********************************************Init********************************************
 func init() {
@@ -12,6 +27,7 @@ func init() {
 
 //********************************************Adding commands********************************************
 func showRecentInspections(user User, conversationID string, params ...string) {
+    // p:=fmt.Println
 	var limit = 5
 	if len(params) > 0 {
 		limit, _ = strconv.Atoi(params[0])
@@ -24,8 +40,33 @@ func showRecentInspections(user User, conversationID string, params ...string) {
 		var date, _ = time.Parse(time.RFC3339, inspection.CreatedAt)
 		var formattedDate = date.Format("02 Jan 2006 3:04PM")
 
-		message += "<a href=\"" + url + "\">" + url + "</a>" + " " + formattedDate
+
+		var msg Asset
+    	var val []byte = []byte	(inspection.Asset)
+
+	    // p(inspection.Asset)
+
+	    _= json.Unmarshal(val, &msg)
+	    // fmt.Println(msg.EmbeddedAsset.Address)
+	    
+		// message += "\n"
+		var address string
+		if msg.EmbeddedAsset.Address.Line1 != "" {
+			address +=msg.EmbeddedAsset.Address.Line1+", "
+		}
+		if msg.EmbeddedAsset.Address.Line2 != ""{
+			address +=msg.EmbeddedAsset.Address.Line2+", "
+		}
+		if msg.EmbeddedAsset.Address.Locality !="" {
+			address +=msg.EmbeddedAsset.Address.Locality+", "
+		}
+		if msg.EmbeddedAsset.Address.Province != ""{
+			address +=msg.EmbeddedAsset.Address.Province
+		}
+
+		message += "<a href=\"" + url + "\">" + address + "</a>" + " " + formattedDate
 		message += "\n"
+
 	}
 	addNote(conversationID, message)
 }
