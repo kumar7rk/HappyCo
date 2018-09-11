@@ -34,7 +34,7 @@ if(typeof require !== 'undefined') XLSX = require('xlsx');
   var address_of_cell = 'A2';
   var desired_cell = worksheet[address_of_cell];
 try{  
-  for (var i = 2; i < 4; i++) {
+  for (var i = 8; i < 10; i++) {
     console.log("Row: "+i);
     address_of_cell = 'A'+i;
     desired_cell = worksheet[address_of_cell];
@@ -49,29 +49,26 @@ try{
     await page.waitFor(2 * 1000);
 
     var data = "";  
-    var multiPosition = "";
+    var multiPosition = false
     
-    //#ember2026 > div > div > div.pv-entity__summary-info-v2.pv-entity__summary-info--v2.pv-entity__summary-info-margin-top.mb2 > h3 > span:nth-child(2)
-    //what's this checking?
     if (await page.evaluate(() => document.querySelector
-      ('div.pv-entity__summary-info.pv-entity__summary-info--v2 >h3'))==null) {
+      ('pv-entity__position-group-pager ember-view'))==null) {
         continue;
     }
     //what's this checking?
     if (await page.evaluate(() => document.querySelector
-      ('div.pv-entity__summary-info.pv-entity__summary-info--v2 >h3').textContent)==null) {
+      ('pv-entity__position-group-pager ember-view').textContent)==null) {
         continue;
     }
     
-    //contains title
-    data = await page.evaluate(() => document.querySelector
-    ('div.pv-entity__summary-info.pv-entity__summary-info--v2').textContent)
-    console.log("Title: "+data);
-    multiPosition = data.includes("Title");
-    //div.pv-entity__summary-info.pv-entity__summary-info--v2 > h3
-    
-    //#ember2677 > div > div > div.pv-entity__summary-info-v2.pv-entity__summary-info--v2
-    //.pv-entity__summary-info-margin-top.mb2 > h3 > span:nth-child(2)
+    //contains first job whole
+    data = await page.evaluateHandle(() => {
+      return Array.from(document.getElementsByClassName('pv-entity__position-group-pager ember-view')).map(elem => elem.textContent.trim()).slice(0,1);
+    });
+    var str = JSON.stringify(await data.jsonValue())
+    if (str.trim().startsWith('["Company Name')) {
+      multiPosition = true;
+    } 
     
     if (!multiPosition) {
       if ((await page.evaluate(() => document.querySelector('div.pv-top-card-v2-section__info.mr5 > div.display-flex.align-items-center > h1'))
