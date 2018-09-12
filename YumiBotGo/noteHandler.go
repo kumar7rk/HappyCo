@@ -45,12 +45,12 @@ func newAdminNote(w http.ResponseWriter, r *http.Request) {
 
 //********************************************Processing new note********************************************
 func processNewAdminNote(user User, conversationID string, note string, author string) {
+	note = strings.ToLower(note)
 	if note == "<p>yumi help</p>" || note == "<p>yumi run help</p>" || note == "<p>yumi</p>" {
 		listRunCommands(author, conversationID)
 		return
 	}
-
-	if strings.HasPrefix(note, "<p>yumi run ") || strings.HasPrefix(note, "<p>Yumi run ")  {
+	if strings.HasPrefix(note, "<p>yumi run ") || strings.HasPrefix(note, "<p>yumi get ")  {
 		note = strings.TrimSuffix(note[12:], "</p>")
 		params := strings.Split(note, " ")
 		if cmd, ok := commands[params[0]]; ok {
