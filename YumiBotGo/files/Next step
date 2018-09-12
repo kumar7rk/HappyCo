@@ -1,14 +1,9 @@
 ~/go/bin/godotenv go run *.go 
 
-include phrases- "password was incorrect","password is incorrect"
-
-Exclude @happy.co from b auto responder
-
-modify query to show address for inspections as well like report
 
 Note command
 - follow up at a specific time
-- Spit out account admins' name (SQL)
+
 
 Automatic reply for all messages
 -
@@ -110,4 +105,14 @@ auto reply
 //snooze conversation after password reply
 - can only do through post request
 
+modify query to show address for inspections as well like report
+- HI-5344
+Note command
+- Spit out account admins' name (SQL) 
+- HI-5343
 
+Exclude @happy.co from b auto responder
+-HI- 5357
+
+include phrases- "password was incorrect","password is incorrect"
+-HI- 5358
