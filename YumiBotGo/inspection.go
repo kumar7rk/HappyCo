@@ -4,7 +4,6 @@ import (
 	"strconv"
 	"time"
 	"encoding/json"
-	// "fmt"
 )
 type Asset struct {
 	EmbeddedAsset EmbeddedAsset
@@ -27,7 +26,6 @@ func init() {
 
 //********************************************Adding commands********************************************
 func showRecentInspections(user User, conversationID string, params ...string) {
-    // p:=fmt.Println
 	var limit = 5
 	if len(params) > 0 {
 		limit, _ = strconv.Atoi(params[0])
@@ -40,16 +38,12 @@ func showRecentInspections(user User, conversationID string, params ...string) {
 		var date, _ = time.Parse(time.RFC3339, inspection.CreatedAt)
 		var formattedDate = date.Format("02 Jan 2006 3:04PM")
 
-
 		var msg Asset
     	var val []byte = []byte	(inspection.Asset)
 
-	    // p(inspection.Asset)
-
 	    _= json.Unmarshal(val, &msg)
-	    // fmt.Println(msg.EmbeddedAsset.Address)
 	    
-		// message += "\n"
+		message += inspection.FolderName +" > "
 		var address string
 		if msg.EmbeddedAsset.Address.Line1 != "" {
 			address +=msg.EmbeddedAsset.Address.Line1+", "
