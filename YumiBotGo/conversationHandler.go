@@ -89,7 +89,7 @@ func processNewConversation(user User, conversationID string, conversationMessag
 	conversationMessage = strings.ToLower(conversationMessage)
 
 	var passwordPhrases = []string{"change password", "change my password", "reset password",
-		"reset my password", "password is incorrect", "manage password", "manage my password", "forgot password", "forgot my password","password was incorrect"}
+		"reset my password", "resetting my password", "password is incorrect", "password was incorrect", "manage password", "manage my password", "forgot password", "forgot my password"}
 
 	var passwordReply bool
 
