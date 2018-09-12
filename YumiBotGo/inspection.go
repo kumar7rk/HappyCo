@@ -31,9 +31,7 @@ func showRecentInspections(user User, conversationID string, params ...string) {
 		limit, _ = strconv.Atoi(params[0])
 	}
 	inspectionsRec := getInspections(user.UserID, limit)
-
-	s:=len(inspectionsRec)    
-	message := "<b>Showing " + strconv.Itoa(s) + " recent inspections created by " + user.Name + " in last 30 days</b>"
+	message := "<b>Showing " + strconv.Itoa(len(inspectionsRec)) + " recent inspections created by " + user.Name + " in last 30 days</b>"
 	message += "\n"
 	for _, inspection := range inspectionsRec {
 		var url = "https://manage.happyco.com/folder/" + inspection.FolderID + "/inspections/" + inspection.ID
