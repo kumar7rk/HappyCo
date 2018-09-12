@@ -16,7 +16,8 @@ func showRecentReports(user User, conversationID string, params ...string) {
 		limit, _ = strconv.Atoi(params[0])
 	}
 	reportsRec := getReports(user.UserID, limit)
-	message := "<b>Showing " + strconv.Itoa(limit) + " recent reports created by " + user.Name + " in last 30 days</b>"
+
+	message := "<b>Showing " + strconv.Itoa(len(reportsRec)) + " recent reports created by " + user.Name + " in last 30 days</b>"
 	message += "\n"
 	for _, report := range reportsRec {
 		var url = "https://manage.happyco.com/reports/" + report.PublicID
