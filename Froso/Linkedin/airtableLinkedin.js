@@ -5,7 +5,7 @@ var Airtable = require('airtable');
 var base = new Airtable({apiKey: 'keyrYSQEONtptwMth'}).base('appfcatXnrEsiTmFB');
 
 base('scraped_data').select({
-    maxRecords: 3,
+    maxRecords: 10,
     view: "Grid view"
 }).eachPage(function page(records, fetchNextPage) {
     records.forEach(function(record) {
@@ -31,13 +31,19 @@ base('scraped_data').select({
           await page.waitForNavigation();
           await page.goto(record.get('linkedin_url'));
           var name = await page.evaluate(() => document.querySelector('div.pv-top-card-v2-section__info.mr5 > div.display-flex.align-items-center > h1').textContent);
+          var location = await page.evaluate(() => document.querySelector('div.pv-top-card-v2-section__info.mr5 > h3').textContent);
+
+          /*const clickElement = 'span.pv-top-card-v2-section__entity-name.pv-top-card-v2-section__contact-info.ml2.Sans-15px-black-85\25'
+          await page.click(clickElement)
+          var phone = await page.evaluate(() => document.querySelector('div > section.pv-contact-info__contact-type.ci-phone > ul > li > span.Sans-15px-black-85\25').textContent);
+          console.log(phone)*/
           base('scraped_data').update(record.getId(),{
-            "phone": name 
+            "location": location 
         },function(err, record) {
             if (err) {console.error(err);return;}
-            console.log("Phone updated for:"+record.get('full_name'));
+            console.log("Location updated for:"+record.get('full_name'));
         });
-          console.log("The person's who profile you visited is:"+ name);
+          // console.log("The person's who profile you visited is:"+ name);
           await browser.close();
         })();
     });
