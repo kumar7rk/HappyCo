@@ -3,20 +3,15 @@ const CREDS = require('./creds');
 
 var Airtable = require('airtable');
 var base = new Airtable({apiKey: 'keyrYSQEONtptwMth'}).base('appfcatXnrEsiTmFB');
+var browser = "";
+var page = "";
 
-base('scraped_data').select({
-    maxRecords: 10,
-    view: "Grid view"
-}).eachPage(function page(records, fetchNextPage) {
-    records.forEach(function(record) {
-        (async () => {
-          const browser = await puppeteer.launch({
+(async () => {
+          browser = await puppeteer.launch({
                 headless: false
             });
           const page = await browser.newPage();
-
           await page.goto("https://www.linkedin.com");
-
           const USERNAME_SELECTOR = '#login-email';
           const PASSWORD_SELECTOR = '#login-password';
           const BUTTON_SELECTOR = '#login-submit';
@@ -28,32 +23,41 @@ base('scraped_data').select({
           await page.keyboard.type(CREDS.password);
           
           await page.click(BUTTON_SELECTOR);
-          await page.waitForNavigation();
-          await page.goto(record.get('linkedin_url'));
+          // await page.waitForNavigation();
+      
+      setTimeout(function(){
+base('scraped_data').select({
+    maxRecords: 3,
+    view: "Grid view"
+}).eachPage(function page(records, fetchNextPage) {
+    records.forEach(function(record) {
+      (async () => {
+        const page = await browser.newPage();
+
+        await page.goto(record.get('linkedin_url'));
+
           var name = await page.evaluate(() => document.querySelector('div.pv-top-card-v2-section__info.mr5 > div.display-flex.align-items-center > h1').textContent);
           var location = await page.evaluate(() => document.querySelector('div.pv-top-card-v2-section__info.mr5 > h3').textContent);
-
-          /*const clickElement = 'span.pv-top-card-v2-section__entity-name.pv-top-card-v2-section__contact-info.ml2.Sans-15px-black-85\25'
-          await page.click(clickElement)
-          var phone = await page.evaluate(() => document.querySelector('div > section.pv-contact-info__contact-type.ci-phone > ul > li > span.Sans-15px-black-85\25').textContent);
-          console.log(phone)*/
           base('scraped_data').update(record.getId(),{
             "location": location 
         },function(err, record) {
             if (err) {console.error(err);return;}
             console.log("Location updated for:"+record.get('full_name'));
         });
-          // console.log("The person's who profile you visited is:"+ name);
-          await browser.close();
-        })();
+          console.log("The person's who profile you visited is:"+ name);
+          // await browser.close();
+
+      })();
     });
 
     fetchNextPage();
 
 }, function done(err) {
     if (err) { console.error(err); return; }
-});
-
+});}
+, 10000);
+    await browser.close();
+})();
 /*OUTPUT
 {
     "id": "recz7ddYYhNCqUL1T",
