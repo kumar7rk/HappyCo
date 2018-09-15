@@ -17,7 +17,7 @@ func sendBuildiumReply(user User, conversationID string, params ...string) {
 		params = strings.Split(user.Name, " ")
 	}
 	name := "there"
-	snoozeDays := int64(3)
+	snoozeDays := int64(7)
 
 	if len(params) > 0 {
 		val, err := strconv.Atoi(params[0])
