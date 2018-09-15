@@ -1,24 +1,8 @@
+Run cmd
 ~/go/bin/godotenv go run *.go 
 
 
-Note command
-- follow up at a specific time
-
-
-Automatic reply for all messages
--
-
-check some preset values (photo inline...) and message user if turned off when closing a conversation
-
-	
-
-struct- remove json...db if same name as struct's value
-
-
-
-
-/Create a new user YumiBot
-
+info
 Business query- Role id can be null
 -------------------------Done-------------------------
 
@@ -115,4 +99,24 @@ Exclude @happy.co from b auto responder
 -HI- 5357
 
 include phrases- "password was incorrect","password is incorrect"
+"resetting my password
 -HI- 5358
+
+
+//use yumi run note or Yumi run note
+
+Automatic reply for all messages
+- Hi-5412
+
+check some preset values (photo inline...) and message user if turned off when closing a conversation
+Hi-5413
+
+/Create a new user YumiBot
+
+Note command
+- follow up at a specific time
+HI-5414
+
+struct- remove json...db if same name as struct's value
+Hi-5415
+
