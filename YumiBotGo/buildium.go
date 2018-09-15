@@ -7,7 +7,7 @@ import (
 
 //********************************************Init********************************************
 func init() {
-	commands["buildium"] = sendBuildiumReply
+	repCommands["buildium"] = Command{Func: sendBuildiumReply, Description: `Sends a buildium message to a user. You can give arguments either name or snooze time. yumi rep buildium <name> or <days to snooze conversation for>`}
 }
 
 //********************************************Sending Buildium reply********************************************
