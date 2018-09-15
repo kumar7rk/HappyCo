@@ -16,7 +16,7 @@ func showAllAdmins(user User, conversationID string, params ...string) {
 	adminsRec := getAdmins(user.UserID)
 	for _, admin := range adminsRec {
 		message += admin.Detail
-		message +="\n"
+		message += "\n"
 	}
 	addNote(conversationID, message)
 }

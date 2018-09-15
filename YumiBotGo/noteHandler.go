@@ -62,7 +62,7 @@ func processNewAdminNote(user User, conversationID string, note string, author s
 		}
 	}
 
-	if strings.HasPrefix(note, "<p>yumi get ")  {
+	if strings.HasPrefix(note, "<p>yumi get ") {
 		note = strings.TrimSuffix(note[12:], "</p>")
 		params := strings.Split(note, " ")
 		if cmd, ok := getCommands[params[0]]; ok {
@@ -76,7 +76,7 @@ func processNewAdminNote(user User, conversationID string, note string, author s
 
 type Command struct {
 	Description string
-	Func func(user User, conversationID string, params ...string)
+	Func        func(user User, conversationID string, params ...string)
 }
 
 var repCommands map[string]Command = make(map[string]Command)

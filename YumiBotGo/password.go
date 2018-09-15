@@ -7,7 +7,7 @@ import (
 
 //********************************************Init********************************************
 func init() {
-	repCommands["password"] = Command{Func: sendPasswordReply, Description: `Sends password reset instructions.` +"\n"+` <b>Default</b> snooze is 3 days. ` +"\n"+` <b>Arguments</b> either name or snooze time. ` +"\n"+` <b>Example</b> yumi rep password [name] or [days to snooze]`}
+	repCommands["password"] = Command{Func: sendPasswordReply, Description: `Sends password reset instructions.` + "\n" + ` <b>Default</b> snooze is 3 days. ` + "\n" + ` <b>Arguments</b> either name or snooze time. ` + "\n" + ` <b>Example</b> yumi rep password [name] or [days to snooze]`}
 }
 
 //********************************************Sending password reply********************************************

@@ -1,27 +1,28 @@
 package main
 
 import (
+	"encoding/json"
 	"strconv"
 	"time"
-	"encoding/json"
 )
+
 type Asset struct {
 	EmbeddedAsset EmbeddedAsset
 }
 type EmbeddedAsset struct {
-	Address Address
+	Address  Address
 	Building string
 }
 type Address struct {
-	Line1 string 
-	Line2 string 
-	Locality string 
-	Province string 
+	Line1    string
+	Line2    string
+	Locality string
+	Province string
 }
 
 //********************************************Init********************************************
 func init() {
-	getCommands["inspection"] = Command{Func: showRecentInspections, Description: `Shows inspections created by a user in last 30 days. ` +"\n"+` <b>Default</b> is 5. ` +"\n"+` <b>Argument</b> # of inspections to show. ` +"\n"+`<b>Example</b> yumi get inspection 100 will show 100 inspections in last 30 days`}
+	getCommands["inspection"] = Command{Func: showRecentInspections, Description: `Shows inspections created by a user in last 30 days. ` + "\n" + ` <b>Default</b> is 5. ` + "\n" + ` <b>Argument</b> # of inspections to show. ` + "\n" + `<b>Example</b> yumi get inspection 100 will show 100 inspections in last 30 days`}
 }
 
 //********************************************Adding commands********************************************
@@ -39,23 +40,23 @@ func showRecentInspections(user User, conversationID string, params ...string) {
 		var formattedDate = date.Format("02 Jan 2006 3:04PM")
 
 		var msg Asset
-    	var val []byte = []byte	(inspection.Asset)
+		var val []byte = []byte(inspection.Asset)
 
-	    _= json.Unmarshal(val, &msg)
-	    
+		_ = json.Unmarshal(val, &msg)
+
 		// message += "<b>" + inspection.FolderName +"</b> "
 		var address string
 		if msg.EmbeddedAsset.Address.Line1 != "" {
-			address +=msg.EmbeddedAsset.Address.Line1+", "
+			address += msg.EmbeddedAsset.Address.Line1 + ", "
 		}
-		if msg.EmbeddedAsset.Address.Line2 != ""{
-			address +=msg.EmbeddedAsset.Address.Line2+", "
+		if msg.EmbeddedAsset.Address.Line2 != "" {
+			address += msg.EmbeddedAsset.Address.Line2 + ", "
 		}
-		if msg.EmbeddedAsset.Address.Locality !="" {
-			address +=msg.EmbeddedAsset.Address.Locality+", "
+		if msg.EmbeddedAsset.Address.Locality != "" {
+			address += msg.EmbeddedAsset.Address.Locality + ", "
 		}
-		if msg.EmbeddedAsset.Address.Province != ""{
-			address +=msg.EmbeddedAsset.Address.Province
+		if msg.EmbeddedAsset.Address.Province != "" {
+			address += msg.EmbeddedAsset.Address.Province
 		}
 		// message += "<p><a href=\"" + url + "\"><p>" + inspection.FolderName + "</p><p>" + address + "</p><p>" + formattedDate + "</p></a>\n"
 		message += inspection.FolderName + " > "

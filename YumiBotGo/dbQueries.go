@@ -16,7 +16,7 @@ type Inspection struct {
 	ID           string
 	Status       string
 	Location     string
-	Asset		 string
+	Asset        string
 }
 
 type Report struct {
@@ -45,7 +45,7 @@ type Plan struct {
 	Status string `db:"status"`
 }
 type Admin struct {
-	Detail string 
+	Detail string
 }
 
 //********************************************Inspection********************************************
@@ -124,6 +124,7 @@ func getUserPlanType(ID string) (planTypeRec []Plan) {
 	}
 	return
 }
+
 //********************************************Business's Admins********************************************
 func getAdmins(ID string) (AdminRec []Admin) {
 	err := db.Select(&AdminRec, "SELECT CONCAT(first_name, ' ', last_name, ' ', email) as detail FROM users WHERE id IN (SELECT user_id FROM business_membership WHERE business_id IN (SELECT business_id FROM business_membership WHERE user_id = $1) AND inactivated_at IS NULL AND business_role_id IN (8, 1))", ID)

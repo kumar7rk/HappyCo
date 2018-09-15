@@ -1,13 +1,13 @@
 package main
 
 import (
-	"strings"
 	"strconv"
+	"strings"
 )
 
 //********************************************Init********************************************
 func init() {
-	repCommands["buildium"] = Command{Func: sendBuildiumReply, Description: `Sends a buildium message to a user.` +"\n"+` <b>Default</b> snooze is 7 days.` +"\n"+` <b>Arguments</b> either name or snooze time.` +"\n"+` <b>Example</b> yumi rep buildium [name] or [days to snooze]`}
+	repCommands["buildium"] = Command{Func: sendBuildiumReply, Description: `Sends a buildium message to a user.` + "\n" + ` <b>Default</b> snooze is 7 days.` + "\n" + ` <b>Arguments</b> either name or snooze time.` + "\n" + ` <b>Example</b> yumi rep buildium [name] or [days to snooze]`}
 }
 
 //********************************************Sending Buildium reply********************************************

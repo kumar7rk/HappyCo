@@ -63,7 +63,7 @@ func processNewConversation(user User, conversationID string, conversationMessag
 			buildiumSupport := strings.Contains(user.Email, "@buildium.com")
 			happyCoTeam := strings.Contains(user.Email, "@happy.co")
 			if conversationSubject == "" {
-				if !buildiumSupport && !happyCoTeam{
+				if !buildiumSupport && !happyCoTeam {
 					sendBuildiumReply(user, conversationID)
 				}
 			} else {
