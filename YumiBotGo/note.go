@@ -10,7 +10,7 @@ import (
 
 //********************************************Init********************************************
 func init() {
-	commands["note"] = makeAndSendNote
+	getCommands["note"] = Command{Func: makeAndSendNote, Description: `Print user's information - business, role etc.`}
 }
 
 //********************************************Adding note to conversation********************************************
