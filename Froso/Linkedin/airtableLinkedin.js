@@ -7,25 +7,24 @@ var browser = "";
 var page = "";
 
 (async () => {
-          browser = await puppeteer.launch({
-                headless: false
-            });
-          const page = await browser.newPage();
-          await page.goto("https://www.linkedin.com");
-          const USERNAME_SELECTOR = '#login-email';
-          const PASSWORD_SELECTOR = '#login-password';
-          const BUTTON_SELECTOR = '#login-submit';
+  browser = await puppeteer.launch({
+    headless: false
+  });
+  const page = await browser.newPage();
+  await page.goto("https://www.linkedin.com");
+  const USERNAME_SELECTOR = '#login-email';
+  const PASSWORD_SELECTOR = '#login-password';
+  const BUTTON_SELECTOR = '#login-submit';
 
-          await page.click(USERNAME_SELECTOR);
-          await page.keyboard.type(CREDS.username);
+  await page.click(USERNAME_SELECTOR);
+  await page.keyboard.type(CREDS.username);
 
-          await page.click(PASSWORD_SELECTOR);
-          await page.keyboard.type(CREDS.password);
-          
-          await page.click(BUTTON_SELECTOR);
-          // await page.waitForNavigation();
+  await page.click(PASSWORD_SELECTOR);
+  await page.keyboard.type(CREDS.password);
+  
+  await page.click(BUTTON_SELECTOR);
+  await page.waitForNavigation();
       
-      setTimeout(function(){
 base('scraped_data').select({
     maxRecords: 3,
     view: "Grid view"
@@ -44,20 +43,23 @@ base('scraped_data').select({
             if (err) {console.error(err);return;}
             console.log("Location updated for:"+record.get('full_name'));
         });
-          console.log("The person's who profile you visited is:"+ name);
-          // await browser.close();
-
+          // console.log("The person's who profile you visited is:"+ name);
       })();
+          // await browser.close();
     });
-
     fetchNextPage();
-
 }, function done(err) {
-    if (err) { console.error(err); return; }
-});}
-, 10000);
-    await browser.close();
+    // await browser.close();
+    if (err) { 
+      console.error("Error for "+record.get('full_name'))
+      console.error(err); 
+      return; 
+    }
+});
 })();
+
+
+
 /*OUTPUT
 {
     "id": "recz7ddYYhNCqUL1T",
