@@ -21,7 +21,7 @@ type Address struct {
 
 //********************************************Init********************************************
 func init() {
-	getCommands["inspection"] = Command{Func: showRecentInspections, Description: `Shows inspections created by a user in last 30 days. Default is 5. Add argument to print more. e.g yumi rep inspection 100 will show 100 inspections in last 30 days`}
+	getCommands["inspection"] = Command{Func: showRecentInspections, Description: `Shows inspections created by a user in last 30 days. ` +"\n"+` <b>Default</b> is 5. ` +"\n"+` <b>Argument</b> # of inspections to show. ` +"\n"+`<b>Example</b> yumi get inspection 100 will show 100 inspections in last 30 days`}
 }
 
 //********************************************Adding commands********************************************
