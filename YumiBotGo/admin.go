@@ -6,7 +6,7 @@ import (
 
 //********************************************Init********************************************
 func init() {
-	commands["admin"] = showAllAdmins
+	getCommands["admin"] = Command{Func: showAllAdmins, Description: `Prints a note with the name and emails of all the admins in a business. No arguments`}
 }
 
 //********************************************Adding commands********************************************
