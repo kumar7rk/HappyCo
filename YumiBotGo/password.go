@@ -7,7 +7,8 @@ import (
 
 //********************************************Init********************************************
 func init() {
-	commands["password"] = sendPasswordReply
+	repCommands["password"] = Command{Func: sendPasswordReply, Description: `Sends password reset instructions.
+Argument - same as buildium`}
 }
 
 //********************************************Sending password reply********************************************
