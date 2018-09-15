@@ -21,7 +21,7 @@ type Address struct {
 
 //********************************************Init********************************************
 func init() {
-	commands["inspection"] = showRecentInspections
+	getCommands["inspection"] = Command{Func: showRecentInspections, Description: `Shows inspections created by a user in last 30 days. Default is 5. Add argument to print more. e.g yumi rep inspection 100 will show 100 inspections in last 30 days`}
 }
 
 //********************************************Adding commands********************************************
@@ -43,7 +43,7 @@ func showRecentInspections(user User, conversationID string, params ...string) {
 
 	    _= json.Unmarshal(val, &msg)
 	    
-		message += inspection.FolderName +" > "
+		// message += "<b>" + inspection.FolderName +"</b> "
 		var address string
 		if msg.EmbeddedAsset.Address.Line1 != "" {
 			address +=msg.EmbeddedAsset.Address.Line1+", "
@@ -57,10 +57,9 @@ func showRecentInspections(user User, conversationID string, params ...string) {
 		if msg.EmbeddedAsset.Address.Province != ""{
 			address +=msg.EmbeddedAsset.Address.Province
 		}
-
-		message += "<a href=\"" + url + "\">" + address + "</a>" + " " + formattedDate
-		message += "\n"
-
+		// message += "<p><a href=\"" + url + "\"><p>" + inspection.FolderName + "</p><p>" + address + "</p><p>" + formattedDate + "</p></a>\n"
+		message += inspection.FolderName + " > "
+		message += "<a href=\"" + url + "\">" + address + "</a>" + " " + formattedDate + "\n\n"
 	}
 	addNote(conversationID, message)
 }
