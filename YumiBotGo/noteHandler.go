@@ -46,15 +46,27 @@ func newAdminNote(w http.ResponseWriter, r *http.Request) {
 //********************************************Processing new note********************************************
 func processNewAdminNote(user User, conversationID string, note string, author string) {
 	note = strings.ToLower(note)
-	if note == "<p>yumi help</p>" || note == "<p>yumi run help</p>" || note == "<p>yumi</p>" {
+
+	if note == "<p>yumi help</p>" || note == "<p>yumi</p>" {
 		listRunCommands(author, conversationID)
 		return
 	}
-	if strings.HasPrefix(note, "<p>yumi run ") || strings.HasPrefix(note, "<p>yumi get ")  {
+	if strings.HasPrefix(note, "<p>yumi rep ") {
 		note = strings.TrimSuffix(note[12:], "</p>")
 		params := strings.Split(note, " ")
-		if cmd, ok := commands[params[0]]; ok {
-			cmd(user, conversationID, params[1:]...)
+		if cmd, ok := repCommands[params[0]]; ok {
+			cmd.Func(user, conversationID, params[1:]...)
+		} else {
+			fmt.Println("Unable to run", params)
+			listRunCommands(author, conversationID)
+		}
+	}
+
+	if strings.HasPrefix(note, "<p>yumi get ")  {
+		note = strings.TrimSuffix(note[12:], "</p>")
+		params := strings.Split(note, " ")
+		if cmd, ok := getCommands[params[0]]; ok {
+			cmd.Func(user, conversationID, params[1:]...)
 		} else {
 			fmt.Println("Unable to run", params)
 			listRunCommands(author, conversationID)
@@ -62,6 +74,10 @@ func processNewAdminNote(user User, conversationID string, note string, author s
 	}
 }
 
-type CommandFunc func(user User, conversationID string, params ...string)
+type Command struct {
+	Description string
+	Func func(user User, conversationID string, params ...string)
+}
 
-var commands map[string]CommandFunc = make(map[string]CommandFunc)
+var repCommands map[string]Command = make(map[string]Command)
+var getCommands map[string]Command = make(map[string]Command)
