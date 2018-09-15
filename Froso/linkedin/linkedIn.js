@@ -6,9 +6,7 @@ const player = require('play-sound')(opts = {});
   const browser = await puppeteer.launch({
     headless: false
   });
-  /*const browser = await puppeteer.launch({
-        ignoreHTTPSErrors: true
-    });*/
+ 
   const page = await browser.newPage();
 
   await page.goto("https://www.linkedin.com");
@@ -34,7 +32,7 @@ if(typeof require !== 'undefined') XLSX = require('xlsx');
   var address_of_cell = 'A2';
   var desired_cell = worksheet[address_of_cell];
 try{  
-  for (var i = 8; i < 10; i++) {
+  for (var i = 2; i < 4; i++) {
     console.log("Row: "+i);
     address_of_cell = 'A'+i;
     desired_cell = worksheet[address_of_cell];
@@ -172,12 +170,12 @@ try{
 }
 catch(error){
       console.log(error);
-      player.play('error.mp3', function(err){
+      player.play('./files/error.mp3', function(err){
       if (err) throw err
     })
     }
   await browser.close();
-  /*player.play('completed.mp3', function(err){
+  /*player.play('./files/completed.mp3', function(err){
       if (err) throw err
     })*/
 })();
