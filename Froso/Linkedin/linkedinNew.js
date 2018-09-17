@@ -35,7 +35,7 @@ if(typeof require !== 'undefined') XLSX = require('xlsx');
 
   var t0 = performance.now();
 try{
-  for (var i = 17; i < 18; i++) {
+  for (var i = 2; i < 4; i++) {
     console.log("Row: "+i);
     address_of_cell = 'B'+i;
     desired_cell = worksheet[address_of_cell];
@@ -52,16 +52,16 @@ try{
     var data = "";  
     var multiPosition = false
     
-    //checking if a job('s holder) exists
+    //checking if any job('s holder) exists
     if (await page.evaluate(() => document.getElementsByClassName
       ('pv-entity__position-group-pager ember-view'))==null) {
        console.log("No job exist");
         continue;
     }
-    //checking if a job has data
+    //checking if any job has data
     if (await page.evaluateHandle(() => document.getElementsByClassName
       ('pv-entity__position-group-pager ember-view').textContent)==null) {
-        console.log("No data for a job");
+        console.log("No data for any job");
         continue;
     }    
     //getting first job - all information
@@ -102,10 +102,11 @@ try{
             worksheet[writeCell].v = companyName;
           }
       }      
-      if (await page.evaluate(() => document.querySelector('div.pv-entity__summary-info.pv-entity__summary-info--v2 > h4:nth-child(4) > span.pv-entity__bullet-item-v2')) != null){
-        if (await page.evaluate(() => document.querySelector('div.pv-entity__summary-info.pv-entity__summary-info--v2 > h4:nth-child(4) > span.pv-entity__bullet-item-v2').textContent) !=null){
+    
+      if (await page.evaluate(() => document.querySelector('div.pv-entity__summary-info.pv-entity__summary-info--v2 > div > h4:nth-child(2) > span.pv-entity__bullet-item-v2')) != null){
+        if (await page.evaluate(() => document.querySelector('div.pv-entity__summary-info.pv-entity__summary-info--v2 > div > h4:nth-child(2) > span.pv-entity__bullet-item-v2').textContent) !=null){
             var currentJobDuration = await page.evaluate(() => document.querySelector
-              ('div.pv-entity__summary-info.pv-entity__summary-info--v2 > h4:nth-child(4) > span.pv-entity__bullet-item-v2').textContent)
+              ('div.pv-entity__summary-info.pv-entity__summary-info--v2 > div > h4:nth-child(2) > span.pv-entity__bullet-item-v2').textContent)
             writeCell = 'N'+i
             if (!worksheet[writeCell]) {
              worksheet[writeCell] = {}
@@ -160,10 +161,12 @@ try{
         }
       }
 
-      if (await page.evaluate(() => document.querySelector('div > h4:nth-child(3) > span.pv-entity__bullet-item-v2')) != null){
-        if (await page.evaluate(() => document.querySelector('div > h4:nth-child(3) > span.pv-entity__bullet-item-v2').textContent) !=null){
+
+//div > div > div.pv-entity__summary-info-v2.pv-entity__summary-info--v2.pv-entity__summary-info-margin-top.mb2 > div > h4:nth-child(2) > span.pv-entity__bullet-item-v2
+      if (await page.evaluate(() => document.querySelector(' div > div > div.pv-entity__summary-info-v2.pv-entity__summary-info--v2.pv-entity__summary-info-margin-top.mb2 > div > h4:nth-child(2) > span.pv-entity__bullet-item-v2')) != null){
+        if (await page.evaluate(() => document.querySelector(' div > div > div.pv-entity__summary-info-v2.pv-entity__summary-info--v2.pv-entity__summary-info-margin-top.mb2 > div > h4:nth-child(2) > span.pv-entity__bullet-item-v2').textContent) !=null){
           var currentJobDuration = await page.evaluate(() => document.querySelector
-            ('div > h4:nth-child(3) > span.pv-entity__bullet-item-v2').textContent)
+            (' div > div > div.pv-entity__summary-info-v2.pv-entity__summary-info--v2.pv-entity__summary-info-margin-top.mb2 > div > h4:nth-child(2) > span.pv-entity__bullet-item-v2').textContent)
 //#ember2170 > div > div > div.pv-entity__summary-info-v2.pv-entity__summary-info--v2.pv-entity__summary-info-margin-top.mb2 > h4:nth-child(3) > span.pv-entity__bullet-item-v2
           writeCell = 'N'+i
           if (!worksheet[writeCell]) {
