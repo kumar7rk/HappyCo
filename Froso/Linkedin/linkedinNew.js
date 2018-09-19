@@ -27,7 +27,7 @@ const {performance} = require('perf_hooks');
     
 if(typeof require !== 'undefined') XLSX = require('xlsx');
 
-  var workbook = XLSX.readFile('output.xlsx');
+  var workbook = XLSX.readFile('data.xlsx');
   var first_sheet_name = workbook.SheetNames[0];
   var worksheet = workbook.Sheets[first_sheet_name];
   var address_of_cell = 'A2';
@@ -35,7 +35,7 @@ if(typeof require !== 'undefined') XLSX = require('xlsx');
 
   var t0 = performance.now();
 try{
-  for (var i = 2; i < 4; i++) {
+  for (var i = 2; i < 101; i++) {
     console.log("Row: "+i);
     address_of_cell = 'B'+i;
     desired_cell = worksheet[address_of_cell];
@@ -105,31 +105,13 @@ try{
     
       if (await page.evaluate(() => document.querySelector('div.pv-entity__summary-info.pv-entity__summary-info--v2 > div > h4:nth-child(2) > span.pv-entity__bullet-item-v2')) != null){
         if (await page.evaluate(() => document.querySelector('div.pv-entity__summary-info.pv-entity__summary-info--v2 > div > h4:nth-child(2) > span.pv-entity__bullet-item-v2').textContent) !=null){
-            var currentJobDuration = await page.evaluate(() => document.querySelector
-              ('div.pv-entity__summary-info.pv-entity__summary-info--v2 > div > h4:nth-child(2) > span.pv-entity__bullet-item-v2').textContent)
-            writeCell = 'N'+i
-            if (!worksheet[writeCell]) {
-             worksheet[writeCell] = {}
-            }
-            //
-            worksheet[writeCell].v = currentJobDuration;
-
-          //checking if the current job is less than 3 months old
-          var ym = currentJobDuration.split(" ");
-          if (ym.length ==2) {
-            currentJobDuration = currentJobDuration.replace('mos',"").trim();
-            ym = currentJobDuration.split(" ");
-            if (ym.length ==1) {
-               var num =  parseInt(ym[0]);
-               if (num<4) {
-                writeCell = 'O'+i
-                if (!worksheet[writeCell]) {
-                 worksheet[writeCell] = {}
-                }
-                worksheet[writeCell].v = "Yo"
-              }
-            }
+          var currentJobDuration = await page.evaluate(() => document.querySelector
+            ('div.pv-entity__summary-info.pv-entity__summary-info--v2 > div > h4:nth-child(2) > span.pv-entity__bullet-item-v2').textContent)
+          writeCell = 'N'+i
+          if (!worksheet[writeCell]) {
+           worksheet[writeCell] = {}
           }
+          worksheet[writeCell].v = currentJobDuration;
         }
       }  
     }
@@ -162,50 +144,29 @@ try{
       }
 
 
-//div > div > div.pv-entity__summary-info-v2.pv-entity__summary-info--v2.pv-entity__summary-info-margin-top.mb2 > div > h4:nth-child(2) > span.pv-entity__bullet-item-v2
+
       if (await page.evaluate(() => document.querySelector(' div > div > div.pv-entity__summary-info-v2.pv-entity__summary-info--v2.pv-entity__summary-info-margin-top.mb2 > div > h4:nth-child(2) > span.pv-entity__bullet-item-v2')) != null){
         if (await page.evaluate(() => document.querySelector(' div > div > div.pv-entity__summary-info-v2.pv-entity__summary-info--v2.pv-entity__summary-info-margin-top.mb2 > div > h4:nth-child(2) > span.pv-entity__bullet-item-v2').textContent) !=null){
           var currentJobDuration = await page.evaluate(() => document.querySelector
             (' div > div > div.pv-entity__summary-info-v2.pv-entity__summary-info--v2.pv-entity__summary-info-margin-top.mb2 > div > h4:nth-child(2) > span.pv-entity__bullet-item-v2').textContent)
-//#ember2170 > div > div > div.pv-entity__summary-info-v2.pv-entity__summary-info--v2.pv-entity__summary-info-margin-top.mb2 > h4:nth-child(3) > span.pv-entity__bullet-item-v2
           writeCell = 'N'+i
           if (!worksheet[writeCell]) {
              worksheet[writeCell] = {}
           }
           worksheet[writeCell].v = currentJobDuration;
-
-          var ym = currentJobDuration.split(" ");
-          if (ym.length ==2) {
-            currentJobDuration = currentJobDuration.replace('mos',"").trim();
-            ym = currentJobDuration.split(" ");
-            if (ym.length ==1) {
-               var num =  parseInt(ym[0]);
-               if (num<4) {
-                writeCell = 'O'+i
-                if (!worksheet[writeCell]) {
-                 worksheet[writeCell] = {}
-                }
-                worksheet[writeCell].v = "Yo"
-              }
-            }
-          }
         }
       }
     }
+    //getting name
     var name = ""
-    //getting name location phone birthday
     if (await page.evaluate(() => document.querySelector('div.pv-top-card-v2-section__info.mr5 > div.display-flex.align-items-center > h1')) != null){
       if (await page.evaluate(() => document.querySelector('div.pv-top-card-v2-section__info.mr5 > div.display-flex.align-items-center > h1').textContent) !=null){
         name = await page.evaluate(() => document.querySelector
-            ('div.pv-top-card-v2-section__info.mr5 > div.display-flex.align-items-center > h1').textContent)
-          writeCell = 'I'+i
-          if (!worksheet[writeCell]) {
-            worksheet[writeCell] = {}
-          }
-          worksheet[writeCell].v = name.trim();
+            ('div.pv-top-card-v2-section__info.mr5 > div.display-flex.align-items-center > h1').textContent);
+        name = name.trim();
       }
     }
-    
+    //getting and adding location phone birthday
     const clickElement = 'span.pv-top-card-v2-section__entity-name.pv-top-card-v2-section__contact-info.ml2'
     if (name !="") {
       await page.click(clickElement)
@@ -244,9 +205,10 @@ try{
       }
     }
   }
+  //adding today's date 
   var today = new Date();
   var dd = today.getDate();
-  var mm = today.getMonth()+1; //January is 0!
+  var mm = today.getMonth()+1; //0 indexed
   var yyyy = today.getFullYear();
 
   if(dd<10) {
@@ -262,6 +224,61 @@ try{
       worksheet[writeCell] = {}
   }
   worksheet[writeCell].v = lastVisitedDate;
+
+  //check if name title company job duration has changed
+  // if so enter yes in I,K,M,O
+  //originals D,E,F,-
+  address_of_cell = 'D'+i;
+  desired_cell = worksheet[address_of_cell];
+  desired_value = (desired_cell ? desired_cell.v : undefined);
+  /*console.log("OldName:"+desired_value);
+  console.log("CurrentName:"+name);
+  console.log(desired_value.localeCompare(name))*/
+  if (desired_value !== name && (name !==""|| desired_value!=="")) {
+    writeCell = 'I'+i
+    if (!worksheet[writeCell]) {
+        worksheet[writeCell] = {}
+    }
+    worksheet[writeCell].v = "Yes";
+  }
+  address_of_cell = 'E'+i;
+  desired_cell = worksheet[address_of_cell];
+  desired_value = (desired_cell ? desired_cell.v : undefined);
+
+  if (desired_value !== title && (title !==""|| desired_value!=="")) {
+    writeCell = 'K'+i
+    if (!worksheet[writeCell]) {
+        worksheet[writeCell] = {}
+    }
+    worksheet[writeCell].v = "Yes";
+  }
+  address_of_cell = 'F'+i;
+  desired_cell = worksheet[address_of_cell];
+  desired_value = (desired_cell ? desired_cell.v : undefined);
+  if (desired_value !== companyName && (companyName !==""|| desired_value!=="")) {
+    writeCell = 'M'+i
+    if (!worksheet[writeCell]) {
+        worksheet[writeCell] = {}
+    }
+    worksheet[writeCell].v = "Yes";
+  }
+
+//checking if the current job is less than 3 months old
+  var ym = currentJobDuration.split(" ");
+  if (ym.length ==2) {
+    currentJobDuration = currentJobDuration.replace('mos',"").trim();
+    ym = currentJobDuration.split(" ");
+    if (ym.length ==1) {
+       var num =  parseInt(ym[0]);
+       if (num<4) {
+        writeCell = 'O'+i
+        if (!worksheet[writeCell]) {
+         worksheet[writeCell] = {}
+        }
+        worksheet[writeCell].v = "Yes"
+      }
+    }
+  }
   XLSX.writeFile(workbook ,'output.xlsx')
   }
 }
