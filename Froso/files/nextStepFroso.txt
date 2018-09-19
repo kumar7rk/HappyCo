@@ -22,3 +22,12 @@ play around with the sheetjs
 //run for the first batch
 
 //linkedin-else not running
+
+Linkedin
+//- clean up code
+- make changes as per sheetjs library
+
+Improve linkdein code efficiency 
+-current avg. time per user - 8 secs (794/100) Aiming-4 secs
+ - avg 5-5.5 sec at work with 4-5 people in office
+-LOC 298 19r9
