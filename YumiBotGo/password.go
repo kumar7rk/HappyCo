@@ -7,12 +7,15 @@ import (
 
 //********************************************Init********************************************
 func init() {
-	repCommands["password"] = Command{Func: sendPasswordReply, Description: `Sends password reset instructions.` + "\n" + ` <b>Default</b> snooze is 3 days. ` + "\n" + ` <b>Arguments</b> either name or snooze time. ` + "\n" + ` <b>Example</b> yumi rep password [name] or [days to snooze]`}
+	repCommands["password"] = Command{Func: sendPasswordReply, Description: `Sends password reset instructions.
+		<b>Default</b> snooze is 3 days.
+		<b>Arguments</b> either name or snooze time.
+		<b>Example</b> yumi rep password [name] or [days to snooze]`}
 }
 
 //********************************************Sending password reply********************************************
 func sendPasswordReply(user User, conversationID string, params ...string) {
-	// if you don't give a name use the name user have in his account
+	// if you don't give a name use the name user have in the account
 	if len(params) == 0 && user.Email != "" {
 		params = strings.Split(user.Name, " ")
 	}
