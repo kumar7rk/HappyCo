@@ -10,6 +10,8 @@ func listRunCommands(author string, conversationID string, params ...string) {
 
 	message := "Yo! " + name[0] + "\n \n <b>Try following commands</b>"
 	message += "\n\n rep-reply to customer \n get- add a note"
+	message += "\n\n <i>Arguments are optional</i>"
+
 	for cmd, detail := range repCommands {
 		message += "<b>\n\n yumi rep " + cmd + "</b>\n\n" + detail.Description
 	}
