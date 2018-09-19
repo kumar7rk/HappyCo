@@ -72,6 +72,10 @@ func processNewAdminNote(user User, conversationID string, note string, author s
 			listRunCommands(author, conversationID)
 		}
 	}
+
+	if note == "<p>###</p>"{
+		snoozeConversation(conversationID,7)
+	}
 }
 
 type Command struct {
