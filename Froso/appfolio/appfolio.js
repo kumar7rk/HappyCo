@@ -53,7 +53,7 @@ var range = XLSX.utils.decode_range(worksheet['!ref']); // get the range
       if (!worksheet[writeCellUnits]) {
         worksheet[writeCellUnits] = {}
       }
-      worksheet[writeCellName].v = name;   
+      worksheet[writeCellName].v = name;
       worksheet[writeCellWebsite].v = website;   
       worksheet[writeCellUnits].v = "Test";   
 
