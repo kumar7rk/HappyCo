@@ -7,12 +7,15 @@ import (
 
 //********************************************Init********************************************
 func init() {
-	repCommands["buildium"] = Command{Func: sendBuildiumReply, Description: `Sends a buildium message to a user.` + "\n" + ` <b>Default</b> snooze is 7 days.` + "\n" + ` <b>Arguments</b> either name or snooze time.` + "\n" + ` <b>Example</b> yumi rep buildium [name] or [days to snooze]`}
+	repCommands["buildium"] = Command{Func: sendBuildiumReply, Description: `Sends a buildium message to a user
+	 <b>Default</b> snooze is 7 days. 
+	 <b>Arguments</b> either name or snooze time. 
+	 <b>Example</b> yumi rep buildium [name] or [days to snooze]`}
 }
 
 //********************************************Sending Buildium reply********************************************
 func sendBuildiumReply(user User, conversationID string, params ...string) {
-	// if you don't give a name use the name user have in his account
+	// if you don't give a name use the name user have in the account
 	if len(params) == 0 && user.Email != "" {
 		params = strings.Split(user.Name, " ")
 	}
