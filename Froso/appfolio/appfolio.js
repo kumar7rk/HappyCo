@@ -23,15 +23,15 @@ if(typeof require !== 'undefined') XLSX = require('xlsx');
   instead of looping through all I'm saying take first column which should be indexed 0 and go until range.s.c which is again the first column
   doing this means I don't have to hardcode the rows value
   All I need to know is which column has the urls
-  and also what rows does the urls start from - excluding headers
+  and also what rows does the urls start from (excluding headers)
 */
 var range = XLSX.utils.decode_range(worksheet['!ref']); // get the range
   
  for(var R = range.s.r+1; R <= range.e.r; ++R){
       console.log("Row: "+R)
-      var cellref = XLSX.utils.encode_cell({c:range.s.c, r:R}); //A1..
-      if(!worksheet[cellref]) continue; //[object Object]
+      var cellref = XLSX.utils.encode_cell({c:range.s.c, r:R}); //A2,..
       var cell = worksheet[cellref] //[object Object]
+      if(!cell) continue; //[object Object]
       console.log("cell value "+cell.v);
       try{
         await page.goto(cell.v);
@@ -46,9 +46,9 @@ var range = XLSX.utils.decode_range(worksheet['!ref']); // get the range
       const phone = await page.evaluate(() => document.querySelector('.footer__info > a').innerText)
       const website = await page.evaluate(() => document.querySelector('.footer__info > p > a ').href)
       
-      var writeCellName = XLSX.utils.encode_cell({c:range.s.c+1, r:R}); //B1..
-      var writeCellWebsite = XLSX.utils.encode_cell({c:range.s.c+2, r:R}); //C1..
-      var writeCellUnits = XLSX.utils.encode_cell({c:range.s.c+3, r:R}); //D1..
+      var writeCellName = XLSX.utils.encode_cell({c:range.s.c+1, r:R}); //B2..
+      var writeCellWebsite = XLSX.utils.encode_cell({c:range.s.c+2, r:R}); //C2..
+      var writeCellUnits = XLSX.utils.encode_cell({c:range.s.c+3, r:R}); //D3..
       
       if (!worksheet[writeCellUnits]) {
         worksheet[writeCellUnits] = {}
