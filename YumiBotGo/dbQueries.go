@@ -126,10 +126,10 @@ func getUserPlanType(ID string) (planTypeRec []Plan) {
 }
 
 //********************************************Business's Admins********************************************
-func getAdmins(ID string) (AdminRec []Admin) {
-	err := db.Select(&AdminRec, "SELECT CONCAT(first_name, ' ', last_name, ' ', email) as detail FROM users WHERE id IN (SELECT user_id FROM business_membership WHERE business_id IN (SELECT business_id FROM business_membership WHERE user_id = $1) AND inactivated_at IS NULL AND business_role_id IN (8, 1))", ID)
+func getAdmins(userID string) (AdminRec []Admin) {
+	err := db.Select(&AdminRec, "SELECT CONCAT(first_name, ' ', last_name, ' ', email) as detail FROM users u INNER JOIN business_membership bm ON u.id = bm.user_id AND bm.inactivated_at IS NULL AND bm.business_role_id IN (8, 1) INNER JOIN business_membership bm2 ON bm2.business_id = bm.business_id WHERE bm2.user_id =$1", userID)
 	if err != nil {
-		fmt.Fprintf(os.Stderr, "Error in plan query %v: %v\n", ID, err)
+		fmt.Fprintf(os.Stderr, "Error in plan query %v: %v\n", userID, err)
 	}
 	return
 }
