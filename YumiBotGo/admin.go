@@ -1,7 +1,6 @@
 package main
 
 import (
-	"fmt"
 )
 
 //********************************************Init********************************************
@@ -12,7 +11,6 @@ func init() {
 //********************************************Adding commands********************************************
 func showAllAdmins(user User, conversationID string, params ...string) {
 	var message string
-	fmt.Println("showAllAdmins")
 	adminsRec := getAdmins(user.UserID)
 	for _, admin := range adminsRec {
 		message += admin.Detail
