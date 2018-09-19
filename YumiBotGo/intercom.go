@@ -3,8 +3,13 @@ package main
 import (
 	"encoding/json"
 	"fmt"
-	intercom "gopkg.in/intercom/intercom-go.v2"
 	"os"
+	"bytes"
+	"io/ioutil"
+	"net/http"
+	"strconv"
+	"time"	
+	intercom "gopkg.in/intercom/intercom-go.v2"
 )
 
 var ic *intercom.Client
@@ -77,4 +82,31 @@ func assignConversation(conversationID string, inboxTo string) {
 	if err != nil {
 		fmt.Printf("Error from Intercom while assigning conversation: %v\n", err)
 	}
+}
+//********************************************Snooze conversation********************************************
+func snoozeConversation(conversationID string, days int64) {
+	currentTimeInSec := int64(time.Now().Unix())
+	secInADay := int64(86400)
+	snoozeTimeInSec := int64(secInADay * days)
+
+	snooze_until := currentTimeInSec + snoozeTimeInSec
+
+	url := "https://api.intercom.io/conversations/" + conversationID + "/reply"
+	payload := []byte(`{ "admin_id":"207278", "message_type":"snoozed", "snoozed_until":` + strconv.FormatInt(snooze_until, 10) + `}`)
+
+	req, _ := http.NewRequest("POST", url, bytes.NewBuffer(payload))
+	req.Header.Set("Authorization", "Bearer "+os.Getenv("INTERCOM_ACCESS_TOKEN"))
+	req.Header.Set("Accept", "application/json")
+	req.Header.Set("Content-Type", "application/json")
+
+	client := &http.Client{}
+	resp, err := client.Do(req)
+
+	if err != nil {
+		fmt.Printf("Error from Intercom Snoozing conversation: %v\n", err)
+	}
+
+	defer resp.Body.Close()
+
+	_, _ = ioutil.ReadAll(resp.Body)
 }
