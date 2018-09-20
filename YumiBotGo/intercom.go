@@ -1,15 +1,15 @@
 package main
 
 import (
+	"bytes"
 	"encoding/json"
 	"fmt"
-	"os"
-	"bytes"
+	intercom "gopkg.in/intercom/intercom-go.v2"
 	"io/ioutil"
 	"net/http"
+	"os"
 	"strconv"
-	"time"	
-	intercom "gopkg.in/intercom/intercom-go.v2"
+	"time"
 )
 
 var ic *intercom.Client
@@ -83,6 +83,7 @@ func assignConversation(conversationID string, inboxTo string) {
 		fmt.Printf("Error from Intercom while assigning conversation: %v\n", err)
 	}
 }
+
 //********************************************Snooze conversation********************************************
 func snoozeConversation(conversationID string, days int64) {
 	currentTimeInSec := int64(time.Now().Unix())

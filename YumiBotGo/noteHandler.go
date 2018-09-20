@@ -73,8 +73,8 @@ func processNewAdminNote(user User, conversationID string, note string, author s
 		}
 	}
 
-	if note == "<p>###</p>"{
-		snoozeConversation(conversationID,7)
+	if note == "<p>###</p>" {
+		snoozeConversation(conversationID, 7)
 	}
 }
 
