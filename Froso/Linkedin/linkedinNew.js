@@ -42,11 +42,10 @@ try{
     var desired_value = (desired_cell ? desired_cell.v : undefined);
 
     await page.goto(desired_value); 
-    // await page.waitFor(2 * 1000);
     await page.evaluate(_ => {
       window.scrollBy(0, window.innerHeight);
     });
-    await page.waitFor(0.8 * 1000);
+    await page.waitFor(1 * 1000);
   
     var data = "";  
     var multiPosition = false
@@ -55,7 +54,30 @@ try{
       if (await page.evaluate(() => document.querySelector('#profile-content > div > div > h1').textContent) !=null){
           var profileUnavailable = await page.evaluate(() => document.querySelector
             ('#profile-content > div > div > h1').textContent)
-          console.log("Profile Unavailable")
+          writeCell = 'R'+i
+            if (!worksheet[writeCell]) {
+               worksheet[writeCell] = {}
+            }
+          worksheet[writeCell].v = "Yes";
+
+          var today = new Date();
+          var dd = today.getDate();
+          var mm = today.getMonth()+1; //0 indexed
+          var yyyy = today.getFullYear();
+
+          if(dd<10) {
+              dd = '0'+dd
+          } 
+          if(mm<10) {
+              mm = '0'+mm
+          } 
+          var lastVisitedDate = dd + '/' + mm + '/' + yyyy;
+          
+          writeCell = 'P'+i
+          if (!worksheet[writeCell]) {
+              worksheet[writeCell] = {}
+          }
+          worksheet[writeCell].v = lastVisitedDate;
           continue;
         }
     }
@@ -189,7 +211,7 @@ try{
     const clickElement = 'span.pv-top-card-v2-section__entity-name.pv-top-card-v2-section__contact-info.ml2'
     if (name !="") {
       await page.click(clickElement)
-      await page.waitFor(1 * 1000); 
+      await page.waitFor(2 * 1000); 
 
       if (await page.evaluate(() => document.querySelector('div > section.pv-contact-info__contact-type.ci-phone > ul > li')) != null){
        if (await page.evaluate(() => document.querySelector('div > section.pv-contact-info__contact-type.ci-phone > ul > li').textContent) !=null){
@@ -281,7 +303,6 @@ try{
     if (currentJobDuration != "") {
     //checking if the current job is less than 3 months old
       var ym = currentJobDuration.split(" ");
-      console.log("currentJobDuration is:"+currentJobDuration)
       if (ym.length ==2) {
         currentJobDuration = currentJobDuration.replace('mos',"").trim();
         ym = currentJobDuration.split(" ");
