@@ -32,8 +32,8 @@ type Report struct {
 }
 
 type Business struct {
-	ID               string 
-	Name             string 
+	ID               string
+	Name             string
 	Role             string `db:"business_role_id"`
 	PermissionsModel string `db:"permissions_model"`
 }
@@ -42,7 +42,7 @@ type IAP struct {
 }
 type Plan struct {
 	Type   string `db:"plan_type"`
-	Status string 
+	Status string
 }
 type Admin struct {
 	Detail string

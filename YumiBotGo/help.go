@@ -1,8 +1,8 @@
 package main
 
 import (
-	"strings"
 	"math/rand"
+	"strings"
 )
 
 //********************************************Adding commands********************************************
@@ -10,7 +10,7 @@ func listRunCommands(author string, conversationID string, params ...string) {
 	name := strings.Fields(author)
 	var salution = []string{"Howdy", "Namaste", "Yo", "Aloha", "Ni Hau", "Star lord", "Happy", "Bonjour", "Hola", "Hallo"}
 
-	message := "<h2>" +salution[rand.Intn(len(salution))]+" "+ name[0] + "</h2>\n \n <b>Try following commands</b>"
+	message := "<h2>" + salution[rand.Intn(len(salution))] + " " + name[0] + "</h2>\n \n <b>Try following commands</b>"
 	message += "\n\n rep-reply to customer \n get- add a note"
 	message += "\n\n <i>Arguments are optional</i>"
 

@@ -21,12 +21,12 @@ func init() {
 
 // structs for reading payload in json received from Intercom
 type Author struct {
-	Name string 
+	Name string
 }
 
 type Part struct {
-	Body   string 
-	Author Author 
+	Body   string
+	Author Author
 }
 
 type ConversationPart struct {
@@ -34,30 +34,30 @@ type ConversationPart struct {
 }
 
 type ConversationMessage struct {
-	Body    string 
-	Subject string 
+	Body    string
+	Subject string
 }
 
 type User struct {
 	UserID string `json:"user_id"`
-	Type   string 
-	Name   string 
-	Email  string 
+	Type   string
+	Name   string
+	Email  string
 }
 
 type Item struct {
-	ConversationID      string              `json:"id"`
-	User                User                
+	ConversationID      string `json:"id"`
+	User                User
 	ConversationMessage ConversationMessage `json:"conversation_message"`
 	ConversationPart    ConversationPart    `json:"conversation_parts"`
 }
 
 type Data struct {
-	Item Item 
+	Item Item
 }
 
 type Message struct {
-	Data Data 
+	Data Data
 }
 
 //********************************************Add note********************************************
