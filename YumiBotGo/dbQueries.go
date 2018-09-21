@@ -3,7 +3,8 @@ package main
 import (
 	"fmt"
 	"os"
-)
+	"database/sql"
+	)
 
 type Inspection struct {
 	Business     string
@@ -36,8 +37,8 @@ type Business struct {
 	Name             string
 	Role             string `db:"business_role_id"`
 	PermissionsModel string `db:"permissions_model"`
-	MRR string
-	SupportLevel string `db:"support_level"`
+	MRR sql.NullString
+	SupportLevel sql.NullString `db:"support_level"`
 }
 type IAP struct {
 	Expiry string `db:"expires_at"`
