@@ -36,6 +36,8 @@ type Business struct {
 	Name             string
 	Role             string `db:"business_role_id"`
 	PermissionsModel string `db:"permissions_model"`
+	MRR string
+	SupportLevel string `db:"support_level"`
 }
 type IAP struct {
 	Expiry string `db:"expires_at"`
@@ -69,8 +71,7 @@ func getReports(userID string, limit int) (reportsRec []Report) {
 
 //********************************************Business********************************************
 func getBusiness(userID string) (businessRec []Business) {
-
-	err := db.Select(&businessRec, "SELECT b.id, b.name, bm.business_role_id, bc.permissions_model FROM businesses b INNER JOIN business_membership bm ON b.id = bm.business_id INNER JOIN business_customizations bc ON bc.business_id = bm.business_id WHERE bm.user_id = $1 AND inactivated_at IS NULL", userID)
+	err := db.Select(&businessRec, "SELECT b.id, b.name, bm.business_role_id, bc.permissions_model, abd.mrr, abd.support_level FROM ((businesses b INNER JOIN business_membership bm ON b.id = bm.business_id) INNER JOIN business_customizations bc ON bc.business_id = bm.business_id) LEFT OUTER JOIN airflow.business_details abd ON abd.business_id = bc.business_id WHERE bm.user_id = $1 AND inactivated_at IS NULL", userID)
 	if err != nil {
 		fmt.Fprintf(os.Stderr, "Error in business query %v: %v\n", userID, err)
 	}
