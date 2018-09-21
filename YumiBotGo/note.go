@@ -79,8 +79,13 @@ func makeNote(us_id string) string {
 		note += "<b>BusinessID:</b>" + business.ID + "\n"
 		note += "<b>Permissions:</b>" + BusinessPermission + "\n"
 		note += "<b>Role:</b>" + roles[permission] + "\n"
-		note += "<b>MRRID:</b>" + business.MRR.String+ "\n"
-		note += "<b><h3>Support Level:</b>" + business.SupportLevel.String + "<h3>\n"
+		if business.MRR.Valid {
+			note += "<b>MRRID:</b>" + business.MRR.String+ "\n"
+		}
+		if business.SupportLevel.Valid {
+			note += "<b><h3>Support Level:</b>" + business.SupportLevel.String + "<h3>\n"
+		}
+			
 	}
 	//******************constructing plan type string******************
 	for _, plan := range planTypeRec {
