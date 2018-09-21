@@ -35,7 +35,7 @@ type Report struct {
 type Business struct {
 	ID               string
 	Name             string
-	Role             string `db:"business_role_id"`
+	Role             sql.NullString `db:"business_role_id"`
 	PermissionsModel string `db:"permissions_model"`
 	MRR sql.NullString
 	SupportLevel sql.NullString `db:"support_level"`

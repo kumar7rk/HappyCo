@@ -61,24 +61,36 @@ func makeNote(us_id string) string {
 	var roles = []string{"", "Admin", "Process Manger", "Inspector", "Limited Inspector", "", "", "", "Admin", "Process Manager"}
 
 	for _, business := range businessRec {
+		//if its null uri is null if not then we have got ourselves a value
+		var userRoleID = business.Role.String
+		var businessPermission = business.PermissionsModel
 
-		permission, err := strconv.Atoi(business.Role)
+		// if value is null set value explicitly
+		if !business.Role.Valid {
+			if businessPermission == "constant-roles" {
+				userRoleID = "4"
+			}
+			if businessPermission == "basic-roles" {
+				userRoleID = "9"
+			}
+		}
+		permission, err := strconv.Atoi(userRoleID)
 		if err != nil {
 			panic(err)
 		}
-		var BusinessPermission = business.PermissionsModel
 
-		if BusinessPermission == "constant-roles" {
-			BusinessPermission = "Constant/Full"
+		if businessPermission == "constant-roles" {
+			businessPermission = "Constant/Full"
 		}
 
-		if BusinessPermission == "basic-roles" {
-			BusinessPermission = "Basic"
+		if businessPermission == "basic-roles" {
+			businessPermission = "Basic"
 		}
 		note += "<b>Business: </b>" + business.Name + "\n"
 		note += "<b>BusinessID:</b>" + business.ID + "\n"
-		note += "<b>Permissions:</b>" + BusinessPermission + "\n"
+		note += "<b>Permissions:</b>" + businessPermission + "\n"
 		note += "<b>Role:</b>" + roles[permission] + "\n"
+		
 		if business.MRR.Valid {
 			note += "<b>MRRID:</b>" + business.MRR.String+ "\n"
 		}
