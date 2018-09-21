@@ -104,7 +104,7 @@ func snoozeConversation(conversationID string, days int64) {
 	resp, err := client.Do(req)
 
 	if err != nil {
-		fmt.Printf("Error from Intercom Snoozing conversation: %v\n", err)
+		fmt.Printf("Error from Intercom snoozing conversation: %v\n", err)
 	}
 
 	defer resp.Body.Close()
