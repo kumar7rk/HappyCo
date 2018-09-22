@@ -284,7 +284,7 @@ try{
       worksheet[writeCell].v = "Yes";
     }
 
-    if (currentJobDuration != "") {
+if (currentJobDuration != "" && currentJobDuration != undefined) {
     //checking if the current job is less than 3 months old
       var ym = currentJobDuration.split(" ");
       if (ym.length ==2) {
