@@ -78,19 +78,6 @@ try{
       worksheet[writeCell].v = lastVisitedDate;
       continue;
     }
-/*    //checking if any job('s holder) exists
-    if (await page.evaluate(() => document.getElementsByClassName
-      ('pv-entity__position-group-pager ember-view'))==null) {
-       console.log("No job exist");
-        continue;
-    }
-    //checking if any job has data
-    if (await page.evaluateHandle(() => document.getElementsByClassName
-      ('pv-entity__position-group-pager ember-view').textContent)==null) {
-        console.log("No data for any job");
-        continue;
-    }*/
-
     //getting current job - all information
     if (await page.evaluate(() => document.getElementsByClassName
       ('pv-entity__position-group-pager ember-view'))!==null) {
