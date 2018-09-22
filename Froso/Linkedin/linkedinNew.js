@@ -50,36 +50,33 @@ try{
     var data = "";  
     var multiPosition = false
     var jobExists = false
-    if (await page.evaluate(() => document.querySelector('#profile-content > div > div > h1')) != null){
-      if (await page.evaluate(() => document.querySelector('#profile-content > div > div > h1').textContent) !=null){
-          var profileUnavailable = await page.evaluate(() => document.querySelector
-            ('#profile-content > div > div > h1').textContent)
-          writeCell = 'R'+i
-            if (!worksheet[writeCell]) {
-               worksheet[writeCell] = {}
-            }
-          worksheet[writeCell].v = "Yes";
+    //exiting if the profile is unavailable (deleted?)
+    if (await page.url() === "https://www.linkedin.com/in/unavailable/"){
+      writeCell = 'R'+i
+      if (!worksheet[writeCell]) {
+         worksheet[writeCell] = {}
+      }
+      worksheet[writeCell].v = "Yes";
 
-          var today = new Date();
-          var dd = today.getDate();
-          var mm = today.getMonth()+1; //0 indexed
-          var yyyy = today.getFullYear();
+      var today = new Date();
+      var dd = today.getDate();
+      var mm = today.getMonth()+1; //0 indexed
+      var yyyy = today.getFullYear();
 
-          if(dd<10) {
-              dd = '0'+dd
-          } 
-          if(mm<10) {
-              mm = '0'+mm
-          } 
-          var lastVisitedDate = dd + '/' + mm + '/' + yyyy;
-          
-          writeCell = 'P'+i
-          if (!worksheet[writeCell]) {
-              worksheet[writeCell] = {}
-          }
-          worksheet[writeCell].v = lastVisitedDate;
-          continue;
-        }
+      if(dd<10) {
+          dd = '0'+dd
+      } 
+      if(mm<10) {
+          mm = '0'+mm
+      } 
+      var lastVisitedDate = dd + '/' + mm + '/' + yyyy;
+      
+      writeCell = 'P'+i
+      if (!worksheet[writeCell]) {
+          worksheet[writeCell] = {}
+      }
+      worksheet[writeCell].v = lastVisitedDate;
+      continue;
     }
 /*    //checking if any job('s holder) exists
     if (await page.evaluate(() => document.getElementsByClassName
