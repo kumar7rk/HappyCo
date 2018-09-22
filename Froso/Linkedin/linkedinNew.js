@@ -96,7 +96,7 @@ try{
     if (str.trim().startsWith('["Company Name')) {
       multiPosition = true;
     }
-
+    //if job exists we can get job specific information else get basic information
     if (jobExists) { 
       //only one position in the current job
       if (!multiPosition) {
