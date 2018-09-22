@@ -42,10 +42,10 @@ try{
     var desired_value = (desired_cell ? desired_cell.v : undefined);
 
     await page.goto(desired_value); 
+    await page.waitFor(2 * 1000);
     await page.evaluate(_ => {
       window.scrollBy(0, window.innerHeight);
     });
-    await page.waitFor(1 * 1000);
   
     var data = "";  
     var multiPosition = false
