@@ -35,7 +35,8 @@ if(typeof require !== 'undefined') XLSX = require('xlsx');
 
   var t0 = performance.now();
 try{
-  for (var i = 2; i < 11; i++) {
+
+  for (var i = 3; i < 4; i++) {
     console.log("Row: "+i);
     address_of_cell = 'B'+i;
     desired_cell = worksheet[address_of_cell];
@@ -50,6 +51,7 @@ try{
     var data = "";  
     var multiPosition = false
     var jobExists = false
+
     //exiting if the profile is unavailable (deleted?)
     if (await page.url() === "https://www.linkedin.com/in/unavailable/"){
       writeCell = 'R'+i
@@ -78,11 +80,14 @@ try{
       worksheet[writeCell].v = lastVisitedDate;
       continue;
     }
+
     //getting current job - all information
     if (await page.evaluate(() => document.getElementsByClassName
       ('pv-entity__position-group-pager ember-view'))!==null) {
+      // console.log("Job is not null");
       if (await page.evaluateHandle(() => document.getElementsByClassName
       ('pv-entity__position-group-pager ember-view').textContent)!==null) {
+          // console.log("Job has some data too");
           jobExists = true
           data = await page.evaluateHandle(() => {
           return Array.from(document.getElementsByClassName('pv-entity__position-group-pager ember-view')).map(elem => elem.textContent.trim()).slice(0,1);
@@ -93,6 +98,7 @@ try{
     //converting json to string
     var str = JSON.stringify(await data.jsonValue())
     //if text starts with `["Company Name...` --> the (current) job has multiple positions
+    // console.log("str:"+str);
     if (str.trim().startsWith('["Company Name')) {
       multiPosition = true;
     }
@@ -284,7 +290,8 @@ try{
       worksheet[writeCell].v = "Yes";
     }
 
-if (currentJobDuration != "" && currentJobDuration != undefined) {
+    if (currentJobDuration != "" && currentJobDuration != undefined) {
+      // console.log(currentJobDuration);
     //checking if the current job is less than 3 months old
       var ym = currentJobDuration.split(" ");
       if (ym.length ==2) {
@@ -314,7 +321,7 @@ catch(error){
     })
     }
   var t1 = performance.now();
-  console.log((t1-t0)/1000+ " seconds");
+  // console.log((t1-t0)/1000+ " seconds");
 
   await browser.close();
   player.play('./files/completed.mp3', function(err){
