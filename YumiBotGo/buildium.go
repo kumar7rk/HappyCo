@@ -8,8 +8,8 @@ import (
 //********************************************Init********************************************
 func init() {
 	repCommands["buildium"] = Command{Func: sendBuildiumReply, Description: `Sends a buildium message to a user
-	 <b>Default</b> snooze is 7 days. 
-	 <b>Arguments</b> either name or snooze time. 
+	 <b>Default</b> snooze is 7 days.
+	 <b>Arguments</b> either name or snooze time.
 	 <b>Example</b> yumi rep buildium [name] or [days to snooze]`}
 }
 
