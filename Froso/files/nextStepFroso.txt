@@ -34,6 +34,6 @@ Linkedin
 
 //don't run anything if profile is deleted and also make a note in excel so we don't keep on visiting them in future
 
-
+check if str is empty - ideally retry or maybe increase wait for or use waitFor selector
 if profile private job title e.g https://www.linkedin.com/in/brent-law-49a54053
 #experience > ul > li:nth-child(1) > header > h4 > a
