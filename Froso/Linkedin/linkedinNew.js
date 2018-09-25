@@ -3,8 +3,10 @@ const CREDS = require('./creds');
 const player = require('play-sound')(opts = {});
 const {performance} = require('perf_hooks');
 
+//puppeteer variables
 var browser;
 var page;
+//SheetJS variables
 var workbook;
 var first_sheet_name;
 var worksheet;
@@ -32,27 +34,28 @@ async function run () {
   await page.click(BUTTON_SELECTOR);
   await page.waitForNavigation();
     
-if(typeof require !== 'undefined') XLSX = require('xlsx');
+  var t0 = performance.now();
+try{
+  if(typeof require !== 'undefined') XLSX = require('xlsx');
 
   workbook = XLSX.readFile('data.xlsx');
   first_sheet_name = workbook.SheetNames[0];
   worksheet = workbook.Sheets[first_sheet_name];
-  var address = 'A2';
-  var cell = worksheet[address];
+  // var address = 'A2';
+  // var cell = worksheet[address];
 
-  var t0 = performance.now();
-try{
   for (var i = 2; i < 11; i++) {
     console.log("Row: "+i);
-    address = 'B'+i;
-    cell = worksheet[address];
+    var address = 'B'+i;
+    var cell = worksheet[address];
     var url = (cell ? cell.v : undefined);
 
     await page.goto(url); 
+    await page.waitFor(2 * 1000);
     await page.evaluate(_ => {
       window.scrollBy(0, window.innerHeight);
     });
-    await page.waitFor(1 * 1000);
+    await page.waitFor(2 * 1000);
     var data = "";  
     var multiPosition = false;
     var jobExists = false;
@@ -81,7 +84,7 @@ try{
     //converting json to string
     var str = JSON.stringify(await data.jsonValue())
     //if text starts with `["Company Name...` --> the (current) job has multiple positions
-    // //console.log("str:"+str);
+    console.log("str:"+str);
     if (str.trim().startsWith('["Company Name')) {
       multiPosition = true;
     }
@@ -90,11 +93,11 @@ try{
     if (jobExists) { 
       //only one position in the current job
       if (!multiPosition) {
-        //console.log("single position")
+        console.log("single position")
 
         //adding title, company name, current job duration
         sel = 'div.pv-entity__summary-info.pv-entity__summary-info--v2 >h3';
-        // await page.waitFor(2 * 1000);
+        await page.waitFor(3 * 1000);
         var title = await getData(sel);
         title = title.replace('Title','').trim();
         //console.log("Title:"+title)
@@ -112,7 +115,7 @@ try{
       }
      //multiple positions in the current job
       else{
-        //console.log("muliple positions")
+        console.log("muliple positions")
         
         //adding title, company name, current job duration
         sel = 'div > div > div.pv-entity__summary-info-v2.pv-entity__summary-info--v2.pv-entity__summary-info-margin-top.mb2 > h3 > span:nth-child(2)';
