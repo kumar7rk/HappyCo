@@ -13,6 +13,7 @@ var worksheet;
 
 run();
 
+//********************************************Main function********************************************
 async function run () {
   browser = await puppeteer.launch({
     headless: false
@@ -44,7 +45,7 @@ try{
 
   for (var i = 2; i < 11; i++) {
     console.log("Row: "+i);
-    var address = 'R'+il;
+    var address = 'R'+i;
     var cell = workbook[address];
     var profileUnavailable = (cell ? cell.v : undefined);
     //if profile was unavailable last time and not removed yet- skip the row
@@ -58,7 +59,6 @@ try{
     var url = (cell ? cell.v : undefined);
 
     await page.goto(url); 
-    await page.waitFor(2 * 1000);
     await page.evaluate(_ => {
       window.scrollBy(0, window.innerHeight);
     });
@@ -97,17 +97,17 @@ try{
     }
     var sel = "";
     //if job exists we can get job specific information else get basic information
-    if (jobExists) { 
+    if (jobExists) {
       //only one position in the current job
       if (!multiPosition) {
         console.log("single position")
 
         //adding title, company name, current job duration
         sel = 'div.pv-entity__summary-info.pv-entity__summary-info--v2 >h3';
-        await page.waitFor(3 * 1000);
+        await page.waitFor(2 * 1000);
         var title = await getData(sel);
         title = title.replace('Title','').trim();
-        //console.log("Title:"+title)
+        // log("Title",title)
         setData('J'+i,title);
        
         sel = 'div > h4 > span:nth-child(2)';
@@ -216,7 +216,7 @@ player.play('./files/completed.mp3', function(err){
 })
 }
 
-// getting data from the LinkedIn
+//********************************************Getting data from LinkedIn********************************************
 async function getData(selector) {
   var resultsString = "Null";
   const result = await page.evaluate((selector) => {
@@ -231,14 +231,14 @@ async function getData(selector) {
   return result;
 }
 
-// adding data to cell
+//********************************************Adding data to cell********************************************
 async function setData(writeCell, data) {
   if (!worksheet[writeCell]) {
      worksheet[writeCell] = {}
   }
   worksheet[writeCell].v = data;
 }
-//setting today's date as a profile's last visited date
+//********************************************Setting today's date as a profile's last visited date********************************************
 async function setTodaysDate(i) {
   var today = new Date();
   var dd = today.getDate();
@@ -254,7 +254,7 @@ async function setTodaysDate(i) {
     setData('P'+i,lastVisitedDate);
 }
 
-//if either the name fetched last and now is empty- don't do anything
+//********************************************Comparing values********************************************
 async function hasValueChanged(readCell,data, writeCell) {
   var cell = worksheet[readCell];
   var value = (cell ? cell.v : undefined);
@@ -262,6 +262,7 @@ async function hasValueChanged(readCell,data, writeCell) {
     setData(writeCell,"Yes")
   }
 }
+//********************************************Log********************************************
 async function log(title, value){
   console.log(title+":"+ value);
 }
