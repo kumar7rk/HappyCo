@@ -50,8 +50,6 @@ try{
     var desired_value = (desired_cell ? desired_cell.v : undefined);
 
     await page.goto(desired_value); 
-    // await page.waitFor(5 * 1000);
-    // await page.waitForSelector('pv-entity__position-group-pager ember-view');
     await page.evaluate(_ => {
       window.scrollBy(0, window.innerHeight);
     });
@@ -61,31 +59,9 @@ try{
     var jobExists = false
 
     //exiting if the profile is unavailable/deleted
-        if (await page.url() === "https://www.linkedin.com/in/unavailable/"){
-      writeCell = 'R'+i
-      if (!worksheet[writeCell]) {
-         worksheet[writeCell] = {}
-      }
-      worksheet[writeCell].v = "Yes";
-
-      var today = new Date();
-      var dd = today.getDate();
-      var mm = today.getMonth()+1; //0 indexed
-      var yyyy = today.getFullYear();
-
-      if(dd<10) {
-          dd = '0'+dd
-      } 
-      if(mm<10) {
-          mm = '0'+mm
-      } 
-      var lastVisitedDate = dd + '/' + mm + '/' + yyyy;
-      
-      writeCell = 'P'+i
-      if (!worksheet[writeCell]) {
-          worksheet[writeCell] = {}
-      }
-      worksheet[writeCell].v = lastVisitedDate;
+    if (await page.url() === "https://www.linkedin.com/in/unavailable/") {
+      setData('R'+i,"Yes");
+      setTodaysDate(i);
       continue;
     }
 
@@ -110,6 +86,7 @@ try{
     if (str.trim().startsWith('["Company Name')) {
       multiPosition = true;
     }
+    var sel = "";
     //if job exists we can get job specific information else get basic information
     if (jobExists) { 
       //only one position in the current job
@@ -117,7 +94,8 @@ try{
         console.log("single position")
 
         //adding title, company name, current job duration
-        var sel = 'div.pv-entity__summary-info.pv-entity__summary-info--v2 >h3';
+        sel = 'div.pv-entity__summary-info.pv-entity__summary-info--v2 >h3';
+        await page.waitFor(2 * 1000);
         var title = await getData(sel);
         title = title.replace('Title','').trim();
         console.log("Title:"+title)
@@ -130,21 +108,21 @@ try{
         
         sel = 'div.pv-entity__summary-info.pv-entity__summary-info--v2 > div > h4:nth-child(2) > span.pv-entity__bullet-item-v2';
         var currentJobDuration = await getData(sel);
-        console.log("Current Job Duration:"+currentJobDuration)
+        console.log("Current Job Duration:"+currentJobDuration);
         setData('N'+i,currentJobDuration);
       }
     //multiple positions in the current job
       else{
         console.log("muliple positions")
 
-        var sel = 'div > div > div.pv-entity__summary-info-v2.pv-entity__summary-info--v2.pv-entity__summary-info-margin-top.mb2 > h3 > span:nth-child(2)';
+        sel = 'div > div > div.pv-entity__summary-info-v2.pv-entity__summary-info--v2.pv-entity__summary-info-margin-top.mb2 > h3 > span:nth-child(2)';
         var title = await getData(sel);
-        console.log("I got this title:"+title)
+        console.log("I got this title:"+title);
         setData('J'+i,title);
           
         sel = 'div > h3 > span:nth-child(2)';
         var companyName = await getData(sel);
-        console.log("Company Name:"+companyName)
+        console.log("Company Name:"+companyName);
         setData('L'+i,companyName);    
 
         sel = 'div > div > div.pv-entity__summary-info-v2.pv-entity__summary-info--v2.pv-entity__summary-info-margin-top.mb2 > div > h4:nth-child(2) > span.pv-entity__bullet-item-v2';
@@ -152,114 +130,72 @@ try{
         console.log("Current Job Duration:"+currentJobDuration)
         setData('N'+i,currentJobDuration);
       }//end of else
-    }
+    }//jobExists
 
     //getting name
     var name = ""
-
-    //div.pv-top-card-v2-section__info.mr5 > div:nth-child(1) > h1
-    //div.pv-top-card-v2-section__info.mr5 > div.display-flex.align-items-center > h1
-    if (await page.evaluate(() => document.querySelector('div.pv-top-card-v2-section__info.mr5 > div:nth-child(1) > h1')) != null){
-      if (await page.evaluate(() => document.querySelector('div.pv-top-card-v2-section__info.mr5 > div:nth-child(1) > h1').textContent) !=null){
-        name = await page.evaluate(() => document.querySelector
-            ('div.pv-top-card-v2-section__info.mr5 > div:nth-child(1) > h1').textContent);
-        name = name.trim();
-      }
-    }
-
+    sel = 'div.pv-top-card-v2-section__info.mr5 > div:nth-child(1) > h1';
+    var name = await getData(sel);
+    name = name.trim();
+    console.log("Name:"+name);
+    
     //adding location phone birthday
     const clickElement = 'span.pv-top-card-v2-section__entity-name.pv-top-card-v2-section__contact-info.ml2'
     if (name !="") {
       await page.click(clickElement)
       await page.waitFor(2 * 1000); 
 
-      if (await page.evaluate(() => document.querySelector('div > section.pv-contact-info__contact-type.ci-phone > ul > li')) != null){
-       if (await page.evaluate(() => document.querySelector('div > section.pv-contact-info__contact-type.ci-phone > ul > li').textContent) !=null){
-        var phone = await page.evaluate(() => document.querySelector('div > section.pv-contact-info__contact-type.ci-phone > ul > li').textContent);
-        phone = phone.trim().replace('(Mobile)','').replace('(Home)','').replace('(Work)','').replace(' ','').trim();
-        writeCell = 'G'+i
-        if (!worksheet[writeCell]) {
-            worksheet[writeCell] = {}
-          }
-          worksheet[writeCell].v = phone;
+      sel = 'div > section.pv-contact-info__contact-type.ci-phone > ul > li';
+      var phone = await getData(sel);
+      if (phone !=null) {
+        phone = phone.trim().replace('(Mobile)','').replace('(Home)','').replace('(Work)','').replace(' ','').trim();        
       }
-    }
-      if (await page.evaluate(() => document.querySelector('div.pv-top-card-v2-section__info.mr5 > h3')) != null){
-         if (await page.evaluate(() => document.querySelector('div.pv-top-card-v2-section__info.mr5 > h3').textContent) !=null){
-          var location = await page.evaluate(() => document.querySelector('div.pv-top-card-v2-section__info.mr5 > h3').textContent);
-          location = location.trim();
-          writeCell = 'H'+i
-          if (!worksheet[writeCell]) {
-              worksheet[writeCell] = {}
-            }
-            worksheet[writeCell].v = location;
-        }
-      }
-      if (await page.evaluate(() => document.querySelector('div > section.pv-contact-info__contact-type.ci-birthday > div > span')) != null){
-       if (await page.evaluate(() => document.querySelector('div > section.pv-contact-info__contact-type.ci-birthday > div > span').textContent) !=null){
-          var birthday = await page.evaluate(() => document.querySelector('div > section.pv-contact-info__contact-type.ci-birthday > div > span').textContent);
-          writeCell = 'Q'+i
-          if (!worksheet[writeCell]) {
-              worksheet[writeCell] = {}
-          }
-          worksheet[writeCell].v = birthday;
-        }
-      }
+      console.log("Phone:"+phone);
+      setData('G'+i,phone);
+
+      sel = 'div.pv-top-card-v2-section__info.mr5 > h3';
+      var location = await getData(sel);
+      location = location.trim();
+      console.log("Location:"+location);
+      setData('H'+i,location);
+
+      sel = 'div > section.pv-contact-info__contact-type.ci-birthday > div > span';
+      var birthday = await getData(sel);
+      console.log("Birthday:"+birthday);
+      setData('Q'+i,birthday);
     }
 
     //adding today's date to track when was profile last visited
-    var today = new Date();
-    var dd = today.getDate();
-    var mm = today.getMonth()+1; //0 indexed
-    var yyyy = today.getFullYear();
-
-    if(dd<10) {
-        dd = '0'+dd
-    } 
-    if(mm<10) {
-        mm = '0'+mm
-    } 
-    var lastVisitedDate = dd + '/' + mm + '/' + yyyy;
-    
-    writeCell = 'P'+i
-    if (!worksheet[writeCell]) {
-        worksheet[writeCell] = {}
-    }
-    worksheet[writeCell].v = lastVisitedDate;
+    setTodaysDate(i);
 
     //check if name title company job duration has changed
-    //if either the name fetched last and now is different- don't do anything
-    address_of_cell = 'D'+i;
+    //if either the name fetched last and now is empty- don't do anything
+    
+    hasValueChanged('D'+i,name,'I'+i);
+
+    /*address_of_cell = 'D'+i;
     desired_cell = worksheet[address_of_cell];
     desired_value = (desired_cell ? desired_cell.v : undefined);
     if (desired_value !== name && (name !==""|| desired_value !=="")) {
-      writeCell = 'I'+i
-      if (!worksheet[writeCell]) {
-          worksheet[writeCell] = {}
-      }
-      worksheet[writeCell].v = "Yes";
-    }
-    address_of_cell = 'E'+i;
+      setData('I'+i,"Yes")
+    }*/
+
+    hasValueChanged('E'+i,title,'K'+i);
+    /*address_of_cell = 'E'+i;
     desired_cell = worksheet[address_of_cell];
     desired_value = (desired_cell ? desired_cell.v : undefined);
 
     if (desired_value !== title && (title !==""|| desired_value!=="")) {
-      writeCell = 'K'+i
-      if (!worksheet[writeCell]) {
-          worksheet[writeCell] = {}
-      }
-      worksheet[writeCell].v = "Yes";
-    }
-    address_of_cell = 'F'+i;
+     setData('K'+i,"Yes")
+    }*/
+    hasValueChanged('F'+i,companyName,'M'+i);
+
+/*    address_of_cell = 'F'+i;
     desired_cell = worksheet[address_of_cell];
     desired_value = (desired_cell ? desired_cell.v : undefined);
     if (desired_value !== companyName && (companyName !==""|| desired_value!=="")) {
-      writeCell = 'M'+i
-      if (!worksheet[writeCell]) {
-          worksheet[writeCell] = {}
-      }
-      worksheet[writeCell].v = "Yes";
-    }
+      setData('M'+i,"Yes")
+    }*/
 
     if (currentJobDuration != "" && currentJobDuration != undefined) {
       // console.log(currentJobDuration);
@@ -271,11 +207,7 @@ try{
         if (ym.length ==1) {
            var num =  parseInt(ym[0]);
            if (num<4) {
-            writeCell = 'O'+i
-            if (!worksheet[writeCell]) {
-             worksheet[writeCell] = {}
-            }
-            worksheet[writeCell].v = "Yes"
+            setData('O'+i,"Yes")
           }
         }
       }
@@ -290,7 +222,7 @@ catch(error){
       player.play('./files/error.mp3', function(err){
       if (err) throw err
     })
-    }
+}
   var t1 = performance.now();
   // console.log((t1-t0)/1000+ " seconds");
 
@@ -301,7 +233,7 @@ catch(error){
 }
 
 async function getData(selector) {
-  console.log("getData");
+  // console.log("getData");
   var resultsString = "Null";
   const result = await page.evaluate((selector) => {
     if (document.querySelector(selector) != null) {
@@ -312,17 +244,40 @@ async function getData(selector) {
        }
     }
   }, selector);
-  if (result == undefined) {
-      resull = "";
+  if (result == undefined || result == "undefined") {
+      // console.log(result);
   }
   return result;
 }
 
 async function setData(writeCell, data) {
-  console.log("setData");
+  // console.log("setData");
 
   if (!worksheet[writeCell]) {
      worksheet[writeCell] = {}
   }
   worksheet[writeCell].v = data;
+}
+async function setTodaysDate(i) {
+  var today = new Date();
+  var dd = today.getDate();
+  var mm = today.getMonth()+1; //0 indexed
+    var yyyy = today.getFullYear();
+
+    if(dd<10) {
+        dd = '0'+dd
+    } 
+    if(mm<10) {
+        mm = '0'+mm
+    } 
+    var lastVisitedDate = dd + '/' + mm + '/' + yyyy;
+    setData('P'+i,lastVisitedDate);
+}
+
+async function hasValueChanged(readCell,data, writeCell) {
+  var cell = worksheet[readCell];
+  var value = (cell ? cell.v : undefined);
+  if (value !== data && (data !==""|| value !=="")) {
+    setData(writeCell,"Yes")
+  }
 }
