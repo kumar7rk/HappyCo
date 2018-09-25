@@ -194,14 +194,13 @@ try{
   }
 }
 catch(error){
-      //console.log(error);
-      player.play('./files/error.mp3', function(err){
-      if (err) throw err
-    })
+  //console.log(error);
+  player.play('./files/error.mp3', function(err){
+  if (err) throw err
+})
 }
 var t1 = performance.now();
 console.log((t1-t0)/1000+ " seconds");
-
 await browser.close();
 player.play('./files/completed.mp3', function(err){
   if (err) throw err
@@ -209,7 +208,6 @@ player.play('./files/completed.mp3', function(err){
 }
 
 async function getData(selector) {
-  // //console.log("getData");
   var resultsString = "Null";
   const result = await page.evaluate((selector) => {
     if (document.querySelector(selector) != null) {
@@ -224,7 +222,6 @@ async function getData(selector) {
 }
 
 async function setData(writeCell, data) {
-  // //console.log("setData");
   if (!worksheet[writeCell]) {
      worksheet[writeCell] = {}
   }
