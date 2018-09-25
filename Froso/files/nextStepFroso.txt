@@ -27,9 +27,13 @@ Linkedin
 //- clean up code
 - make changes as per sheetjs library
 
-Improve LinkedIn code efficiency 
+//Improve LinkedIn code efficiency 
 //-current avg. time per user - 8 secs (794/100) Aiming-4 secs
 //- avg 5-5.5 sec at work with 4-5 people in office
--LOC 298 19r9
+//-LOC 298 19r9
 
 //don't run anything if profile is deleted and also make a note in excel so we don't keep on visiting them in future
+
+
+if profile private job title e.g https://www.linkedin.com/in/brent-law-49a54053
+#experience > ul > li:nth-child(1) > header > h4 > a
