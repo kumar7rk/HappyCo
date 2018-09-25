@@ -1,7 +1,5 @@
 package main
 
-import ()
-
 //********************************************Init********************************************
 func init() {
 	getCommands["admin"] = Command{Func: showAllAdmins, Description: `Prints a note with the name and emails of all the admins in a business.`}
