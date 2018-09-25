@@ -2,9 +2,15 @@ const puppeteer = require('puppeteer');
 const CREDS = require('./creds');
 const player = require('play-sound')(opts = {});
 const {performance} = require('perf_hooks');
+
 run();
+
 var browser;
 var page;
+var workbook;
+var first_sheet_name;
+var worksheet;
+
 async function run () {
   browser = await puppeteer.launch({
     headless: false
@@ -29,9 +35,9 @@ async function run () {
     
 if(typeof require !== 'undefined') XLSX = require('xlsx');
 
-  var workbook = XLSX.readFile('data.xlsx');
-  var first_sheet_name = workbook.SheetNames[0];
-  var worksheet = workbook.Sheets[first_sheet_name];
+  workbook = XLSX.readFile('data.xlsx');
+  first_sheet_name = workbook.SheetNames[0];
+  worksheet = workbook.Sheets[first_sheet_name];
   var address_of_cell = 'A2';
   var desired_cell = worksheet[address_of_cell];
 
@@ -111,17 +117,18 @@ try{
       if (!multiPosition) {
         console.log("single position")
 
+        //adding title, company name, current job duration
         var select = 'div.pv-entity__summary-info.pv-entity__summary-info--v2 >h3';
-        await page.waitFor(2 * 1000);
-        var title = await getData2(select);
+        // await page.waitFor(2 * 1000);
+        var title = await getData(select);
         console.log("I got this title:"+title)
-        writeCell = 'J'+i
+        setData('J'+i,title);
+        /*writeCell = 'J'+i
           if (!worksheet[writeCell]) {
              worksheet[writeCell] = {}
           }
-        worksheet[writeCell].v = title;
+        worksheet[writeCell].v = title;*/
           
-        //adding title, company name, current job duration
         /*if (await page.evaluate(() => document.querySelector('div.pv-entity__summary-info.pv-entity__summary-info--v2 >h3')) != null){
           if (await page.evaluate(() => document.querySelector('div.pv-entity__summary-info.pv-entity__summary-info--v2 >h3').textContent) !=null){
               var title = await page.evaluate(() => document.querySelector
@@ -161,17 +168,22 @@ try{
       else{
         console.log("muliple positions")
         var select = 'div > div > div.pv-entity__summary-info-v2.pv-entity__summary-info--v2.pv-entity__summary-info-margin-top.mb2 > h3 > span:nth-child(2)';
-        await page.waitFor(2 * 1000);
-        var title = await getData2(select);
+        // await page.waitFor(2 * 1000);
+        var title = await getData(select);
         console.log("I got this title:"+title)
+        setData('J'+i,title);
+        
+
         /*if (title == undefined) {
           console.log("I'm actually undefined");
         }*/
-        writeCell = 'J'+i
+        
+
+        /*writeCell = 'J'+i
         if (!worksheet[writeCell]) {
          worksheet[writeCell] = {}
         }
-        worksheet[writeCell].v = title;
+        worksheet[writeCell].v = title;*/
  
 
 
@@ -358,23 +370,8 @@ catch(error){
     })
 }
 
-async function getData(selector){
+async function getData(selector) {
   console.log("getData");
-  var title = "Null";
-  if (await page.evaluate((selector) => document.querySelector(selector)) != null){
-    console.log("Mama I made it");
-    if (await page.evaluate((selector) => document.querySelector(selector).textContent) !=null){
-        title = await page.evaluate((selector) => document.querySelector
-          (selector).textContent)
-        title = title.replace('Title','').trim();
-      }
-    }
-    console.log("I'm sending this title:"+title+" Bye");
-  return title;
-}
-
-async function getData2(selector) {
-  console.log("getData2");
   var resultsString = "Null";
   const result = await page.evaluate((selector) => {
     if (document.querySelector(selector) != null) {
@@ -387,4 +384,13 @@ async function getData2(selector) {
   }, selector);
 
   return result;
+}
+
+async function setData(writeCell, data) {
+  console.log("setData");
+
+  if (!worksheet[writeCell]) {
+     worksheet[writeCell] = {}
+  }
+  worksheet[writeCell].v = data;
 }
