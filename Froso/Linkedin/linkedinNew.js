@@ -3,13 +3,13 @@ const CREDS = require('./creds');
 const player = require('play-sound')(opts = {});
 const {performance} = require('perf_hooks');
 
-run();
-
 var browser;
 var page;
 var workbook;
 var first_sheet_name;
 var worksheet;
+
+run();
 
 async function run () {
   browser = await puppeteer.launch({
@@ -17,7 +17,6 @@ async function run () {
   });
  
   page = await browser.newPage();
-
   await page.goto("https://www.linkedin.com");
 
   const USERNAME_SELECTOR = '#login-email';
@@ -38,25 +37,25 @@ if(typeof require !== 'undefined') XLSX = require('xlsx');
   workbook = XLSX.readFile('data.xlsx');
   first_sheet_name = workbook.SheetNames[0];
   worksheet = workbook.Sheets[first_sheet_name];
-  var address_of_cell = 'A2';
-  var desired_cell = worksheet[address_of_cell];
+  var address = 'A2';
+  var cell = worksheet[address];
 
   var t0 = performance.now();
 try{
   for (var i = 2; i < 11; i++) {
     console.log("Row: "+i);
-    address_of_cell = 'B'+i;
-    desired_cell = worksheet[address_of_cell];
-    var desired_value = (desired_cell ? desired_cell.v : undefined);
+    address = 'B'+i;
+    cell = worksheet[address];
+    var url = (cell ? cell.v : undefined);
 
-    await page.goto(desired_value); 
+    await page.goto(url); 
     await page.evaluate(_ => {
       window.scrollBy(0, window.innerHeight);
     });
     await page.waitFor(2 * 1000);
     var data = "";  
-    var multiPosition = false
-    var jobExists = false
+    var multiPosition = false;
+    var jobExists = false;
 
     //exiting if the profile is unavailable/deleted
     if (await page.url() === "https://www.linkedin.com/in/unavailable/") {
@@ -114,7 +113,8 @@ try{
     //multiple positions in the current job
       else{
         console.log("muliple positions")
-
+        
+        //adding title, company name, current job duration
         sel = 'div > div > div.pv-entity__summary-info-v2.pv-entity__summary-info--v2.pv-entity__summary-info-margin-top.mb2 > h3 > span:nth-child(2)';
         var title = await getData(sel);
         console.log("I got this title:"+title);
@@ -123,11 +123,10 @@ try{
         sel = 'div > h3 > span:nth-child(2)';
         var companyName = await getData(sel);
         console.log("Company Name:"+companyName);
-        setData('L'+i,companyName);    
-
+        setData('L'+i,companyName);
         sel = 'div > div > div.pv-entity__summary-info-v2.pv-entity__summary-info--v2.pv-entity__summary-info-margin-top.mb2 > div > h4:nth-child(2) > span.pv-entity__bullet-item-v2';
         var currentJobDuration = await getData(sel);
-        console.log("Current Job Duration:"+currentJobDuration)
+        console.log("Current Job Duration:"+currentJobDuration);
         setData('N'+i,currentJobDuration);
       }//end of else
     }//jobExists
@@ -139,11 +138,11 @@ try{
     name = name.trim();
     console.log("Name:"+name);
     
-    //adding location phone birthday
+    //adding phone location birthday
     const clickElement = 'span.pv-top-card-v2-section__entity-name.pv-top-card-v2-section__contact-info.ml2'
     if (name !="") {
-      await page.click(clickElement)
-      await page.waitFor(2 * 1000); 
+      await page.click(clickElement);
+      await page.waitFor(2 * 1000);
 
       sel = 'div > section.pv-contact-info__contact-type.ci-phone > ul > li';
       var phone = await getData(sel);
@@ -168,38 +167,15 @@ try{
     //adding today's date to track when was profile last visited
     setTodaysDate(i);
 
-    //check if name title company job duration has changed
-    //if either the name fetched last and now is empty- don't do anything
-    
+    //check if name title company has changed
+    //if yes print yes in the excel
     hasValueChanged('D'+i,name,'I'+i);
-
-    /*address_of_cell = 'D'+i;
-    desired_cell = worksheet[address_of_cell];
-    desired_value = (desired_cell ? desired_cell.v : undefined);
-    if (desired_value !== name && (name !==""|| desired_value !=="")) {
-      setData('I'+i,"Yes")
-    }*/
-
     hasValueChanged('E'+i,title,'K'+i);
-    /*address_of_cell = 'E'+i;
-    desired_cell = worksheet[address_of_cell];
-    desired_value = (desired_cell ? desired_cell.v : undefined);
-
-    if (desired_value !== title && (title !==""|| desired_value!=="")) {
-     setData('K'+i,"Yes")
-    }*/
     hasValueChanged('F'+i,companyName,'M'+i);
 
-/*    address_of_cell = 'F'+i;
-    desired_cell = worksheet[address_of_cell];
-    desired_value = (desired_cell ? desired_cell.v : undefined);
-    if (desired_value !== companyName && (companyName !==""|| desired_value!=="")) {
-      setData('M'+i,"Yes")
-    }*/
-
+    //checking if the current job is less than 3 months old
     if (currentJobDuration != "" && currentJobDuration != undefined) {
       // console.log(currentJobDuration);
-    //checking if the current job is less than 3 months old
       var ym = currentJobDuration.split(" ");
       if (ym.length ==2) {
         currentJobDuration = currentJobDuration.replace('mos',"").trim();
@@ -244,9 +220,6 @@ async function getData(selector) {
        }
     }
   }, selector);
-  if (result == undefined || result == "undefined") {
-      // console.log(result);
-  }
   return result;
 }
 
@@ -274,6 +247,7 @@ async function setTodaysDate(i) {
     setData('P'+i,lastVisitedDate);
 }
 
+//if either the name fetched last and now is empty- don't do anything
 async function hasValueChanged(readCell,data, writeCell) {
   var cell = worksheet[readCell];
   var value = (cell ? cell.v : undefined);
