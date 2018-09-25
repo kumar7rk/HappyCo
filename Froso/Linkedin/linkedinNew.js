@@ -2,13 +2,15 @@ const puppeteer = require('puppeteer');
 const CREDS = require('./creds');
 const player = require('play-sound')(opts = {});
 const {performance} = require('perf_hooks');
-
-(async () => {
-  const browser = await puppeteer.launch({
+run();
+var browser;
+var page;
+async function run () {
+  browser = await puppeteer.launch({
     headless: false
   });
  
-  const page = await browser.newPage();
+  page = await browser.newPage();
 
   await page.goto("https://www.linkedin.com");
 
@@ -36,18 +38,19 @@ if(typeof require !== 'undefined') XLSX = require('xlsx');
   var t0 = performance.now();
 try{
 
-  for (var i = 3; i < 4; i++) {
+  for (var i = 2; i < 11; i++) {
     console.log("Row: "+i);
     address_of_cell = 'B'+i;
     desired_cell = worksheet[address_of_cell];
     var desired_value = (desired_cell ? desired_cell.v : undefined);
 
     await page.goto(desired_value); 
-    await page.waitFor(2 * 1000);
+    // await page.waitFor(5 * 1000);
+    // await page.waitForSelector('pv-entity__position-group-pager ember-view');
     await page.evaluate(_ => {
       window.scrollBy(0, window.innerHeight);
     });
-  
+    await page.waitFor(2 * 1000);
     var data = "";  
     var multiPosition = false
     var jobExists = false
@@ -107,8 +110,19 @@ try{
       //only one position in the current job
       if (!multiPosition) {
         console.log("single position")
+
+        var select = 'div.pv-entity__summary-info.pv-entity__summary-info--v2 >h3';
+        await page.waitFor(2 * 1000);
+        var title = await getData2(select);
+        console.log("I got this title:"+title)
+        writeCell = 'J'+i
+          if (!worksheet[writeCell]) {
+             worksheet[writeCell] = {}
+          }
+        worksheet[writeCell].v = title;
+          
         //adding title, company name, current job duration
-        if (await page.evaluate(() => document.querySelector('div.pv-entity__summary-info.pv-entity__summary-info--v2 >h3')) != null){
+        /*if (await page.evaluate(() => document.querySelector('div.pv-entity__summary-info.pv-entity__summary-info--v2 >h3')) != null){
           if (await page.evaluate(() => document.querySelector('div.pv-entity__summary-info.pv-entity__summary-info--v2 >h3').textContent) !=null){
               var title = await page.evaluate(() => document.querySelector
                 ('div.pv-entity__summary-info.pv-entity__summary-info--v2 >h3').textContent)
@@ -118,7 +132,7 @@ try{
               }
               worksheet[writeCell].v = title;
           }
-        }
+        }*/
         if (await page.evaluate(() => document.querySelector('div > h4 > span:nth-child(2)')) != null){
           if (await page.evaluate(() => document.querySelector('div > h4 > span:nth-child(2)').textContent) !=null){
             var companyName = await page.evaluate(() => document.querySelector
@@ -146,8 +160,23 @@ try{
   //multiple positions in the current job
       else{
         console.log("muliple positions")
+        var select = 'div > div > div.pv-entity__summary-info-v2.pv-entity__summary-info--v2.pv-entity__summary-info-margin-top.mb2 > h3 > span:nth-child(2)';
+        await page.waitFor(2 * 1000);
+        var title = await getData2(select);
+        console.log("I got this title:"+title)
+        /*if (title == undefined) {
+          console.log("I'm actually undefined");
+        }*/
+        writeCell = 'J'+i
+        if (!worksheet[writeCell]) {
+         worksheet[writeCell] = {}
+        }
+        worksheet[writeCell].v = title;
+ 
+
+
         //adding title, company name, current job duration
-        if (await page.evaluate(() => document.querySelector('div > div > div.pv-entity__summary-info-v2.pv-entity__summary-info--v2.pv-entity__summary-info-margin-top.mb2 > h3 > span:nth-child(2)')) != null){
+        /*if (await page.evaluate(() => document.querySelector('div > div > div.pv-entity__summary-info-v2.pv-entity__summary-info--v2.pv-entity__summary-info-margin-top.mb2 > h3 > span:nth-child(2)')) != null){
           if (await page.evaluate(() => document.querySelector('div > div > div.pv-entity__summary-info-v2.pv-entity__summary-info--v2.pv-entity__summary-info-margin-top.mb2 > h3 > span:nth-child(2)').textContent) !=null){
             var title = await page.evaluate(() => document.querySelector
               ('div > div > div.pv-entity__summary-info-v2.pv-entity__summary-info--v2.pv-entity__summary-info-margin-top.mb2 > h3 > span:nth-child(2)').textContent)
@@ -158,7 +187,7 @@ try{
             }
             worksheet[writeCell].v = title;
           }
-        }
+        }*/
 
         if (await page.evaluate(() => document.querySelector('div > h3 > span:nth-child(2)')) != null){
           if (await page.evaluate(() => document.querySelector('div > h3 > span:nth-child(2)').textContent) !=null){
@@ -327,4 +356,35 @@ catch(error){
   player.play('./files/completed.mp3', function(err){
       if (err) throw err
     })
-})();
+}
+
+async function getData(selector){
+  console.log("getData");
+  var title = "Null";
+  if (await page.evaluate((selector) => document.querySelector(selector)) != null){
+    console.log("Mama I made it");
+    if (await page.evaluate((selector) => document.querySelector(selector).textContent) !=null){
+        title = await page.evaluate((selector) => document.querySelector
+          (selector).textContent)
+        title = title.replace('Title','').trim();
+      }
+    }
+    console.log("I'm sending this title:"+title+" Bye");
+  return title;
+}
+
+async function getData2(selector) {
+  console.log("getData2");
+  var resultsString = "Null";
+  const result = await page.evaluate((selector) => {
+    if (document.querySelector(selector) != null) {
+        if (document.querySelector(selector).textContent != null) {
+          resultsString = document.querySelector(selector).textContent;
+          resultsString = resultsString.replace('Title','').trim();
+          return resultsString;
+       }
+    }
+  }, selector);
+
+  return result;
+}
