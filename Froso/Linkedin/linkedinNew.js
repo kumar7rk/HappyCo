@@ -41,13 +41,20 @@ try{
   workbook = XLSX.readFile('data.xlsx');
   first_sheet_name = workbook.SheetNames[0];
   worksheet = workbook.Sheets[first_sheet_name];
-  // var address = 'A2';
-  // var cell = worksheet[address];
 
   for (var i = 2; i < 11; i++) {
     console.log("Row: "+i);
-    var address = 'B'+i;
-    var cell = worksheet[address];
+    var address = 'R'+il;
+    var cell = workbook[address];
+    var profileUnavailable = (cell ? cell.v : undefined);
+    //if profile was unavailable last time and not removed yet- skip the row
+    if (profileUnavailable === "Yes") {
+      setData('R'+i,"Yes");
+      setTodaysDate(i);
+      continue;
+    }
+    address = 'B'+i;
+    cell = worksheet[address];
     var url = (cell ? cell.v : undefined);
 
     await page.goto(url); 
@@ -70,10 +77,10 @@ try{
     //getting current job - all information
     if (await page.evaluate(() => document.getElementsByClassName
       ('pv-entity__position-group-pager ember-view'))!==null) {
-      // //console.log("Job is not null");
+      //console.log("Job is not null");
       if (await page.evaluateHandle(() => document.getElementsByClassName
       ('pv-entity__position-group-pager ember-view').textContent)!==null) {
-          // //console.log("Job has some data too");
+          //console.log("Job has some data too");
           jobExists = true
           data = await page.evaluateHandle(() => {
           return Array.from(document.getElementsByClassName('pv-entity__position-group-pager ember-view')).map(elem => elem.textContent.trim()).slice(0,1);
@@ -84,7 +91,7 @@ try{
     //converting json to string
     var str = JSON.stringify(await data.jsonValue())
     //if text starts with `["Company Name...` --> the (current) job has multiple positions
-    console.log("str:"+str);
+    // console.log("str:"+str);
     if (str.trim().startsWith('["Company Name')) {
       multiPosition = true;
     }
@@ -171,14 +178,13 @@ try{
     setTodaysDate(i);
 
     //check if name title company has changed
-    //if yes print yes in the excel
+    //if so print yes in the excel
     hasValueChanged('D'+i,name,'I'+i);
     hasValueChanged('E'+i,title,'K'+i);
     hasValueChanged('F'+i,companyName,'M'+i);
 
     //checking if the current job is less than 3 months old
     if (currentJobDuration != "" && currentJobDuration != undefined) {
-      // //console.log(currentJobDuration);
       var ym = currentJobDuration.split(" ");
       if (ym.length ==2) {
         currentJobDuration = currentJobDuration.replace('mos',"").trim();
@@ -210,6 +216,7 @@ player.play('./files/completed.mp3', function(err){
 })
 }
 
+// getting data from the LinkedIn
 async function getData(selector) {
   var resultsString = "Null";
   const result = await page.evaluate((selector) => {
@@ -224,12 +231,14 @@ async function getData(selector) {
   return result;
 }
 
+// adding data to cell
 async function setData(writeCell, data) {
   if (!worksheet[writeCell]) {
      worksheet[writeCell] = {}
   }
   worksheet[writeCell].v = data;
 }
+//setting today's date as a profile's last visited date
 async function setTodaysDate(i) {
   var today = new Date();
   var dd = today.getDate();
@@ -252,4 +261,7 @@ async function hasValueChanged(readCell,data, writeCell) {
   if (value !== data && (data !==""|| value !=="")) {
     setData(writeCell,"Yes")
   }
+}
+async function log(title, value){
+  console.log(title+":"+ value);
 }
