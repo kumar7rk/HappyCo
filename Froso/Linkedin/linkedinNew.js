@@ -43,7 +43,6 @@ if(typeof require !== 'undefined') XLSX = require('xlsx');
 
   var t0 = performance.now();
 try{
-
   for (var i = 2; i < 11; i++) {
     console.log("Row: "+i);
     address_of_cell = 'B'+i;
@@ -61,8 +60,8 @@ try{
     var multiPosition = false
     var jobExists = false
 
-    //exiting if the profile is unavailable (deleted?)
-    if (await page.url() === "https://www.linkedin.com/in/unavailable/"){
+    //exiting if the profile is unavailable/deleted
+        if (await page.url() === "https://www.linkedin.com/in/unavailable/"){
       writeCell = 'R'+i
       if (!worksheet[writeCell]) {
          worksheet[writeCell] = {}
@@ -118,118 +117,47 @@ try{
         console.log("single position")
 
         //adding title, company name, current job duration
-        var select = 'div.pv-entity__summary-info.pv-entity__summary-info--v2 >h3';
-        // await page.waitFor(2 * 1000);
-        var title = await getData(select);
-        console.log("I got this title:"+title)
+        var sel = 'div.pv-entity__summary-info.pv-entity__summary-info--v2 >h3';
+        var title = await getData(sel);
+        title = title.replace('Title','').trim();
+        console.log("Title:"+title)
         setData('J'+i,title);
-        /*writeCell = 'J'+i
-          if (!worksheet[writeCell]) {
-             worksheet[writeCell] = {}
-          }
-        worksheet[writeCell].v = title;*/
-          
-        /*if (await page.evaluate(() => document.querySelector('div.pv-entity__summary-info.pv-entity__summary-info--v2 >h3')) != null){
-          if (await page.evaluate(() => document.querySelector('div.pv-entity__summary-info.pv-entity__summary-info--v2 >h3').textContent) !=null){
-              var title = await page.evaluate(() => document.querySelector
-                ('div.pv-entity__summary-info.pv-entity__summary-info--v2 >h3').textContent)
-              writeCell = 'J'+i
-              if (!worksheet[writeCell]) {
-                 worksheet[writeCell] = {}
-              }
-              worksheet[writeCell].v = title;
-          }
-        }*/
-        if (await page.evaluate(() => document.querySelector('div > h4 > span:nth-child(2)')) != null){
-          if (await page.evaluate(() => document.querySelector('div > h4 > span:nth-child(2)').textContent) !=null){
-            var companyName = await page.evaluate(() => document.querySelector
-              ('div > h4 > span:nth-child(2)').textContent)
-            writeCell = 'L'+i
-            if (!worksheet[writeCell]) {
-              worksheet[writeCell] = {}
-            }
-            worksheet[writeCell].v = companyName;
-          }
-        }      
-      
-        if (await page.evaluate(() => document.querySelector('div.pv-entity__summary-info.pv-entity__summary-info--v2 > div > h4:nth-child(2) > span.pv-entity__bullet-item-v2')) != null){
-          if (await page.evaluate(() => document.querySelector('div.pv-entity__summary-info.pv-entity__summary-info--v2 > div > h4:nth-child(2) > span.pv-entity__bullet-item-v2').textContent) !=null){
-            var currentJobDuration = await page.evaluate(() => document.querySelector
-              ('div.pv-entity__summary-info.pv-entity__summary-info--v2 > div > h4:nth-child(2) > span.pv-entity__bullet-item-v2').textContent)
-            writeCell = 'N'+i
-            if (!worksheet[writeCell]) {
-             worksheet[writeCell] = {}
-            }
-            worksheet[writeCell].v = currentJobDuration;
-          }
-        }  
+       
+        sel = 'div > h4 > span:nth-child(2)';
+        var companyName = await getData(sel);
+        console.log("Company Name:"+companyName)
+        setData('L'+i,companyName);
+        
+        sel = 'div.pv-entity__summary-info.pv-entity__summary-info--v2 > div > h4:nth-child(2) > span.pv-entity__bullet-item-v2';
+        var currentJobDuration = await getData(sel);
+        console.log("Current Job Duration:"+currentJobDuration)
+        setData('N'+i,currentJobDuration);
       }
-  //multiple positions in the current job
+    //multiple positions in the current job
       else{
         console.log("muliple positions")
-        var select = 'div > div > div.pv-entity__summary-info-v2.pv-entity__summary-info--v2.pv-entity__summary-info-margin-top.mb2 > h3 > span:nth-child(2)';
-        // await page.waitFor(2 * 1000);
-        var title = await getData(select);
+
+        var sel = 'div > div > div.pv-entity__summary-info-v2.pv-entity__summary-info--v2.pv-entity__summary-info-margin-top.mb2 > h3 > span:nth-child(2)';
+        var title = await getData(sel);
         console.log("I got this title:"+title)
         setData('J'+i,title);
-        
+          
+        sel = 'div > h3 > span:nth-child(2)';
+        var companyName = await getData(sel);
+        console.log("Company Name:"+companyName)
+        setData('L'+i,companyName);    
 
-        /*if (title == undefined) {
-          console.log("I'm actually undefined");
-        }*/
-        
-
-        /*writeCell = 'J'+i
-        if (!worksheet[writeCell]) {
-         worksheet[writeCell] = {}
-        }
-        worksheet[writeCell].v = title;*/
- 
-
-
-        //adding title, company name, current job duration
-        /*if (await page.evaluate(() => document.querySelector('div > div > div.pv-entity__summary-info-v2.pv-entity__summary-info--v2.pv-entity__summary-info-margin-top.mb2 > h3 > span:nth-child(2)')) != null){
-          if (await page.evaluate(() => document.querySelector('div > div > div.pv-entity__summary-info-v2.pv-entity__summary-info--v2.pv-entity__summary-info-margin-top.mb2 > h3 > span:nth-child(2)').textContent) !=null){
-            var title = await page.evaluate(() => document.querySelector
-              ('div > div > div.pv-entity__summary-info-v2.pv-entity__summary-info--v2.pv-entity__summary-info-margin-top.mb2 > h3 > span:nth-child(2)').textContent)
-            title = title.replace('Title','').trim();
-            writeCell = 'J'+i
-            if (!worksheet[writeCell]) {
-             worksheet[writeCell] = {}
-            }
-            worksheet[writeCell].v = title;
-          }
-        }*/
-
-        if (await page.evaluate(() => document.querySelector('div > h3 > span:nth-child(2)')) != null){
-          if (await page.evaluate(() => document.querySelector('div > h3 > span:nth-child(2)').textContent) !=null){
-            var companyName = await page.evaluate(() => document.querySelector
-            ('div > h3 > span:nth-child(2)').textContent)
-            writeCell = 'L'+i
-            if (!worksheet[writeCell]) {
-               worksheet[writeCell] = {}
-            }
-            worksheet[writeCell].v = companyName;
-          }
-        }
-
-        if (await page.evaluate(() => document.querySelector(' div > div > div.pv-entity__summary-info-v2.pv-entity__summary-info--v2.pv-entity__summary-info-margin-top.mb2 > div > h4:nth-child(2) > span.pv-entity__bullet-item-v2')) != null){
-          if (await page.evaluate(() => document.querySelector(' div > div > div.pv-entity__summary-info-v2.pv-entity__summary-info--v2.pv-entity__summary-info-margin-top.mb2 > div > h4:nth-child(2) > span.pv-entity__bullet-item-v2').textContent) !=null){
-            var currentJobDuration = await page.evaluate(() => document.querySelector
-              (' div > div > div.pv-entity__summary-info-v2.pv-entity__summary-info--v2.pv-entity__summary-info-margin-top.mb2 > div > h4:nth-child(2) > span.pv-entity__bullet-item-v2').textContent)
-            writeCell = 'N'+i
-            if (!worksheet[writeCell]) {
-               worksheet[writeCell] = {}
-            }
-            worksheet[writeCell].v = currentJobDuration;
-          }
-        }
+        sel = 'div > div > div.pv-entity__summary-info-v2.pv-entity__summary-info--v2.pv-entity__summary-info-margin-top.mb2 > div > h4:nth-child(2) > span.pv-entity__bullet-item-v2';
+        var currentJobDuration = await getData(sel);
+        console.log("Current Job Duration:"+currentJobDuration)
+        setData('N'+i,currentJobDuration);
       }//end of else
     }
+
     //getting name
     var name = ""
 
-    //#ember2431 > div.pv-top-card-v2-section__info.mr5 > div:nth-child(1) > h1
+    //div.pv-top-card-v2-section__info.mr5 > div:nth-child(1) > h1
     //div.pv-top-card-v2-section__info.mr5 > div.display-flex.align-items-center > h1
     if (await page.evaluate(() => document.querySelector('div.pv-top-card-v2-section__info.mr5 > div:nth-child(1) > h1')) != null){
       if (await page.evaluate(() => document.querySelector('div.pv-top-card-v2-section__info.mr5 > div:nth-child(1) > h1').textContent) !=null){
@@ -238,6 +166,7 @@ try{
         name = name.trim();
       }
     }
+
     //adding location phone birthday
     const clickElement = 'span.pv-top-card-v2-section__entity-name.pv-top-card-v2-section__contact-info.ml2'
     if (name !="") {
@@ -247,7 +176,7 @@ try{
       if (await page.evaluate(() => document.querySelector('div > section.pv-contact-info__contact-type.ci-phone > ul > li')) != null){
        if (await page.evaluate(() => document.querySelector('div > section.pv-contact-info__contact-type.ci-phone > ul > li').textContent) !=null){
         var phone = await page.evaluate(() => document.querySelector('div > section.pv-contact-info__contact-type.ci-phone > ul > li').textContent);
-        phone = phone.trim().replace('(Mobile)','').replace('(Home)','').replace('(Work)','').replace(' ','').trim()
+        phone = phone.trim().replace('(Mobile)','').replace('(Home)','').replace('(Work)','').replace(' ','').trim();
         writeCell = 'G'+i
         if (!worksheet[writeCell]) {
             worksheet[writeCell] = {}
@@ -258,6 +187,7 @@ try{
       if (await page.evaluate(() => document.querySelector('div.pv-top-card-v2-section__info.mr5 > h3')) != null){
          if (await page.evaluate(() => document.querySelector('div.pv-top-card-v2-section__info.mr5 > h3').textContent) !=null){
           var location = await page.evaluate(() => document.querySelector('div.pv-top-card-v2-section__info.mr5 > h3').textContent);
+          location = location.trim();
           writeCell = 'H'+i
           if (!worksheet[writeCell]) {
               worksheet[writeCell] = {}
@@ -350,9 +280,9 @@ try{
         }
       }
     }
-    if (i%2==0) {
+    // if (i%2==0) {
       XLSX.writeFile(workbook ,'output.xlsx')
-    }
+    // }
   }
 }
 catch(error){
@@ -377,12 +307,14 @@ async function getData(selector) {
     if (document.querySelector(selector) != null) {
         if (document.querySelector(selector).textContent != null) {
           resultsString = document.querySelector(selector).textContent;
-          resultsString = resultsString.replace('Title','').trim();
+          resultsString = resultsString.trim();
           return resultsString;
        }
     }
   }, selector);
-
+  if (result == undefined) {
+      resull = "";
+  }
   return result;
 }
 
