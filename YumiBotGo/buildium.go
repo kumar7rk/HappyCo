@@ -1,6 +1,7 @@
 package main
 
 import (
+	"fmt"
 	"strconv"
 	"strings"
 )
@@ -15,21 +16,27 @@ func init() {
 
 //********************************************Sending Buildium reply********************************************
 func sendBuildiumReply(user User, conversationID string, params ...string) {
-	// if you don't give a name use the name user have in the account
-	if len(params) == 0 && user.Email != "" {
-		params = strings.Split(user.Name, " ")
-	}
 	name := "there"
 	snoozeDays := int64(7)
-
-	if len(params) > 0 {
+	if user.Email != "" {
+		name = strings.Split(user.Name, " ")[0]
+	}
+	if len(params) == 2 {
+		//assuming first param is a name
+		name = params[0]
+		//checking if the second param is a number or not
+		val, err := strconv.Atoi(params[1])
+		if err != nil {
+			fmt.Printf("Wrong parameters: %v\n", err)
+		} else {
+			snoozeDays = int64(val)
+		}
+	}
+	if len(params) == 1 {
 		val, err := strconv.Atoi(params[0])
 		if err != nil {
 			name = params[0]
 		} else {
-			if user.Email != "" {
-				name = strings.Split(user.Name, " ")[0]
-			}
 			snoozeDays = int64(val)
 		}
 	}
