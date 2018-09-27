@@ -1,9 +1,6 @@
 Run cmd
 ~/go/bin/godotenv go run *.go 
 
-
-info
-Business query- Role id can be null
 -------------------------Done-------------------------
 
 //Use .env
@@ -120,3 +117,7 @@ HI-5414
 struct- remove json...db if same name as struct's value
 Hi-5415
 
+//Business query- Role id can be null
+
+if a message is from an admin on core plan- promote pro plan
+-HI-5438
