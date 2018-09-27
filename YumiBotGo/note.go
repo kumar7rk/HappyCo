@@ -101,7 +101,7 @@ func makeNote(us_id string) string {
 		note += "<b>MRR:</b>" + MRR + "\n"
 		if !business.SupportLevel.Valid {
 			note += "<b>Support Level:</b>" + supportLevel + "\n"
-		} else{
+		} else {
 			note += "<b><h2>Support Level:</b>" + supportLevel + "</h2>\n"
 		}
 	}
