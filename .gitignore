@@ -5,29 +5,22 @@ YumiBot/.DS_Store
 YumiBot/myApp/.DS_Store
 YumiBot/myApp/public/.DS_Store
 
-YumiBotGo/.env
 YumiBotGo/code
 YumiBotGo/YumiBotGo
 YumiBotGo/server
 YumiBotGo/server.go
-YumiBotGo/.DS_Store
 YumiBotGo/Next step
-YumiBotGo/Integration.numbers
-YumiBotGo/intercomAdminIds
-YumiBotGo/push gerrit.txt
-YumiBotGo/.DS_Store
-.DS_Store
-
-*.zip
-
-
-Froso/node_modules/
-*.xlsx
-Froso/creds.js
-Froso/quora.js
-Froso/credsQ.js
 YumiBotGo/files/push gerrit.txt
 YumiBotGo/files/intercomAdminIds
 YumiBotGo/files/Integration.numbers
+
+.DS_Store
+
+*.zip
+*.xlsx
+
+Froso/node_modules/
 Froso/nextStepFroso
 Froso/Linkedin/files/creds.js
+Froso/linkedin/creds.js
+YumiBotGo/.env
