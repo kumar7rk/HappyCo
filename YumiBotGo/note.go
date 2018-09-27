@@ -61,11 +61,9 @@ func makeNote(us_id string) string {
 	var roles = []string{"", "Admin", "Process Manger", "Inspector", "Limited Inspector", "", "", "", "Admin", "Process Manager"}
 
 	for _, business := range businessRec {
-		//if its null uri is null if not then we have got ourselves a value
-		var userRoleID = business.Role.String
+		userRoleID := business.Role.String
 		var businessPermission = business.PermissionsModel
 
-		// if value is null set value explicitly
 		if !business.Role.Valid {
 			if businessPermission == "constant-roles" {
 				userRoleID = "4"
@@ -76,7 +74,7 @@ func makeNote(us_id string) string {
 		}
 		permission, err := strconv.Atoi(userRoleID)
 		if err != nil {
-			panic(err)
+			fmt.Printf("Error converting user role id: %v\n", err)
 		}
 
 		if businessPermission == "constant-roles" {
@@ -86,11 +84,12 @@ func makeNote(us_id string) string {
 		if businessPermission == "basic-roles" {
 			businessPermission = "Basic"
 		}
-		var MRR = business.MRR.String
-		var supportLevel = business.SupportLevel.String
+		MRR := business.MRR.String
 		if !business.MRR.Valid {
 			MRR = "NA"
 		}
+
+		supportLevel := business.SupportLevel.String
 		if !business.SupportLevel.Valid {
 			supportLevel = "NA"
 		}
@@ -102,7 +101,7 @@ func makeNote(us_id string) string {
 		if !business.SupportLevel.Valid {
 			note += "<b>Support Level:</b>" + supportLevel + "\n"
 		} else {
-			note += "<b><h2>Support Level:</b>" + supportLevel + "</h2>\n"
+			note += "<h2><b>Support Level:</b>" + supportLevel + "</h2>\n"
 		}
 	}
 	//******************constructing plan type string******************
