@@ -11,7 +11,6 @@ import (
 
 //********************************************New Conversation********************************************
 func newConversation(w http.ResponseWriter, r *http.Request) {
-	fmt.Println("newConversation")
 	// Read body/payload
 	b, err := ioutil.ReadAll(r.Body)
 	defer r.Body.Close()
@@ -99,7 +98,22 @@ func processNewConversation(user User, conversationID string, conversationMessag
 			break
 		}
 	}
+	//Users replying to password reset email
+	text := "Someone has requested a link to change your password"
+	if strings.Contains(conversationMessage, text) {
+		passwordReply = false
+	}
+
 	if passwordReply {
 		sendPasswordReply(user, conversationID)
+	}
+
+	businessRec := getBusiness(user.UserID)
+	for _, business := range businessRec {
+		fmt.Println(business.SupportLevel.Valid)
+		if business.SupportLevel.String == "4" {
+			snoozeTimeInDays := int64(10) / int64(1440)
+			snoozeConversation(conversationID, snoozeTimeInDays)
+		}
 	}
 }
