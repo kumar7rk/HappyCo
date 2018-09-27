@@ -107,13 +107,4 @@ func processNewConversation(user User, conversationID string, conversationMessag
 	if passwordReply {
 		sendPasswordReply(user, conversationID)
 	}
-
-	businessRec := getBusiness(user.UserID)
-	for _, business := range businessRec {
-		fmt.Println(business.SupportLevel.Valid)
-		if business.SupportLevel.String == "4" {
-			snoozeTimeInDays := int64(10) / int64(1440)
-			snoozeConversation(conversationID, snoozeTimeInDays)
-		}
-	}
 }
