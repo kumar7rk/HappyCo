@@ -4,6 +4,7 @@ import (
 	"fmt"
 	"strconv"
 	"strings"
+	"time"
 )
 
 //********************************************Init********************************************
@@ -17,7 +18,8 @@ func init() {
 //********************************************Sending password reply********************************************
 func sendPasswordReply(user User, conversationID string, params ...string) {
 	name := "there"
-	snoozeDays := int64(3)
+	snoozeDuration := 3 * 24 * time.Hour
+
 	if user.Email != "" {
 		name = strings.Split(user.Name, " ")[0]
 	}
@@ -29,7 +31,7 @@ func sendPasswordReply(user User, conversationID string, params ...string) {
 		if err != nil {
 			fmt.Printf("Wrong parameters: %v\n", err)
 		} else {
-			snoozeDays = int64(val)
+			snoozeDuration = time.Duration(val) * 24 * time.Hour
 		}
 	}
 	if len(params) == 1 {
@@ -37,7 +39,7 @@ func sendPasswordReply(user User, conversationID string, params ...string) {
 		if err != nil {
 			name = params[0]
 		} else {
-			snoozeDays = int64(val)
+			snoozeDuration = time.Duration(val) * 24 * time.Hour
 		}
 	}
 
@@ -45,5 +47,5 @@ func sendPasswordReply(user User, conversationID string, params ...string) {
 
 	addReply(conversationID, message)
 	assignConversation(conversationID, "1398520")
-	snoozeConversation(conversationID, snoozeDays)
+	snoozeConversation(conversationID, snoozeDuration)
 }
