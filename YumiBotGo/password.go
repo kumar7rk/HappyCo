@@ -27,10 +27,13 @@ func sendPasswordReply(user User, conversationID string, params ...string) {
 		if err != nil {
 			name = params[0]
 		} else {
-			name = strings.Split(user.Name, " ")[0]
+			if user.Email != "" {
+				name = strings.Split(user.Name, " ")[0]
+			}
 			snoozeDays = int64(val)
 		}
 	}
+	
 	message := "Hi " + name + " 👋 \n \n It looks like you might be having trouble logging in? \n\n You can reset your password by entering your email <a href='https://manage.happyco.com/password/forgot'> here </a> \n \n Thanks!  \n HappyBot ☺ \n\n <i>Need to contact a human....... just reply</i>"
 
 	addReply(conversationID, message)
