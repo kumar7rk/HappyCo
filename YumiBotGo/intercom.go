@@ -86,9 +86,8 @@ func assignConversation(conversationID string, inboxTo string) {
 
 //********************************************Snooze conversation********************************************
 func snoozeConversation(conversationID string, duration time.Duration) {
-	snooze_until := time.Now().Add(duration)
 	url := "https://api.intercom.io/conversations/" + conversationID + "/reply"
-	payload := []byte(`{ "admin_id":"207278", "message_type":"snoozed", "snoozed_until":` + strconv.FormatInt(snooze_until.Unix(), 10) + `}`)
+	payload := []byte(`{ "admin_id":"207278", "message_type":"snoozed", "snoozed_until":` + strconv.FormatInt(time.Now().Add(duration).Unix(), 10) + `}`)
 
 	req, _ := http.NewRequest("POST", url, bytes.NewBuffer(payload))
 	req.Header.Set("Authorization", "Bearer "+os.Getenv("INTERCOM_ACCESS_TOKEN"))
