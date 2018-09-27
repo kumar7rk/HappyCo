@@ -27,7 +27,9 @@ func sendBuildiumReply(user User, conversationID string, params ...string) {
 		if err != nil {
 			name = params[0]
 		} else {
-			name = strings.Split(user.Name, " ")[0]
+			if user.Email != "" {
+				name = strings.Split(user.Name, " ")[0]
+			}
 			snoozeDays = int64(val)
 		}
 	}
