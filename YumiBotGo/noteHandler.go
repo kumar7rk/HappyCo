@@ -29,7 +29,7 @@ func newAdminNote(w http.ResponseWriter, r *http.Request) {
 	/* getting attributes from the received json
 	user- user's attributes - name id email type
 	conversationId - Intercom conversation ID
-	note- team's message
+	note- internal message
 	author- team member who wrote the note
 	*/
 
