@@ -43,8 +43,7 @@ func sendPasswordReply(user User, conversationID string, params ...string) {
 		}
 	}
 
-	message := "Hi " + name + " 👋 \n \n It looks like you might be having trouble logging in? \n\n You can reset your password by entering your email <a href='https://manage.happyco.com/password/forgot'> here </a> \n \n Thanks!  \n HappyBot ☺ \n\n <i>Need to contact a human....... just reply</i>"
-
+	message:= passwordMessage(name)
 	addReply(conversationID, message)
 	assignConversation(conversationID, "1398520")
 	snoozeConversation(conversationID, snoozeDuration)
