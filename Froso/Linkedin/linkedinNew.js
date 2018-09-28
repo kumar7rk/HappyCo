@@ -1,5 +1,5 @@
 const puppeteer = require('puppeteer');
-const CREDS = require('./creds');
+const CREDS = require('./files/creds');
 const player = require('play-sound')(opts = {});
 const {performance} = require('perf_hooks');
 
