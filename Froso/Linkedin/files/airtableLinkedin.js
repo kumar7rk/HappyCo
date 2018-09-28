@@ -4,26 +4,26 @@ const CREDS = require('./creds');
 var Airtable = require('airtable');
 var base = new Airtable({apiKey: 'keyrYSQEONtptwMth'}).base('appfcatXnrEsiTmFB');
 var browser = "";
-var page = "";
+var webpage = "";
 
 (async () => {
   browser = await puppeteer.launch({
     headless: false
   });
-  const page = await browser.newPage();
-  await page.goto("https://www.linkedin.com");
+  webpage = await browser.newPage();
+  await webpage.goto("https://www.linkedin.com");
   const USERNAME_SELECTOR = '#login-email';
   const PASSWORD_SELECTOR = '#login-password';
   const BUTTON_SELECTOR = '#login-submit';
 
-  await page.click(USERNAME_SELECTOR);
-  await page.keyboard.type(CREDS.username);
+  await webpage.click(USERNAME_SELECTOR);
+  await webpage.keyboard.type(CREDS.username);
 
-  await page.click(PASSWORD_SELECTOR);
-  await page.keyboard.type(CREDS.password);
+  await webpage.click(PASSWORD_SELECTOR);
+  await webpage.keyboard.type(CREDS.password);
   
-  await page.click(BUTTON_SELECTOR);
-  await page.waitForNavigation();
+  await webpage.click(BUTTON_SELECTOR);
+  await webpage.waitForNavigation();
       
 base('scraped_data').select({
     maxRecords: 3,
@@ -31,12 +31,10 @@ base('scraped_data').select({
 }).eachPage(function page(records, fetchNextPage) {
     records.forEach(function(record) {
       (async () => {
-        const page = await browser.newPage();
+        await webpage.goto(record.get('linkedin_url'));
 
-        await page.goto(record.get('linkedin_url'));
-
-          var name = await page.evaluate(() => document.querySelector('div.pv-top-card-v2-section__info.mr5 > div.display-flex.align-items-center > h1').textContent);
-          var location = await page.evaluate(() => document.querySelector('div.pv-top-card-v2-section__info.mr5 > h3').textContent);
+          var name = await webpage.evaluate(() => document.querySelector('div.pv-top-card-v2-section__info.mr5 > div.display-flex.align-items-center > h1').textContent);
+          var location = await webpage.evaluate(() => document.querySelector('div.pv-top-card-v2-section__info.mr5 > h3').textContent);
           base('scraped_data').update(record.getId(),{
             "location": location 
         },function(err, record) {
