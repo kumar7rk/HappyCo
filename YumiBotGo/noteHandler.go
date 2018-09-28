@@ -74,7 +74,7 @@ func processNewAdminNote(user User, conversationID string, note string, author s
 	}
 
 	if note == "<p>###</p>" {
-		snoozeConversation(conversationID, 7)
+		snoozeConversation(conversationID, 7 * 24 * time.Hour)
 	}
 }
 
