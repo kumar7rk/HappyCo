@@ -59,10 +59,10 @@ try{
     var url = (cell ? cell.v : undefined);
 
     await page.goto(url); 
+    await page.waitFor(3 * 1000);
     await page.evaluate(_ => {
       window.scrollBy(0, window.innerHeight);
     });
-    await page.waitFor(2 * 1000);
     var data = "";  
     var multiPosition = false;
     var jobExists = false;
@@ -77,10 +77,10 @@ try{
     //getting current job - all information
     if (await page.evaluate(() => document.getElementsByClassName
       ('pv-entity__position-group-pager ember-view'))!==null) {
-      //console.log("Job is not null");
+      log("Job is not null");
       if (await page.evaluateHandle(() => document.getElementsByClassName
       ('pv-entity__position-group-pager ember-view').textContent)!==null) {
-          //console.log("Job has some data too");
+          log("Job has some data too");
           jobExists = true
           data = await page.evaluateHandle(() => {
           return Array.from(document.getElementsByClassName('pv-entity__position-group-pager ember-view')).map(elem => elem.textContent.trim()).slice(0,1);
@@ -91,13 +91,13 @@ try{
     //converting json to string
     var str = JSON.stringify(await data.jsonValue())
     //if text starts with `["Company Name...` --> the (current) job has multiple positions
-    // console.log("str:"+str);
+    log("str:"+str);
     if (str.trim().startsWith('["Company Name')) {
       multiPosition = true;
     }
     var sel = "";
     //if job exists we can get job specific information else get basic information
-    if (jobExists) {
+    if (jobExists && str!=="[]") {
       //only one position in the current job
       if (!multiPosition) {
         console.log("single position")
@@ -106,37 +106,40 @@ try{
         sel = 'div.pv-entity__summary-info.pv-entity__summary-info--v2 >h3';
         await page.waitFor(2 * 1000);
         var title = await getData(sel);
-        title = title.replace('Title','').trim();
+        if (title !== undefined) {
+          title = title.replace('Title','').trim();
+        }
         // log("Title",title)
         setData('J'+i,title);
        
         sel = 'div > h4 > span:nth-child(2)';
         var companyName = await getData(sel);
-        //console.log("Company Name:"+companyName)
+        log("Company Name:"+companyName)
         setData('L'+i,companyName);
         
         sel = 'div.pv-entity__summary-info.pv-entity__summary-info--v2 > div > h4:nth-child(2) > span.pv-entity__bullet-item-v2';
         var currentJobDuration = await getData(sel);
-        //console.log("Current Job Duration:"+currentJobDuration);
+        log("Current Job Duration:"+currentJobDuration);
         setData('N'+i,currentJobDuration);
       }
      //multiple positions in the current job
       else{
-        console.log("muliple positions")
+        console.log("multiple positions")
         
         //adding title, company name, current job duration
-        sel = 'div > div > div.pv-entity__summary-info-v2.pv-entity__summary-info--v2.pv-entity__summary-info-margin-top.mb2 > h3 > span:nth-child(2)';
+        // sel = 'div > div > div.pv-entity__summary-info-v2.pv-entity__summary-info--v2.pv-entity__summary-info-margin-top.mb2 > h3 > span:nth-child(2)';
+        sel = 'div > div > div > h3 > span:nth-child(2)';
         var title = await getData(sel);
-        //console.log("I got this title:"+title);
+        log("I got this title:"+title);
         setData('J'+i,title);
           
         sel = 'div > h3 > span:nth-child(2)';
         var companyName = await getData(sel);
-        //console.log("Company Name:"+companyName);
+        log("Company Name:"+companyName);
         setData('L'+i,companyName);
         sel = 'div > div > div.pv-entity__summary-info-v2.pv-entity__summary-info--v2.pv-entity__summary-info-margin-top.mb2 > div > h4:nth-child(2) > span.pv-entity__bullet-item-v2';
         var currentJobDuration = await getData(sel);
-        //console.log("Current Job Duration:"+currentJobDuration);
+        log("Current Job Duration:"+currentJobDuration);
         setData('N'+i,currentJobDuration);
       }//end of else
     }//jobExists
@@ -146,7 +149,7 @@ try{
     sel = 'div.pv-top-card-v2-section__info.mr5 > div:nth-child(1) > h1';
     var name = await getData(sel);
     name = name.trim();
-    //console.log("Name:"+name);
+    log("Name:"+name);
     
     //adding phone location birthday
     const clickElement = 'span.pv-top-card-v2-section__entity-name.pv-top-card-v2-section__contact-info.ml2'
@@ -159,18 +162,18 @@ try{
       if (phone !=null) {
         phone = phone.trim().replace('(Mobile)','').replace('(Home)','').replace('(Work)','').replace(' ','').trim();
       }
-      //console.log("Phone:"+phone);
+      log("Phone:"+phone);
       setData('G'+i,phone);
 
       sel = 'div.pv-top-card-v2-section__info.mr5 > h3';
       var location = await getData(sel);
       location = location.trim();
-      //console.log("Location:"+location);
+      log("Location:"+location);
       setData('H'+i,location);
 
       sel = 'div > section.pv-contact-info__contact-type.ci-birthday > div > span';
       var birthday = await getData(sel);
-      //console.log("Birthday:"+birthday);
+      log("Birthday:"+birthday);
       setData('Q'+i,birthday);
     }
 
@@ -203,17 +206,17 @@ try{
   }
 }
 catch(error){
-  //console.log(error);
-  player.play('./files/error.mp3', function(err){
+  console.log(error);
+  /*player.play('./files/error.mp3', function(err){
   if (err) throw err
-})
+})*/
 }
 var t1 = performance.now();
-console.log((t1-t0)/1000+ " seconds");
+log((t1-t0)/1000+ " seconds");
 await browser.close();
-player.play('./files/completed.mp3', function(err){
+/*player.play('./files/completed.mp3', function(err){
   if (err) throw err
-})
+})*/
 }
 
 //********************************************Getting data from LinkedIn********************************************
@@ -263,6 +266,6 @@ async function hasValueChanged(readCell,data, writeCell) {
   }
 }
 //********************************************Log********************************************
-async function log(title, value){
-  console.log(title+":"+ value);
+async function log(value){
+  console.log(value);
 }
