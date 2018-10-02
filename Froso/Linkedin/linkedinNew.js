@@ -49,8 +49,8 @@ try{
     var cell = workbook[address];
     var profileUnavailable = (cell ? cell.v : undefined);
     //if profile was unavailable last time and not removed yet- skip the row
-    if (profileUnavailable === "Yes") {
-      setData('R'+i,"Yes");
+    if (profileUnavailable === "TRUE") {
+      setData('R'+i,"TRUE");
       setTodaysDate(i);
       continue;
     }
@@ -69,7 +69,7 @@ try{
 
     //exiting if the profile is unavailable/deleted
     if (await page.url() === "https://www.linkedin.com/in/unavailable/") {
-      setData('R'+i,"Yes");
+      setData('R'+i,"TRUE");
       setTodaysDate(i);
       continue;
     }
@@ -181,7 +181,7 @@ try{
     setTodaysDate(i);
 
     //check if name title company has changed
-    //if so print yes in the excel
+    //if so print true in the excel
     hasValueChanged('D'+i,name,'I'+i);
     hasValueChanged('E'+i,title,'K'+i);
     hasValueChanged('F'+i,companyName,'M'+i);
@@ -195,7 +195,7 @@ try{
         if (ym.length ==1) {
            var num =  parseInt(ym[0]);
            if (num<4) {
-            setData('O'+i,"Yes")
+            setData('O'+i,"TRUE")
           }
         }
       }
@@ -262,7 +262,7 @@ async function hasValueChanged(readCell,data, writeCell) {
   var cell = worksheet[readCell];
   var value = (cell ? cell.v : undefined);
   if (value !== data && (data !==""|| value !=="")) {
-    setData(writeCell,"Yes")
+    setData(writeCell,"TRUE")
   }
 }
 //********************************************Log********************************************
