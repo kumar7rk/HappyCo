@@ -68,7 +68,7 @@ try{
     var jobExists = false;
 
     //exiting if the profile is unavailable/deleted
-    if (await page.url() === "https://www.linkedin.com/in/unavailable/") {
+    if (await page.url().includes("linkedin.com/in/unavailable")) {
       setData('R'+i,"TRUE");
       setTodaysDate(i);
       continue;
