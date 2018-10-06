@@ -48,7 +48,7 @@ try{
     var address = 'R'+i;
     var cell = workbook[address];
     var profileUnavailable = (cell ? cell.v : undefined);
-    //if profile was unavailable last time and not removed yet- skip the row
+    //if profile was unavailable last time and wasn't removed- skip the row
     if (profileUnavailable === "TRUE") {
       setData('R'+i,"TRUE");
       setTodaysDate(i);
@@ -58,7 +58,7 @@ try{
     cell = worksheet[address];
     var url = (cell ? cell.v : undefined);
 
-    await page.goto(url); 
+    await page.goto(url);
     await page.waitFor(3 * 1000);
     await page.evaluate(_ => {
       window.scrollBy(0, window.innerHeight);
@@ -203,8 +203,8 @@ try{
     if (i%2==0) {
       XLSX.writeFile(workbook ,'output.xlsx')
     }
-  }
-}
+  }//for
+}//try
 catch(error){
   console.log(error);
   /*player.play('./files/error.mp3', function(err){
@@ -217,7 +217,7 @@ await browser.close();
 /*player.play('./files/completed.mp3', function(err){
   if (err) throw err
 })*/
-}
+}//run()
 
 //********************************************Getting data from LinkedIn********************************************
 async function getData(selector) {
