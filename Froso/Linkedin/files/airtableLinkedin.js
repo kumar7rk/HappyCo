@@ -6,12 +6,20 @@ var base = new Airtable({apiKey: 'keyrYSQEONtptwMth'}).base('appfcatXnrEsiTmFB')
 var browser = "";
 var webpage = "";
 
-(async () => {
+run();
+
+async function run () {
   browser = await puppeteer.launch({
-    headless: false
+    headless: false,
+    // slowMo:200
   });
   webpage = await browser.newPage();
   await webpage.goto("https://www.linkedin.com");
+
+  await webpage.setViewport({
+    width: 1200,
+    height: 800
+  });
   const USERNAME_SELECTOR = '#login-email';
   const PASSWORD_SELECTOR = '#login-password';
   const BUTTON_SELECTOR = '#login-submit';
@@ -24,38 +32,78 @@ var webpage = "";
   
   await webpage.click(BUTTON_SELECTOR);
   await webpage.waitForNavigation();
-      
-base('scraped_data').select({
-    maxRecords: 3,
-    view: "Grid view"
-}).eachPage(function page(records, fetchNextPage) {
-    records.forEach(function(record) {
-      (async () => {
-        await webpage.goto(record.get('linkedin_url'));
+  try{
+    base('Data').select({
+        maxRecords: 1000,
+        pageSize:1,
+        sort: [{field: "full_name", direction: "asc"}],
+        view: "Master"
+    }).eachPage(function page(records, fetchNextPage) {
+        records.forEach(function(record) {
+          (async () => {
+            log("Opening profile");
+            await webpage.goto(record.get('linkedin_url'));
+            await webpage.waitFor(20000);
 
-          var name = await webpage.evaluate(() => document.querySelector('div.pv-top-card-v2-section__info.mr5 > div.display-flex.align-items-center > h1').textContent);
-          var location = await webpage.evaluate(() => document.querySelector('div.pv-top-card-v2-section__info.mr5 > h3').textContent);
-          base('scraped_data').update(record.getId(),{
-            "location": location 
-        },function(err, record) {
-            if (err) {console.error(err);return;}
-            console.log("Location updated for:"+record.get('full_name'));
-        });
-          // console.log("The person's who profile you visited is:"+ name);
-      })();
-          // await browser.close();
+            log("Pausing for 30 seconds");
+            await new Promise(function(resolve) { 
+              setTimeout(resolve, 30000)
+            });
+            /*log("Scrolling");
+            await webpage.evaluate(_ => {
+              window.scrollBy(0, window.innerHeight);
+            });
+            log("Done scrolling. Pausing for 2 seconds")
+
+            await webpage.waitFor(2 * 1000);*/
+
+            log("Getting name and location")
+
+            var name = "";
+            name = await webpage.evaluate(() => document.querySelector('div.pv-top-card-v2-section__info.mr5 > div:nth-child(1) > h1').textContent);
+            var location = "";
+            location = await webpage.evaluate(() => document.querySelector('div.pv-top-card-v2-section__info.mr5 > h3').textContent);
+            log("Got the name and location. Pausing for 2 seconds")
+
+            await webpage.waitFor(2 * 1000);
+            log("calling update func");
+            base('Data').update(record.getId(),{
+              "location": location,
+              // "new_name": name
+            },function(err, record) {
+                if (err) {
+                  console.error("I'm printing an error");
+                  console.error(err);
+                  return;
+                }
+                else{ 
+                  log("Location updated for:"+record.get('full_name'));
+                }
+            });
+            log("Completed update. Pausing for 2 seconds")
+            await webpage.waitFor(2 * 1000);
+            await browser.close();
+         })();
+       });
+      fetchNextPage();
+      }, function done(err) {
+      if (err) { 
+        log("I'm Done (w/you)");
+        console.error(err); 
+        return; 
+      }
     });
-    fetchNextPage();
-}, function done(err) {
-    // await browser.close();
-    if (err) { 
-      console.error("Error for "+record.get('full_name'))
-      console.error(err); 
-      return; 
-    }
-});
-})();
+  }//try
+  catch(error){
+    console.log("I'm catch and I'm catching bad boys today");
+    console.log(error);
+  }
+}//run()
 
+//********************************************Log********************************************
+async function log(value){
+  console.log(value);
+}
 
 
 /*OUTPUT
