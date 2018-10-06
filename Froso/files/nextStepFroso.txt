@@ -1,4 +1,4 @@
-play around with the sheetjs
+//play around with the sheetjs
 
 //write better code (appfolio example) 
 //- continue if website is not available
@@ -48,8 +48,7 @@ play around with giving sel as a direct parameter
 
 check if sound file exist before playing
 
-
-
 check if str is empty - ideally retry or maybe increase wait for or use waitFor selector
+
 if profile private job title e.g https://www.linkedin.com/in/brent-law-49a54053
 #experience > ul > li:nth-child(1) > header > h4 > a
