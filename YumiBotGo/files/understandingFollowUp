@@ -1,0 +1,56 @@
+users <how to do this>
+my message:<hey this is how you do it>
+and then they don't reply for a day or two
+I'll send them #what's up
+and add ### (sometimes)
+
+what if I can do yumi rep follow when I send the message
+so the workflow is
+yumi rep follow
+ snooze for 3 days
+A job runs twice a day; checks snoozed conversations && last note === yumi rep follow && snoozed time > 2 days
+ send #what's up
+ add note follow up sent
+ snooze for 7 days
+the same "job" checks snoozed conversations && last note = follow up sent && snooze time > 4 days
+send #close
+close the conversation
+
+challenges
+What if I want to cancel the process? 
+ add a note or reply to a conversation
+ since we're checking for snoozed conversations
+ doing above will unsnooze them
+What if I don't add a note and/or reply and snooze conversation again without adding yumi rep follow?
+ good question. I don't know the answer to this question but I feel like doing so will still follow the process
+ I'll have to check payload to see if you snooze a conversation after replying do we get the last note.
+What if a user replies?
+ if user or you reply the conversations will be opened nothing will happen if you don't snooze the conversation (until it's open)
+
+ following use cases are for when you snooze conversation and/or reply/add a note 
+ - you reply
+   - no note added --> same as last question (not sure)
+   - w/non followup note --> process will stop (note != yumi rep follow)
+   - w/followup note --> new follow up process will start
+ - you snooze the conversation 
+   - no note added --> same as last question (not sure)
+   - w/non followup note --> process will stop
+   - w/followup note --> new follow up process will start
+ - you add a note
+   - follow up --> new follow up process will start
+   - non follow up --> process will stop (note != yumi rep follow)
+
+three basics actions 
+process will stop
+not sure
+new process will start
+
+things are clearer now
+if you add a new note in any scenario two things will happen 
+- if it's a non follow up note - process will stop
+- if it's a follow up note - new process will start
+what we're unsure is if you do an actions (reply/snooze) and don't add a note which means the last note for the conversation is still yumi rep follow. Will the process resume?
+
+
+Test:
+what payload do we get when finding all conversations
