@@ -22,7 +22,10 @@ func init() {
 // structs for reading payload in json received from Intercom
 type Author struct {
 	Name string
+	ID   string
 }
+
+var YumiBot = Author{Name:"HappyBot", ID:"207278"}
 
 type Part struct {
 	Body   string
@@ -69,8 +72,8 @@ func addNote(conversationID, note string) {
 }
 
 //********************************************Reply to user********************************************
-func addReply(conversationID, reply string) {
-	_, err := ic.Conversations.Reply(conversationID, intercom.Admin{ID: "207278"}, intercom.CONVERSATION_COMMENT, reply)
+func addReply(authorID, conversationID string, reply string) {
+	_, err := ic.Conversations.Reply(conversationID, intercom.Admin{ID: json.Number(authorID)}, intercom.CONVERSATION_COMMENT, reply)
 	if err != nil {
 		fmt.Printf("Error from Intercom while adding reply: %v\n", err)
 	}
@@ -105,3 +108,29 @@ func snoozeConversation(conversationID string, duration time.Duration) {
 
 	_, _ = ioutil.ReadAll(resp.Body)
 }
+//********************************************Snooze conversation********************************************
+func listAllConversations() {
+	p:=fmt.Println
+	// convoList, err := ic.Conversations.ListAll(intercom.PageParams{})
+	convoList, err := ic.Conversations.ListByAdmin(&intercom.Admin{ID: "1544605"}, intercom.SHOW_OPEN, intercom.PageParams{})
+	if err != nil {
+		fmt.Printf("Error from Intercom listing all conversation: %v\n", err)
+	}
+	convo, _ := ic.Conversations.Find(convoList.Conversations[0].ID)
+	l := convo.ConversationParts.Parts
+	noteContent := l[len(l)-2].Body
+	noteAddedTime := l[len(l)-2].CreatedAt
+	p(noteAddedTime) //int64
+	p(time.Now().Unix())
+	if l[len(l)-1].PartType == "note" && (noteContent == "yumi rep follow" ||
+	 noteContent == "<p>yumi consvo</p>") {
+	 	p("following up")
+		addReply("1544605","18878341022",followUpMessage("Rohit","Rohit"))
+		addNote("18878341022","follow up sent")
+	} 
+	if l[len(l)-1].PartType == "note" && noteContent == "<p>follow up sent</p>"{
+		p("closing conversation")
+		addReply("1544605","18878341022",closingMessage("Rohit","Rohit"))
+	}
+}
+//requirement check if the conversation is currently snoozed.
