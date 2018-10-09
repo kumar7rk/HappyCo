@@ -6,17 +6,17 @@ import (
 	"strings"
 	"time"
 )
-
+const P2ABox = "1615207"
 //********************************************Init********************************************
 func init() {
-	repCommands["buildium"] = Command{Func: sendBuildiumReply, Description: `Sends a buildium message to a user
+	repCommands["buildium"] = RepCommand{Func: sendBuildiumReply, Description: `Sends a buildium message to a user
 	 <b>Default</b> snooze is 7 days.
 	 <b>Arguments</b> either name or snooze time.
 	 <b>Example</b> yumi rep buildium [name] or [days to snooze]`}
 }
 
 //********************************************Sending Buildium reply********************************************
-func sendBuildiumReply(user User, conversationID string, params ...string) {
+func sendBuildiumReply(user User, author Author, conversationID string, params ...string) {
 	name := "there"
 	snoozeDuration := 7 * 24 * time.Hour
 
@@ -44,8 +44,8 @@ func sendBuildiumReply(user User, conversationID string, params ...string) {
 	}
 
 	message :=buildiumMessage(name)
-	
-	addReply(conversationID, message)
-	assignConversation(conversationID, "1615207")
+
+	addReply(YumiBot.ID, conversationID, message)
+	assignConversation(conversationID, P2ABox)
 	snoozeConversation(conversationID, snoozeDuration)
 }
