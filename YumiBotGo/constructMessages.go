@@ -11,7 +11,7 @@ func passwordMessage(name string) (message string) {
 }
 
 func followUpMessage(name string, authorName string) (message string) {
-	message = "Hey " + name + " 👋 \n \n Just wanted to message and check in, and see how you're going? \n\n Did our last message help? \n \n Shout out if you need any help.\n" + authorName + " 😄 "
+	message = "Hey " + name + " 👋 \n \n Just wanted to message and check in, and see how you're going? \n\n Did our last message help? \n \n Shout out if you need any help.\n\n" + authorName + " 😄 "
 	return
 }
 
