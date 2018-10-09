@@ -62,7 +62,7 @@ func processNewConversation(user User, conversationID string, conversationMessag
 			happyCoTeam := strings.Contains(user.Email, "@happy.co")
 			if conversationSubject == "" {
 				if !buildiumSupport && !happyCoTeam {
-					sendBuildiumReply(user, conversationID)
+					sendBuildiumReply(user, YumiBot, conversationID)
 				}
 			} else {
 				conversationSubject = strings.ToLower(conversationSubject)
@@ -77,7 +77,7 @@ func processNewConversation(user User, conversationID string, conversationMessag
 					}
 				}
 				if !buildiumSupport && !happyCoTeam && !autoRepliedMessage {
-					sendBuildiumReply(user, conversationID)
+					sendBuildiumReply(user, YumiBot, conversationID)
 					return
 				}
 			}
@@ -104,6 +104,6 @@ func processNewConversation(user User, conversationID string, conversationMessag
 	}
 
 	if passwordReply {
-		sendPasswordReply(user, conversationID)
+		sendPasswordReply(user, YumiBot, conversationID)
 	}
 }
