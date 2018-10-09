@@ -10,13 +10,14 @@ yumi rep follow
  snooze for 3 days
 A job runs twice a day; checks snoozed conversations && last note === yumi rep follow && snoozed time > 2 days
  send #what's up
- add note follow up sent
+ add note "follow up sent"
  snooze for 7 days
 the same "job" checks snoozed conversations && last note = follow up sent && snooze time > 4 days
 send #close
 close the conversation
 
-challenges
+
+#Challenges
 What if I want to cancel the process? 
  add a note or reply to a conversation
  since we're checking for snoozed conversations
