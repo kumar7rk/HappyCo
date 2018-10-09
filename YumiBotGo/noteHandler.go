@@ -6,6 +6,7 @@ import (
 	"io/ioutil"
 	"net/http"
 	"strings"
+	"time"
 )
 
 //********************************************New adming note********************************************
@@ -36,29 +37,33 @@ func newAdminNote(w http.ResponseWriter, r *http.Request) {
 	user := msg.Data.Item.User
 	conversationId := msg.Data.Item.ConversationID
 	note := msg.Data.Item.ConversationPart.Part[0].Body
-	author := msg.Data.Item.ConversationPart.Part[0].Author.Name
+	author := msg.Data.Item.ConversationPart.Part[0].Author
 
-	go processNewAdminNote(user, conversationId, note, author)
+	go processNewAdminNote(user, author, conversationId, note)
 	w.WriteHeader(http.StatusOK)
 	w.Write([]byte("Received"))
 }
 
 //********************************************Processing new note********************************************
-func processNewAdminNote(user User, conversationID string, note string, author string) {
+func processNewAdminNote(user User, author Author, conversationID string, note string) {
 	note = strings.ToLower(note)
 
 	if note == "<p>yumi help</p>" || note == "<p>yumi</p>" {
-		listRunCommands(author, conversationID)
+		listRunCommands(author.Name, conversationID)
+		return
+	}
+	if note == "<p>yumi convo</p>" {
+		listAllConversations()
 		return
 	}
 	if strings.HasPrefix(note, "<p>yumi rep ") {
 		note = strings.TrimSuffix(note[12:], "</p>")
 		params := strings.Split(note, " ")
 		if cmd, ok := repCommands[params[0]]; ok {
-			cmd.Func(user, conversationID, params[1:]...)
+			cmd.Func(user, author, conversationID, params...)
 		} else {
 			fmt.Println("Unable to run", params)
-			listRunCommands(author, conversationID)
+			listRunCommands(author.Name, conversationID)
 		}
 	}
 
@@ -69,7 +74,7 @@ func processNewAdminNote(user User, conversationID string, note string, author s
 			cmd.Func(user, conversationID, params[1:]...)
 		} else {
 			fmt.Println("Unable to run", params)
-			listRunCommands(author, conversationID)
+			listRunCommands(author.Name, conversationID)
 		}
 	}
 
@@ -78,10 +83,16 @@ func processNewAdminNote(user User, conversationID string, note string, author s
 	}
 }
 
+type RepCommand struct {
+	Description string
+	Func        func(user User, author Author, conversationID string, params ...string)
+}
+
 type Command struct {
 	Description string
 	Func        func(user User, conversationID string, params ...string)
 }
 
-var repCommands map[string]Command = make(map[string]Command)
+
+var repCommands map[string]RepCommand = make(map[string]RepCommand)
 var getCommands map[string]Command = make(map[string]Command)
