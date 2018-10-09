@@ -7,16 +7,19 @@ import (
 	"time"
 )
 
+const P3BoxID = "1398520"
+
 //********************************************Init********************************************
 func init() {
-	repCommands["password"] = Command{Func: sendPasswordReply, Description: `Sends password reset instructions.
+	repCommands["password"] = RepCommand{Func: sendPasswordReply, Description: `Sends password reset instructions.
 		<b>Default</b> snooze is 3 days.
 		<b>Arguments</b> either name or snooze time.
 		<b>Example</b> yumi rep password [name] or [days to snooze]`}
 }
 
 //********************************************Sending password reply********************************************
-func sendPasswordReply(user User, conversationID string, params ...string) {
+
+func sendPasswordReply(user User, author Author, conversationID string, params ...string) {
 	name := "there"
 	snoozeDuration := 3 * 24 * time.Hour
 
@@ -44,7 +47,8 @@ func sendPasswordReply(user User, conversationID string, params ...string) {
 	}
 
 	message:= passwordMessage(name)
-	addReply(conversationID, message)
-	assignConversation(conversationID, "1398520")
+	
+	addReply(conversationID, YumiBot.ID, message)
+	assignConversation(conversationID, P3BoxID)
 	snoozeConversation(conversationID, snoozeDuration)
 }
