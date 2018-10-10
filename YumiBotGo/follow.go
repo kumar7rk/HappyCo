@@ -7,10 +7,12 @@ import (
 
 //********************************************Init********************************************
 func init() {
-	repCommands["follow"] = RepCommand{Func:followUpConversation , Description: `Follow up message is sent. Conversation is snoozed for 5 days. After 5 days a closing message is sent
-	<b>Arguments</b> name
+	repCommands["follow"] = RepCommand{Func:followUpConversation , Description: `A conversation is snoozed for 3 days. 
+	After 2 days a follow up message is sent from you. (a note "follow up sent" is added)
+	Again, the conversation is snoozed for a week.
+	After 4 days a closing message is sent.
 	<b>Want to cancel? You can't. JK. Just enter a note during this time</b>
-	It will also cancel if customer messages during the snoozed duration`}
+	It will also cancel if a customer messages or we reply.`}
 }
 
 //********************************************Sending Buildium reply********************************************
