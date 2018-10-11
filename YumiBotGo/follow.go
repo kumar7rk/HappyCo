@@ -15,7 +15,7 @@ func init() {
 	It will also cancel if a customer messages or we reply.`}
 }
 
-//********************************************Sending Buildium reply********************************************
+//********************************************Follow up********************************************
 func followUpConversation(user User, author Author, conversationID string, params ...string) {
 	userName := "there"
 
