@@ -8,7 +8,11 @@ func init() {
 //********************************************Adding commands********************************************
 func showAllAdmins(user User, conversationID string, params ...string) {
 	var message string
-	adminsRec := getAdmins(user.UserID)
+	userID := user.UserID
+	if len(params) > 0 {
+		userID = params[0]
+	}
+	adminsRec := getAdmins(userID)
 	for _, admin := range adminsRec {
 		message += admin.Detail
 		message += "\n"
