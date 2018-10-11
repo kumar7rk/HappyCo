@@ -2,7 +2,9 @@ package main
 
 //********************************************Init********************************************
 func init() {
-	getCommands["admin"] = Command{Func: showAllAdmins, Description: `Prints a note with the name and emails of all the admins in a business.`}
+	getCommands["admin"] = Command{Func: showAllAdmins, Description: `Prints a note with the name and emails of all the admins in a business.
+		<b>Arguments</b> userID.
+		<b>Example</b> yumi get admin [userID]`}
 }
 
 //********************************************Adding commands********************************************
