@@ -10,6 +10,7 @@ import (
 	"os"
 	"strconv"
 	"time"
+	"reflect"
 )
 
 var ic *intercom.Client
@@ -110,20 +111,35 @@ func snoozeConversation(conversationID string, duration time.Duration) {
 }
 //********************************************Snooze conversation********************************************
 func listAllConversations() {
-	p:=fmt.Println
 	// convoList, err := ic.Conversations.ListAll(intercom.PageParams{})
-	convoList, err := ic.Conversations.ListByAdmin(&intercom.Admin{ID: "1544605"}, intercom.SHOW_OPEN, intercom.PageParams{})
+
+	p := fmt.Println
+	convoList, err := ic.Conversations.ListByAdmin(&intercom.Admin{ID: "1544605"}, intercom.SHOW_ALL, intercom.PageParams{})
 	if err != nil {
-		fmt.Printf("Error from Intercom listing all conversation: %v\n", err)
+		fmt.Printf("Error from Intercom listing all opened conversation: %v\n", err)
 	}
-	convo, _ := ic.Conversations.Find(convoList.Conversations[0].ID)
+
+	p(reflect.TypeOf(convoList))
+	
+	/*for _, conv := range convoList {
+
+	}*/
+
+	convoID := convoList.Conversations[0].ID
+	convo, _ := ic.Conversations.Find(convoID)
 	l := convo.ConversationParts.Parts
 	noteContent := l[len(l)-2].Body
 	noteAddedTime := l[len(l)-2].CreatedAt
+	
+	p("noteAddedTime:")
 	p(noteAddedTime) //int64
+	fmt.Printf("Current time:")
 	p(time.Now().Unix())
+	
+	// p("State:"+convoList.Conversations[0].State)
+
 	if l[len(l)-1].PartType == "note" && (noteContent == "yumi rep follow" ||
-	 noteContent == "<p>yumi consvo</p>") {
+	 noteContent == "<p>yumi convo</p>") {
 	 	p("following up")
 		addReply("1544605","18878341022",followUpMessage("Rohit","Rohit"))
 		addNote("18878341022","follow up sent")
