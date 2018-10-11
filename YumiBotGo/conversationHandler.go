@@ -44,6 +44,9 @@ func newConversation(w http.ResponseWriter, r *http.Request) {
 
 //********************************************Checking for different attributes********************************************
 func processNewConversation(user User, conversationID string, conversationMessage string, conversationSubject string) {
+
+	addReply(YumiBot.ID,conversationID,welcomeMessage(user.Name))
+
 	// user.type = lead/user
 	if user.Type == "user" {
 		makeAndSendNote(user, conversationID)
