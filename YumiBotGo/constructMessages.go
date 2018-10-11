@@ -16,6 +16,6 @@ func followUpMessage(name string, authorName string) (message string) {
 }
 
 func closingMessage(name string, authorName string) (message string) {
-	message = "Hey " + name + " 👋 \n \n We're still here if you need any help. \n\n I'm closing this conversation for now, but you can reopen it at anytime by replying. \n \n We value your feedback Rohit- please rate us on AppStore: https://hpy.io/review 💯  \n" + authorName + " 😄 \n\n Get real-time intelligence on property conditions and portfolio trends to optimize operations, achieve higher NOI, and make better business decisions: http://hpy.io/happy-insights"
+	message = "Hey " + name + " 👋 \n \n We're still here if you need any help. \n\n I'm closing this conversation for now, but you can reopen it at anytime by replying. \n \n We value your feedback Rohit- please rate us on AppStore: https://hpy.io/appstore-review 💯  \n" + authorName + " 😄 \n\n Get real-time intelligence on property conditions and portfolio trends to optimize operations, achieve higher NOI, and make better business decisions: http://hpy.io/happy-insights"
 	return
 }
