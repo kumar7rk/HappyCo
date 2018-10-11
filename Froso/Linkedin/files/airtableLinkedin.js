@@ -34,8 +34,8 @@ async function run () {
   await webpage.waitForNavigation();
   try{
     base('Data').select({
-        maxRecords: 1000,
-        pageSize:1,
+        // maxRecords: 10,
+        // pageSize:1,
         sort: [{field: "full_name", direction: "asc"}],
         view: "Master"
     }).eachPage(function page(records, fetchNextPage) {
@@ -43,7 +43,7 @@ async function run () {
           (async () => {
             log("Opening profile");
             await webpage.goto(record.get('linkedin_url'));
-            await webpage.waitFor(20000);
+            // await webpage.waitFor(20000);
 
             log("Pausing for 30 seconds");
             await new Promise(function(resolve) { 
@@ -65,7 +65,7 @@ async function run () {
             location = await webpage.evaluate(() => document.querySelector('div.pv-top-card-v2-section__info.mr5 > h3').textContent);
             log("Got the name and location. Pausing for 2 seconds")
 
-            await webpage.waitFor(2 * 1000);
+            // await webpage.waitFor(2 * 1000);
             log("calling update func");
             base('Data').update(record.getId(),{
               "location": location,
@@ -80,8 +80,8 @@ async function run () {
                   log("Location updated for:"+record.get('full_name'));
                 }
             });
-            log("Completed update. Pausing for 2 seconds")
-            await webpage.waitFor(2 * 1000);
+            // log("Completed update. Pausing for 2 seconds")
+            // await webpage.waitFor(2 * 1000);
             await browser.close();
          })();
        });
@@ -104,18 +104,3 @@ async function run () {
 async function log(value){
   console.log(value);
 }
-
-
-/*OUTPUT
-{
-    "id": "recz7ddYYhNCqUL1T",
-    "fields": {
-        "email": "nostensen@olenproperties.com",
-        "full_name": "Natalia Ostensen",
-        "last_title": "Owner",
-        "last_company": "Olen Properties",
-        "salesforce_id": "0034A00002kpY1fQAE",
-        "linkedin_url": "https://www.linkedin.com/in/natalia-ostensen-2818a61a"
-    },
-    "createdTime": "2018-08-23T17:33:15.000Z"
-}*/
