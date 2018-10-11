@@ -45,11 +45,11 @@ func newConversation(w http.ResponseWriter, r *http.Request) {
 //********************************************Checking for different attributes********************************************
 func processNewConversation(user User, conversationID string, conversationMessage string, conversationSubject string) {
 
+	var isBuildiumUser bool
 	// user.type = lead/user
 	if user.Type == "user" {
 		makeAndSendNote(user, conversationID)
 
-		var isBuildiumUser bool
 		planTypeRec := getUserPlanType(user.UserID)
 		for _, plan := range planTypeRec {
 			if plan.Type == "buildium" {
@@ -108,12 +108,12 @@ func processNewConversation(user User, conversationID string, conversationMessag
 		sendPasswordReply(user, YumiBot, conversationID)
 	}
 	//Sending welcome message for each new conversation including from leads excluding if user is Buildium for is asking to reset password
-	userName := there
+	userName := "there"
 	if user.Email != "" {
-		userName = user.Name
+		userName = strings.Split(user.Name, " ")[0]
 	}
 
 	if !passwordReply && !isBuildiumUser {
-		addReply(YumiBot.ID,conversationID,welcomeMessage(userName))
+		addReply(YumiBot.ID, conversationID, welcomeMessage(userName))
 	}
 }
