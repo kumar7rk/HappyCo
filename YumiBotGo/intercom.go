@@ -8,9 +8,9 @@ import (
 	"io/ioutil"
 	"net/http"
 	"os"
+	"reflect"
 	"strconv"
 	"time"
-	"reflect"
 )
 
 var ic *intercom.Client
@@ -26,7 +26,7 @@ type Author struct {
 	ID   string
 }
 
-var YumiBot = Author{Name:"HappyBot", ID:"207278"}
+var YumiBot = Author{Name: "HappyBot", ID: "207278"}
 
 type Part struct {
 	Body   string
@@ -109,6 +109,7 @@ func snoozeConversation(conversationID string, duration time.Duration) {
 
 	_, _ = ioutil.ReadAll(resp.Body)
 }
+
 //********************************************Snooze conversation********************************************
 func listAllConversations() {
 	// convoList, err := ic.Conversations.ListAll(intercom.PageParams{})
@@ -120,7 +121,7 @@ func listAllConversations() {
 	}
 
 	p(reflect.TypeOf(convoList))
-	
+
 	/*for _, conv := range convoList {
 
 	}*/
@@ -130,23 +131,24 @@ func listAllConversations() {
 	l := convo.ConversationParts.Parts
 	noteContent := l[len(l)-2].Body
 	noteAddedTime := l[len(l)-2].CreatedAt
-	
+
 	p("noteAddedTime:")
 	p(noteAddedTime) //int64
 	fmt.Printf("Current time:")
 	p(time.Now().Unix())
-	
+
 	// p("State:"+convoList.Conversations[0].State)
 
 	if l[len(l)-1].PartType == "note" && (noteContent == "yumi rep follow" ||
-	 noteContent == "<p>yumi convo</p>") {
-	 	p("following up")
-		addReply("1544605","18878341022",followUpMessage("Rohit","Rohit"))
-		addNote("18878341022","follow up sent")
-	} 
-	if l[len(l)-1].PartType == "note" && noteContent == "<p>follow up sent</p>"{
+		noteContent == "<p>yumi convo</p>") {
+		p("following up")
+		addReply("1544605", "18878341022", followUpMessage("Rohit", "Rohit"))
+		addNote("18878341022", "follow up sent")
+	}
+	if l[len(l)-1].PartType == "note" && noteContent == "<p>follow up sent</p>" {
 		p("closing conversation")
-		addReply("1544605","18878341022",closingMessage("Rohit","Rohit"))
+		addReply("1544605", "18878341022", closingMessage("Rohit", "Rohit"))
 	}
 }
+
 //requirement check if the conversation is currently snoozed.

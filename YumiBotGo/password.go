@@ -46,8 +46,8 @@ func sendPasswordReply(user User, author Author, conversationID string, params .
 		}
 	}
 
-	message:= passwordMessage(name)
-	
+	message := passwordMessage(name)
+
 	addReply(conversationID, YumiBot.ID, message)
 	assignConversation(conversationID, P3BoxID)
 	snoozeConversation(conversationID, snoozeDuration)

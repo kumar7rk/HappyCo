@@ -79,7 +79,7 @@ func processNewAdminNote(user User, author Author, conversationID string, note s
 	}
 
 	if note == "<p>###</p>" {
-		snoozeConversation(conversationID, 7 * 24 * time.Hour)
+		snoozeConversation(conversationID, 7*24*time.Hour)
 	}
 }
 
@@ -92,7 +92,6 @@ type Command struct {
 	Description string
 	Func        func(user User, conversationID string, params ...string)
 }
-
 
 var repCommands map[string]RepCommand = make(map[string]RepCommand)
 var getCommands map[string]Command = make(map[string]Command)

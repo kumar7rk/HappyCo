@@ -6,7 +6,9 @@ import (
 	"strings"
 	"time"
 )
+
 const P2ABox = "1615207"
+
 //********************************************Init********************************************
 func init() {
 	repCommands["buildium"] = RepCommand{Func: sendBuildiumReply, Description: `Sends a buildium message to a user
@@ -43,7 +45,7 @@ func sendBuildiumReply(user User, author Author, conversationID string, params .
 		}
 	}
 
-	message :=buildiumMessage(name)
+	message := buildiumMessage(name)
 
 	addReply(YumiBot.ID, conversationID, message)
 	assignConversation(conversationID, P2ABox)
