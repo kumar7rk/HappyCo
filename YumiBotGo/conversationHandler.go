@@ -117,7 +117,7 @@ func processNewConversation(user User, conversationID string, conversationMessag
 		userName = strings.Split(user.Name, " ")[0]
 	}
 
-	if !passwordReply && !isBuildiumUser {
+	if !passwordReply && !isBuildiumUser && user.Type == "user"{
 		addReply(YumiBot.ID, conversationID, welcomeMessage(userName))
 	}
 }
