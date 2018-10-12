@@ -3,6 +3,7 @@ package main
 import (
 	"strings"
 )
+
 //********************************************Init********************************************
 func init() {
 	getCommands["admin"] = Command{Func: showAllAdmins, Description: `Prints a note with the name and emails of all the admins in a business.
@@ -19,7 +20,7 @@ func showAllAdmins(user User, conversationID string, params ...string) {
 	}
 	adminsRec := getAdmins(userID)
 	for _, admin := range adminsRec {
-		if strings.Contains(admin.Detail,"hpy.io") || strings.Contains(admin.Detail,"happy.co") {
+		if strings.Contains(admin.Detail, "hpy.io") || strings.Contains(admin.Detail, "happy.co") {
 			continue
 		}
 		message += admin.Detail
