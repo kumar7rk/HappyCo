@@ -2,10 +2,11 @@ package main
 
 import (
 	"fmt"
-	_ "github.com/lib/pq"
 	"strconv"
 	"strings"
 	"time"
+
+	_ "github.com/lib/pq"
 )
 
 //********************************************Init********************************************
@@ -30,7 +31,7 @@ func makeAndSendNote(user User, conversationID string, params ...string) {
 }
 
 //********************************************Getting UserData********************************************
-func getUserData(ID string) (businessRec []Business, iapRec []IAP, integrationName string, planTypeRec []Plan) {
+func getUserData(ID string) (businessRec []Business, iapRec []IAP, integrationName string, planRecs []Plan) {
 	// fetching business id and role id for user role in this business
 	businessRec = getBusiness(ID)
 
@@ -41,7 +42,7 @@ func getUserData(ID string) (businessRec []Business, iapRec []IAP, integrationNa
 	integrationName = getIntegration(ID)
 
 	// Getting Plan type - Admin tags
-	planTypeRec = getUserPlanType(ID)
+	planRecs = getUserPlans(ID)
 	return
 }
 
@@ -51,7 +52,7 @@ func makeNote(us_id string) string {
 	var formattedDate string
 
 	//getting user data from the database
-	businessRec, iapRec, integrationName, planTypeRec := getUserData(us_id)
+	businessRec, iapRec, integrationName, planRecs := getUserData(us_id)
 
 	note = "<b>🐶Note</b><br/><br/>"
 
@@ -105,9 +106,8 @@ func makeNote(us_id string) string {
 		}
 	}
 	//******************constructing plan type string******************
-	for _, plan := range planTypeRec {
-		plan.Type = strings.Replace(plan.Type, "_", " ", -1)
-		note += "<b>Plan: </b>" + strings.Title(plan.Type) + "\n"
+	for _, plan := range planRecs {
+		note += "<b>Plan: </b>" + strings.Title(plan.Name) + "\n"
 
 		if plan.Status != "active" {
 			note += "<b><h3>Status:</b>" + plan.Status + "</h3>\n"
