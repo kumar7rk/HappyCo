@@ -2,11 +2,15 @@ package main
 
 import (
 	"encoding/json"
-	_ "github.com/lib/pq"
 	"io/ioutil"
 	"net/http"
 	"strings"
+
+	_ "github.com/lib/pq"
 )
+
+// BuildiumPlanID represents the constant ID for the Buildium plan
+const BuildiumPlanID = "8"
 
 //********************************************New Conversation********************************************
 func newConversation(w http.ResponseWriter, r *http.Request) {
@@ -50,9 +54,9 @@ func processNewConversation(user User, conversationID string, conversationMessag
 	if user.Type == "user" {
 		makeAndSendNote(user, conversationID)
 
-		planTypeRec := getUserPlanType(user.UserID)
-		for _, plan := range planTypeRec {
-			if plan.Type == "buildium" {
+		planRecs := getUserPlans(user.UserID)
+		for _, plan := range planRecs {
+			if plan.ID == BuildiumPlanID {
 				isBuildiumUser = true
 				break
 			}
