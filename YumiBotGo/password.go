@@ -18,7 +18,6 @@ func init() {
 }
 
 //********************************************Sending password reply********************************************
-
 func sendPasswordReply(user User, author Author, conversationID string, params ...string) {
 	name := "there"
 	snoozeDuration := 3 * 24 * time.Hour
