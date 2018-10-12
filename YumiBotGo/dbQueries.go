@@ -40,13 +40,17 @@ type Business struct {
 	MRR              sql.NullString
 	SupportLevel     sql.NullString `db:"support_level"`
 }
+
 type IAP struct {
 	Expiry string `db:"expires_at"`
 }
+
 type Plan struct {
-	Type   string `db:"plan_type"`
-	Status string
+	ID     string `db:"id"`
+	Name   string `db:"name"`
+	Status string `db:"status"`
 }
+
 type Admin struct {
 	Detail string
 }
@@ -119,8 +123,8 @@ func getIntegration(userID string) (integrationName string) {
 }
 
 //********************************************Plan Type********************************************
-func getUserPlanType(userID string) (planTypeRec []Plan) {
-	err := db.Select(&planTypeRec, "Select plan_type,status FROM current_subscriptions WHERE business_id IN (SELECT business_id from business_membership WHERE user_id = $1 AND inactivated_at IS NULL)", userID)
+func getUserPlans(userID string) (plans []Plan) {
+	err := db.Select(&plans, "Select p.id, p.name,s.status FROM current_subscriptions s INNER JOIN plans p ON s.plan_id = p.id WHERE s.business_id IN (SELECT business_id from business_membership WHERE user_id = $1 AND inactivated_at IS NULL)", userID)
 	if err != nil {
 		fmt.Fprintf(os.Stderr, "Error in plan query %v: %v\n", userID, err)
 	}
@@ -131,7 +135,7 @@ func getUserPlanType(userID string) (planTypeRec []Plan) {
 func getAdmins(userID string) (AdminRec []Admin) {
 	err := db.Select(&AdminRec, "SELECT CONCAT(first_name, ' ', last_name, ' ', email) as detail FROM users u INNER JOIN business_membership bm ON u.id = bm.user_id AND bm.inactivated_at IS NULL AND bm.business_role_id IN (8, 1) INNER JOIN business_membership bm2 ON bm2.business_id = bm.business_id WHERE bm2.user_id =$1", userID)
 	if err != nil {
-		fmt.Fprintf(os.Stderr, "Error in plan query %v: %v\n", userID, err)
+		fmt.Fprintf(os.Stderr, "Error in admin query %v: %v\n", userID, err)
 	}
 	return
 }
