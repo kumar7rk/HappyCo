@@ -34,12 +34,21 @@ func main() {
 		return
 	}
 
+	go runFollowupChecker()
+
 	//handling every new convesations in newConversation method in conversation.go
 	http.HandleFunc("/conversation", newConversation)
 	http.HandleFunc("/note", newAdminNote)
 	http.HandleFunc("/healthcheck", healthcheck)
 	if err := http.ListenAndServe(":8080", nil); err != nil {
 		panic(err)
+	}
+}
+
+func runFollowupChecker() {
+	for {
+		// TODO followup
+		time.Sleep(12 * time.Hour)
 	}
 }
 
