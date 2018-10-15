@@ -143,9 +143,9 @@ func listAllConversations() {
 		noteContent == "<p>yumi convo</p>") {
 		p("following up")
 		addReply("1544605", "18878341022", followUpMessage("Rohit", "Rohit"))
-		addNote("18878341022", "follow up sent")
+		addNote("18878341022", "followed up")
 	}
-	if l[len(l)-1].PartType == "note" && noteContent == "<p>follow up sent</p>" {
+	if l[len(l)-1].PartType == "note" && noteContent == "<p>followed up</p>" {
 		p("closing conversation")
 		addReply("1544605", "18878341022", closingMessage("Rohit", "Rohit"))
 	}
