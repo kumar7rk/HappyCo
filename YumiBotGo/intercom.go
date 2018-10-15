@@ -115,7 +115,7 @@ func listAllConversations() {
 	// convoList, err := ic.Conversations.ListAll(intercom.PageParams{})
 
 	p := fmt.Println
-	convoList, err := ic.Conversations.ListByAdmin(&intercom.Admin{ID: "1544605"}, intercom.SHOW_ALL, intercom.PageParams{})
+	convoList, err := ic.Conversations.ListByAdmin(&intercom.Admin{ID: "1544605"}, intercom.SHOW_OPEN, intercom.PageParams{})
 	if err != nil {
 		fmt.Printf("Error from Intercom listing all opened conversation: %v\n", err)
 	}
