@@ -37,13 +37,13 @@ timeout = setTimeout(function() {
         if(index_present_at_index>-1) elements[index].style.display = 'none';
     });
 
-    var s = $('[data-attribute-id=email]').parent().parent().find('[data-is-interactive=true]').attr('data-value')
-    var bool1 = s.includes("@buildium.com")
-    var bool2 = s.includes("@happy.co")
-
-    var bool = bool1 || bool2
 
     $(".kv__value").each(function (){
+	    var s = $('[data-attribute-id=email]').parent().parent().find('[data-is-interactive=true]').attr('data-value')
+	    var bool1 = s.includes("@buildium.com")
+	    var bool2 = s.includes("@happy.co")
+
+	    var bool = bool1 || bool2
         var text_here = $(this).text().trim()
         if((text_here === "buildium") && !bool){
             button_text = "Buildium"
