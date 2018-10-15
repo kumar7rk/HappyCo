@@ -111,7 +111,7 @@ func snoozeConversation(conversationID string, duration time.Duration) {
 }
 
 //********************************************Snooze conversation********************************************
-func listAllConversations() {
+func listSnoozedConversations() []intercom.Conversation {
 	// convoList, err := ic.Conversations.ListAll(intercom.PageParams{})
 
 	p := fmt.Println
