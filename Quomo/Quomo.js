@@ -95,6 +95,14 @@ timeout = setTimeout(function() {
     $('[data-attribute-id=email]').parent().parent().find('[data-is-interactive=true]').off('click').on('click',function(e){
         window.open('https://manage.happyco.com/admin/search?utf8=✓&query='+$(this).attr('data-value'));    
     }).css('color','#00c389');
+    // liquid-child ember-view
+    // var rap = document.getElementsByClassName("div > div > div > div > a > span");
+    /*var rap = document.getElementsByClassName("liquid-child.ember-view");
+    for (var i = 0; i < rap.length; i++) {
+    	console.log("Here!");
+    	rap[i].click();
+    }*/
+
     }, 3000); //Three seconds will elapse and Code will execute.
 };
 setTimeout(function() {
