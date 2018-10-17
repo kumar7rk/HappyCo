@@ -53,14 +53,14 @@ func processNewAdminNote(user User, author Author, conversationID string, note s
 		return
 	}
 	if note == "<p>yumi convo</p>" {
-		listAllConversations()
+		// listAllConversations()
 		return
 	}
 	if strings.HasPrefix(note, "<p>yumi rep ") {
 		note = strings.TrimSuffix(note[12:], "</p>")
 		params := strings.Split(note, " ")
 		if cmd, ok := repCommands[params[0]]; ok {
-			cmd.Func(user, author, conversationID, params...)
+			cmd.Func(user, author, conversationID, params[1:]...)
 		} else {
 			fmt.Println("Unable to run", params)
 			listRunCommands(author.Name, conversationID)
