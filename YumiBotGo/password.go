@@ -21,6 +21,7 @@ func init() {
 func sendPasswordReply(user User, author Author, conversationID string, params ...string) {
 	name := "there"
 	snoozeDuration := 3 * 24 * time.Hour
+	
 	if hasValidName(user) {
 		name = strings.Split(user.Name, " ")[0]
 	}
