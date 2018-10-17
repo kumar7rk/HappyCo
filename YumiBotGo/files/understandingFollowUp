@@ -55,3 +55,39 @@ what we're unsure is if you do an actions (reply/snooze) and don't add a note wh
 
 Test:
 what payload do we get when finding all conversations
+
+
+
+
+
+***********Approaches*************
+
+#1
+yumi rep follow
+#what's up
+snooze for a week
+add ###
+run close_convo.rb
+to close it
+
+
+#2 (Preferred)
+yumi rep follow 
+
+snooze for 3 days
+after 2 days
+#what's up 
+note "follow up sent"
+snooze for 7 days
+after 4 days
+#close
+
+if preference change update command description
+
+
+register follow command with getCommand in noteHandler
+have a func -followUpConversation
+maybe when yumi rep follow is called- call snoozeConversation for 3 days
+
+when yumi rep follow is called
+follow.go's followUpConversation will be called
