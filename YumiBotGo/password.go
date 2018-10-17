@@ -21,7 +21,7 @@ func init() {
 func sendPasswordReply(user User, author Author, conversationID string, params ...string) {
 	name := "there"
 	snoozeDuration := 3 * 24 * time.Hour
-	
+
 	if hasValidName(user) {
 		name = strings.Split(user.Name, " ")[0]
 	}
@@ -53,12 +53,12 @@ func sendPasswordReply(user User, author Author, conversationID string, params .
 }
 
 func hasValidName(user User) bool {
-	
+
 	firstName := strings.Split(user.Name, " ")[0]
 	userNameInLowerCase := strings.ToLower(user.Name)
-	
+
 	//checking certain keywords
-	var excludeList = []string {"property","inspector","management","maintenance","department","mgmt","dept"}
+	var excludeList = []string{"property", "inspector", "management", "maintenance", "department", "mgmt", "dept"}
 	for _, name := range excludeList {
 		if strings.Contains(userNameInLowerCase, name) {
 			return false
@@ -72,7 +72,7 @@ func hasValidName(user User) bool {
 	}
 	//checking acronyms
 	if firstName == strings.ToUpper(firstName) {
-	 	return false
+		return false
 	}
 	if user.Email == "" {
 		return false
