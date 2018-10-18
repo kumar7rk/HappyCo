@@ -57,7 +57,7 @@ func processNewAdminNote(user User, author Author, conversationID string, note s
 		return
 	}
 	if strings.HasPrefix(note, "<p>yumi rep ") {
-		note = strings.TrimSuffix(note[12:], "</p>")
+		note = strings.TrimSuffix(note[12:], "<br></p>")
 		params := strings.Split(note, " ")
 		if cmd, ok := repCommands[params[0]]; ok {
 			cmd.Func(user, author, conversationID, params[1:]...)
@@ -68,7 +68,7 @@ func processNewAdminNote(user User, author Author, conversationID string, note s
 	}
 
 	if strings.HasPrefix(note, "<p>yumi get ") {
-		note = strings.TrimSuffix(note[12:], "</p>")
+		note = strings.TrimSuffix(note[12:], "<br></p>")
 		params := strings.Split(note, " ")
 		if cmd, ok := getCommands[params[0]]; ok {
 			cmd.Func(user, conversationID, params[1:]...)
