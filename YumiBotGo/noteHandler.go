@@ -53,7 +53,7 @@ func processNewAdminNote(user User, author Author, conversationID string, note s
 		return
 	}
 	if note == "<p>yumi convo</p>" {
-		// listAllConversations()
+		listSnoozedConversations()
 		return
 	}
 	if strings.HasPrefix(note, "<p>yumi rep ") {
