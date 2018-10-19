@@ -8,7 +8,6 @@ import (
 	"io/ioutil"
 	"net/http"
 	"os"
-	"reflect"
 	"strconv"
 	"time"
 )
@@ -112,43 +111,51 @@ func snoozeConversation(conversationID string, duration time.Duration) {
 
 //********************************************Snooze conversation********************************************
 func listSnoozedConversations() /*[]intercom.Conversation*/ {
-	// convoList, err := ic.Conversations.ListAll(intercom.PageParams{})
-
 	p := fmt.Println
-	convoList, err := ic.Conversations.ListByAdmin(&intercom.Admin{ID: "1544605"}, intercom.SHOW_OPEN, intercom.PageParams{})
-	if err != nil {
-		fmt.Printf("Error from Intercom listing all opened conversation: %v\n", err)
+
+	//such a clunky way
+
+	//rohit, richelle, anna, p1, p1a, p2a, p2b, p2c, p3
+	var whoseInbox = []string{"rohit", "richelle", "anna", "p1", "p1a", "p2a", "p2b", "p2c", "p3"}
+	var allInboxes = []string{"1544605","424979","2687597","1054048","2264830","1615207","931138","2340320","1398520"}
+	
+	//running all the boxes
+	va := 0
+	for _, inbox := range allInboxes {
+		p(whoseInbox[va])
+		va=va+1;
+		//running here to get the totalPages of opened conversations for a box
+		convoList, err := ic.Conversations.ListByAdmin(&intercom.Admin{ID: json.Number(inbox)}, intercom.SHOW_OPEN, intercom.PageParams{})
+		if err != nil {
+				fmt.Printf("Error from Intercom listing all opened conversations for: %v\n", err)
+		}
+		p(convoList.Pages)
+	
+		//running on all the pages
+		for i := 1; i <= int(convoList.Pages.TotalPages); i++ {
+	
+			convoList, err := ic.Conversations.ListByAdmin(&intercom.Admin{ID: json.Number(inbox)}, intercom.SHOW_OPEN, intercom.PageParams{Page:int64(i)})
+			totalConversations := len(convoList.Conversations)
+			// fmt.Printf("%s %d %s %d %s","totalConversations in page ",i, ":", totalConversations, "\n")
+			if err != nil {
+				fmt.Printf("Error from Intercom listing all opened conversations: %v\n", err)
+			}
+	
+			for i := 0; i < totalConversations; i++ {
+				convoID := convoList.Conversations[i].ID
+				// convo, _ := ic.Conversations.Find(convoID)
+				p(convoID)
+				// p(convo.ConversationParts)
+				// p(convo.Open)
+			
+				/*l := convo.ConversationParts.Parts
+				p("l:")
+				p(l[len(l)-2])*/
+			}
+		}
+
 	}
 
-	p(reflect.TypeOf(convoList))
-
-	/*for _, conv := range convoList {
-
-	}*/
-
-	convoID := convoList.Conversations[0].ID
-	convo, _ := ic.Conversations.Find(convoID)
-	l := convo.ConversationParts.Parts
-	noteContent := l[len(l)-2].Body
-	noteAddedTime := l[len(l)-2].CreatedAt
-
-	p("noteAddedTime:")
-	p(noteAddedTime) //int64
-	fmt.Printf("Current time:")
-	p(time.Now().Unix())
-
-	// p("State:"+convoList.Conversations[0].State)
-
-	if l[len(l)-1].PartType == "note" && (noteContent == "yumi rep follow" ||
-		noteContent == "<p>yumi convo</p>") {
-		p("following up")
-		addReply("1544605", "18878341022", followUpMessage("Rohit", "Rohit"))
-		addNote("18878341022", "followed up")
-	}
-	if l[len(l)-1].PartType == "note" && noteContent == "<p>followed up</p>" {
-		p("closing conversation")
-		addReply("1544605", "18878341022", closingMessage("Rohit", "Rohit"))
-	}
 }
 
 //requirement check if the conversation is currently snoozed.
