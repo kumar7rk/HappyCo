@@ -25,7 +25,7 @@ func followUpProcess() {
 
 	for _, convo := range allOpenedConversations {
 		notes := convo.ConversationParts.Parts
-		lastNote = notes[len(notes)-1]
+		lastNote := notes[len(notes)-1]
 
 		m := make(map[string]string)
 		m["1544605"] = "Rohit"
