@@ -34,11 +34,11 @@ func followUpProcess() {
 
 		followUpDuration := 2 * 24 * time.Hour
 		closeDuration := 4 * 24 * time.Hour
-		
+
 		noteAddedTime := lastNote.CreatedAt
 		followUpTime := time.Now().Add(-followUpDuration).Unix()
 		closeTime := time.Now().Add(-closeDuration).Unix()
-		
+
 		canFollowUp := false
 		if followUpTime > noteAddedTime {
 			canFollowUp = true

@@ -114,8 +114,8 @@ func listOpenedConversations() []intercom.Conversation {
 
 	var allOpenedConversations = []intercom.Conversation{}
 	//rohit, richelle, anna, p1, p1a, p2a, p2b, p2c, p3
-	var allInboxes = []string{"1544605","424979","2687597","1054048","2264830","1615207","931138","2340320","1398520"}
-	
+	var allInboxes = []string{"1544605", "424979", "2687597", "1054048", "2264830", "1615207", "931138", "2340320", "1398520"}
+
 	//running for all the boxes
 	for _, inbox := range allInboxes {
 		//running here to get the totalPages of opened conversations for a box
@@ -126,7 +126,7 @@ func listOpenedConversations() []intercom.Conversation {
 
 		//running on all the pages
 		for i := 1; i <= int(convoList.Pages.TotalPages); i++ {
-			convoList, err := ic.Conversations.ListByAdmin(&intercom.Admin{ID: json.Number(inbox)}, intercom.SHOW_OPEN, intercom.PageParams{Page:int64(i)})
+			convoList, err := ic.Conversations.ListByAdmin(&intercom.Admin{ID: json.Number(inbox)}, intercom.SHOW_OPEN, intercom.PageParams{Page: int64(i)})
 			if err != nil {
 				fmt.Printf("Error from Intercom listing all opened conversations: %v\n", err)
 			}
@@ -136,12 +136,13 @@ func listOpenedConversations() []intercom.Conversation {
 			for j := 0; j < totalConversations; j++ {
 				convoID := convoList.Conversations[j].ID
 				convo, _ := ic.Conversations.Find(convoID)
-				allOpenedConversations = append(allOpenedConversations,convo)
+				allOpenedConversations = append(allOpenedConversations, convo)
 			}
 		}
 	}
 	return allOpenedConversations
 }
+
 //********************************************Getting user name********************************************
 
 func getUserName(ID string) string {
