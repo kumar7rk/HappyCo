@@ -7,11 +7,12 @@ import (
 //********************************************Init********************************************
 func init() {
 	repCommands["follow"] = RepCommand{Func: followUpConversation, Description: `A conversation is snoozed for 3 days. 
-	After 2 days a follow up message is sent from you. (a note "followed up" is added)
-	Again, the conversation is snoozed for a week.
+	After 2 days a follow up message is sent from you. (a note "followed up" is added from HappyBot)
+	The conversation is snoozed for 5 days.
 	After 4 days a closing message is sent.
 	<b>Want to cancel? You can't. JK. Just enter a note during this time</b>
-	It will also cancel if a customer messages or we reply.`}
+	It will also cancel if a customer messages or we reply.
+	Currently, this job runs every 12 hours.`}
 }
 
 //********************************************Follow up********************************************
