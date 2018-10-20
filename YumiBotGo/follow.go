@@ -21,7 +21,7 @@ func followUpConversation(user User, author Author, conversationID string, param
 }
 
 func followUpProcess() {
-	allOpenedConversations := listSnoozedConversations()
+	allOpenedConversations := listOpenedConversations()
 
 	for _, convo := range allOpenedConversations {
 		notes := convo.ConversationParts.Parts
