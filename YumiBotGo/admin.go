@@ -26,5 +26,8 @@ func showAllAdmins(user User, conversationID string, params ...string) {
 		message += admin.Detail
 		message += "\n"
 	}
+	if message == "" {
+		message += "No non-HappyCo admin found"
+	}
 	addNote(conversationID, message)
 }
