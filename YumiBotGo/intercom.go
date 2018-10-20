@@ -142,5 +142,12 @@ func listSnoozedConversations() []intercom.Conversation {
 	}
 	return allOpenedConversations
 }
+//********************************************Getting user name********************************************
 
-//requirement check if the conversation is currently snoozed.
+func getUserName(ID string) string {
+	user, err := ic.Users.FindByID(ID)
+	if err != nil {
+		fmt.Printf("Error from Intercom finding a user: %v\n", err)
+	}
+	return user.Name
+}
