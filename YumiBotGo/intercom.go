@@ -109,53 +109,38 @@ func snoozeConversation(conversationID string, duration time.Duration) {
 	_, _ = ioutil.ReadAll(resp.Body)
 }
 
-//********************************************Snooze conversation********************************************
-func listSnoozedConversations() /*[]intercom.Conversation*/ {
-	p := fmt.Println
+//********************************************List snoozed conversation********************************************
+func listSnoozedConversations() []intercom.Conversation {
 
-	//such a clunky way
-
+	var allOpenedConversations = []intercom.Conversation{}
 	//rohit, richelle, anna, p1, p1a, p2a, p2b, p2c, p3
-	var whoseInbox = []string{"rohit", "richelle", "anna", "p1", "p1a", "p2a", "p2b", "p2c", "p3"}
 	var allInboxes = []string{"1544605","424979","2687597","1054048","2264830","1615207","931138","2340320","1398520"}
 	
-	//running all the boxes
-	va := 0
+	//running for all the boxes
 	for _, inbox := range allInboxes {
-		p(whoseInbox[va])
-		va=va+1;
 		//running here to get the totalPages of opened conversations for a box
 		convoList, err := ic.Conversations.ListByAdmin(&intercom.Admin{ID: json.Number(inbox)}, intercom.SHOW_OPEN, intercom.PageParams{})
 		if err != nil {
-				fmt.Printf("Error from Intercom listing all opened conversations for: %v\n", err)
+			fmt.Printf("Error from Intercom listing all opened conversations %v\n", err)
 		}
-		p(convoList.Pages)
-	
+
 		//running on all the pages
 		for i := 1; i <= int(convoList.Pages.TotalPages); i++ {
-	
 			convoList, err := ic.Conversations.ListByAdmin(&intercom.Admin{ID: json.Number(inbox)}, intercom.SHOW_OPEN, intercom.PageParams{Page:int64(i)})
-			totalConversations := len(convoList.Conversations)
-			// fmt.Printf("%s %d %s %d %s","totalConversations in page ",i, ":", totalConversations, "\n")
 			if err != nil {
 				fmt.Printf("Error from Intercom listing all opened conversations: %v\n", err)
 			}
-	
-			for i := 0; i < totalConversations; i++ {
-				convoID := convoList.Conversations[i].ID
-				// convo, _ := ic.Conversations.Find(convoID)
-				p(convoID)
-				// p(convo.ConversationParts)
-				// p(convo.Open)
-			
-				/*l := convo.ConversationParts.Parts
-				p("l:")
-				p(l[len(l)-2])*/
+			totalConversations := len(convoList.Conversations)
+
+			// for all conversations
+			for j := 0; j < totalConversations; j++ {
+				convoID := convoList.Conversations[j].ID
+				convo, _ := ic.Conversations.Find(convoID)
+				allOpenedConversations = append(allOpenedConversations,convo)
 			}
 		}
-
 	}
-
+	return allOpenedConversations
 }
 
 //requirement check if the conversation is currently snoozed.
