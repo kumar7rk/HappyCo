@@ -17,6 +17,10 @@ func init() {
 //********************************************Adding note to conversation********************************************
 func makeAndSendNote(user User, conversationID string, params ...string) {
 	ID := user.UserID
+	if len(params) > 0 {
+		ID = params[0]
+	}
+
 	p := fmt.Println
 
 	//testing prints
