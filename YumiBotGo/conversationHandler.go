@@ -111,13 +111,21 @@ func processNewConversation(user User, conversationID string, conversationMessag
 	if passwordReply {
 		sendPasswordReply(user, YumiBot, conversationID)
 	}
-	//Sending welcome message for each new conversation including from leads excluding if user is Buildium for is asking to reset password
+
 	userName := "there"
-	if user.Email != "" {
+	if hasValidName(user) {
 		userName = strings.Split(user.Name, " ")[0]
 	}
+	signUpRequired := false
+	//Sending a message to a user trying to login without signing up
+	if strings.Contains(conversationMessage, "\"NSLocalizedDescription\" : \"Not Found\"") {
+		addReply(YumiBot.ID, conversationID, signUpMessage(userName))
+		signUpRequired = true
+	}
 
-	if !passwordReply && !isBuildiumUser && user.Type == "user" {
+	//Sending welcome message for each new conversation including from leads excluding if user is Buildium for is asking to reset password
+
+	if !passwordReply && !isBuildiumUser && user.Type == "user" && !signUpRequired {
 		addReply(YumiBot.ID, conversationID, welcomeMessage(userName))
 	}
 }
