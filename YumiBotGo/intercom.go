@@ -109,8 +109,8 @@ func snoozeConversation(conversationID string, duration time.Duration) {
 	_, _ = ioutil.ReadAll(resp.Body)
 }
 
-//********************************************List snoozed conversation********************************************
-func listSnoozedConversations() []intercom.Conversation {
+//********************************************List Opened conversation********************************************
+func listOpenedConversations() []intercom.Conversation {
 
 	var allOpenedConversations = []intercom.Conversation{}
 	//rohit, richelle, anna, p1, p1a, p2a, p2b, p2c, p3
