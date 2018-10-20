@@ -24,3 +24,8 @@ func welcomeMessage(name string) (message string) {
 	message = "Hey " + name + " 👋 \n \n I'm your friendly HappyBot 😎 \n\n We've received your message and the team will respond as soon as possible 🕛 🔜  \n \n <b>Need help faster?</b> check out our iOS user manual https://hpy.io/manual 📓  or search the issue on https://support.happy.co 🌏 \n\n <i>Trouble seeing your reports/data? Make sure your Sync/Cloud tab in app is clear  or try these</i> <a href=\"https://support.happy.co/further-help-and-troubleshooting\">troubeshooting tips</a> 👍"
 	return
 }
+
+func signUpMessage(name string) (message string) {
+	message = "Hi " + name + " 👋 \n \n It looks like you might be having trouble logging in? \n\n What email are you using to login? \n\n If you want to register please do so <a href='https://manage.happyco.com/signup'> here </a> \n \n Thanks!  \n HappyBot 😎 \n\n <i>Need to contact a human....... just reply</i>"
+	return
+}
