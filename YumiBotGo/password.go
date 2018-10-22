@@ -7,7 +7,7 @@ import (
 	"time"
 )
 
-const P3BoxID = "1398520"
+const P3Box = "1398520"
 
 //********************************************Init********************************************
 func init() {
@@ -48,7 +48,7 @@ func sendPasswordReply(user User, author Author, conversationID string, params .
 	message := passwordMessage(name)
 
 	addReply(YumiBot.ID, conversationID, message)
-	assignConversation(conversationID, P3BoxID)
+	assignConversation(conversationID, P3Box)
 	snoozeConversation(conversationID, snoozeDuration)
 }
 
