@@ -52,10 +52,7 @@ func processNewAdminNote(user User, author Author, conversationID string, note s
 		listRunCommands(author.Name, conversationID)
 		return
 	}
-	if note == "<p>yumi convo</p>" {
-		_ = listOpenedConversations()
-		return
-	}
+
 	if strings.HasPrefix(note, "<p>yumi rep ") {
 		note = strings.TrimSuffix(note[12:], "</p>")
 		if strings.Contains(note, "<br>") {
