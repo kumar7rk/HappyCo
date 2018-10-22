@@ -48,7 +48,9 @@ func followUpProcess() {
 		if closeTime > noteAddedTime {
 			canClose = true
 		}
-
+		if !canFollowUp && !canClose {
+			continue
+		}
 		authorID := lastNote.Author.ID
 		authorName := m[authorID]
 		userName := getUserName(convo.User.ID)
