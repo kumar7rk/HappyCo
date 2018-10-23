@@ -7,8 +7,8 @@ import (
 	"time"
 )
 
-// P2ABox represents intercom's inbox ID
-const P2ABox = "1615207"
+// P2ABoxID represents intercom's P2A inbox ID
+const P2ABoxID = "1615207"
 
 //********************************************Init********************************************
 func init() {
@@ -47,6 +47,6 @@ func sendBuildiumReply(user User, author Author, conversationID string, params .
 	}
 
 	addReply(YumiBot.ID, conversationID, buildiumMessage(name))
-	assignConversation(conversationID, P2ABox)
+	assignConversation(conversationID, P2ABoxID)
 	snoozeConversation(conversationID, snoozeDuration)
 }
