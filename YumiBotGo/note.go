@@ -11,7 +11,7 @@ import (
 
 //********************************************Init********************************************
 func init() {
-	getCommands["note"] = Command{Func: makeAndSendNote, Description: `Print user's information - business, role etc.
+	getCommands["note"] = GetCommand{Func: makeAndSendNote, Description: `Print user's information - business, role etc.
 		<b>Arguments</b> userID.
 		<b>Example</b> yumi get note [userID]`}
 }

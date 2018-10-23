@@ -6,7 +6,7 @@ import (
 )
 
 func init() {
-	getCommands["report"] = Command{Func: showRecentReports, Description: `Shows reports created by a user in last 30 days. ` + "\n" + ` <b>Default</b> is 5. ` + "\n" + ` <b>Argument</b> # of reports to show. ` + "\n" + `<b>Example</b> yumi get report 100 will show 100 reports in last 30 days`}
+	getCommands["report"] = GetCommand{Func: showRecentReports, Description: `Shows reports created by a user in last 30 days. ` + "\n" + ` <b>Default</b> is 5. ` + "\n" + ` <b>Argument</b> # of reports to show. ` + "\n" + `<b>Example</b> yumi get report 100 will show 100 reports in last 30 days`}
 }
 
 //********************************************Adding commands********************************************

@@ -91,10 +91,10 @@ type RepCommand struct {
 	Func        func(user User, author Author, conversationID string, params ...string)
 }
 
-type Command struct {
+type GetCommand struct {
 	Description string
 	Func        func(user User, conversationID string, params ...string)
 }
 
 var repCommands map[string]RepCommand = make(map[string]RepCommand)
-var getCommands map[string]Command = make(map[string]Command)
+var getCommands map[string]GetCommand = make(map[string]GetCommand)
