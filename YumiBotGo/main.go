@@ -47,9 +47,9 @@ func main() {
 
 func runFollowupChecker() {
 	for {
-		time.Sleep(12 * time.Hour)
 		// checking if we can follow up || close conversations
 		followUpProcess()
+		time.Sleep(4 * time.Hour)
 	}
 }
 
