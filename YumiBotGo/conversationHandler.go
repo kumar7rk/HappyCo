@@ -123,7 +123,7 @@ func processNewConversation(user User, conversationID string, conversationMessag
 		return
 	}
 
-	//Sending welcome message for each new conversation including from leads excluding if a user is Buildium for is asking to reset password or has sent an error report
+	//Sending welcome message for each new conversation if not already responded to
 	if user.Type == "user" {
 		addReply(YumiBot.ID, conversationID, welcomeMessage(userName))
 	}
