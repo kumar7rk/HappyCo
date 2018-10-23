@@ -6,6 +6,7 @@ import (
 	"strings"
 	"time"
 )
+
 // P3BoxID represents intercom's P3 inbox ID
 const P3BoxID = "1398520"
 
