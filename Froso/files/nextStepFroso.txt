@@ -41,7 +41,6 @@ Linkedin
 test for more accounts
 
 //think of shrinking the write operations as well?
-check if str is null exit for now?
 
 
 play around with giving sel as a direct parameter
@@ -49,6 +48,7 @@ play around with giving sel as a direct parameter
 check if sound file exist before playing
 
 check if str is empty - ideally retry or maybe increase wait for or use waitFor selector
+exit for now?
 
 if profile private job title e.g https://www.linkedin.com/in/brent-law-49a54053
 #experience > ul > li:nth-child(1) > header > h4 > a
