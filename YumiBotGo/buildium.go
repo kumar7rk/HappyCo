@@ -7,6 +7,7 @@ import (
 	"time"
 )
 
+// P2ABox represents intercom's inbox ID
 const P2ABox = "1615207"
 
 //********************************************Init********************************************
