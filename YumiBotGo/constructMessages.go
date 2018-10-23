@@ -6,7 +6,7 @@ func buildiumMessage(name string) (message string) {
 }
 
 func passwordMessage(name string) (message string) {
-	message = "Hi " + name + " 👋 \n \n It looks like you might be having trouble logging in? \n\n You can reset your password by entering your email <a href='https://manage.happyco.com/password/forgot'> here </a> \n \n Thanks!  \n HappyBot 😎 \n\n <i>Need to contact a human....... just reply</i>"
+	message = "Hi " + name + " 👋 \n \n It looks like you might be having trouble logging in? \n\n You can reset your password by entering your email <a href='https://manage.happyco.com/password/forgot'> here </a> \n \n Thanks!  \n HappyBot 😎 \n\n <i>Need to speak to a human....... just reply</i>"
 	return
 }
 
@@ -26,6 +26,6 @@ func welcomeMessage(name string) (message string) {
 }
 
 func signUpMessage(name string) (message string) {
-	message = "Hi " + name + " 👋 \n \n It looks like you might be having trouble logging in? \n\n What email are you using to login? \n\n If you want to register please do so <a href='https://manage.happyco.com/signup'> here </a> \n \n Thanks!  \n HappyBot 😎 \n\n <i>Need to contact a human....... just reply</i>"
+	message = "Hi " + name + " 👋 \n \n It looks like you might be having trouble logging in? \n\n What email are you using to login? \n\n If you're trying to start a free trial, please register here: <a href='https://manage.happyco.com/signup'> https://manage.happyco.com/signup </a> \n \n Thanks! \n HappyBot 😎 \n\n <i>Need to speak to a human....... just reply</i>"
 	return
 }
