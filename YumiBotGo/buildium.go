@@ -23,7 +23,7 @@ func sendBuildiumReply(user User, author Author, conversationID string, params .
 	name := "there"
 	snoozeDuration := 7 * 24 * time.Hour
 
-	if hasValidName(user) {
+	if hasIdentifiableName(user) {
 		name = strings.Split(user.Name, " ")[0]
 	}
 	if len(params) == 2 {

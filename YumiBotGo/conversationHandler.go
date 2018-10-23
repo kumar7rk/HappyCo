@@ -114,7 +114,7 @@ func processNewConversation(user User, conversationID string, conversationMessag
 	}
 
 	userName := "there"
-	if hasValidName(user) {
+	if hasIdentifiableName(user) {
 		userName = strings.Split(user.Name, " ")[0]
 	}
 	//Sending a message to a user trying to login without signing up

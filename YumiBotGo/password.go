@@ -22,7 +22,7 @@ func sendPasswordReply(user User, author Author, conversationID string, params .
 	name := "there"
 	snoozeDuration := 3 * 24 * time.Hour
 
-	if hasValidName(user) {
+	if hasIdentifiableName(user) {
 		name = strings.Split(user.Name, " ")[0]
 	}
 	if len(params) == 2 {
@@ -52,7 +52,7 @@ func sendPasswordReply(user User, author Author, conversationID string, params .
 	snoozeConversation(conversationID, snoozeDuration)
 }
 
-func hasValidName(user User) bool {
+func hasIdentifiableName(user User) bool {
 
 	firstName := strings.Split(user.Name, " ")[0]
 	userNameInLowerCase := strings.ToLower(user.Name)
