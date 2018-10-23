@@ -80,10 +80,6 @@ func processNewAdminNote(user User, author Author, conversationID string, note s
 			listRunCommands(author.Name, conversationID)
 		}
 	}
-
-	if note == "<p>###</p>" {
-		snoozeConversation(conversationID, 7*24*time.Hour)
-	}
 }
 
 type RepCommand struct {
