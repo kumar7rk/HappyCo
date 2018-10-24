@@ -1,10 +1,10 @@
 package main
 
 import (
-	"fmt"
 	"strconv"
 	"strings"
 	"time"
+	"happyco/libs/log"
 )
 
 // P3BoxID represents intercom's P3 inbox ID
@@ -32,7 +32,7 @@ func sendPasswordReply(user User, author Author, conversationID string, params .
 		//checking if the second param is a number or not
 		val, err := strconv.Atoi(params[1])
 		if err != nil {
-			fmt.Printf("Wrong parameters: %v\n", err)
+			log.Error.KV("err",err).KV("params", params).KV("conversationID", conversationID).Println("could not parse number of snooze days for send password reply")
 		} else {
 			snoozeDuration = time.Duration(val) * 24 * time.Hour
 		}
