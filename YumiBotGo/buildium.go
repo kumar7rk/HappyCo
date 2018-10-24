@@ -47,7 +47,7 @@ func sendBuildiumReply(user User, author Author, conversationID string, params .
 		}
 	}
 
-	addReply(YumiBot.ID, conversationID, buildiumMessage(name))
+	addReply(yumiBot.ID, conversationID, buildiumMessage(name))
 	assignConversation(conversationID, P2ABoxID)
 	snoozeConversation(conversationID, snoozeDuration)
 }
