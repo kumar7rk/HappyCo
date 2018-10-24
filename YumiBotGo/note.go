@@ -1,10 +1,11 @@
 package main
 
 import (
-	"fmt"
 	"strconv"
 	"strings"
 	"time"
+	
+	"happyco/libs/log"
 
 	_ "github.com/lib/pq"
 )
@@ -23,13 +24,7 @@ func makeAndSendNote(user User, conversationID string, params ...string) {
 		ID = params[0]
 	}
 
-	p := fmt.Println
-
-	//testing prints
-	p("Conversation id: " + conversationID)
-	p("User id: " + ID)
-	p("User name: " + user.Name)
-	p("User email: " + user.Email)
+	log.Debug.KV("conversationID", conversationID).KV("userId", ID).KV("username", user.Name).KV("user email", user.Email).Println("Make and send note called")
 
 	note := makeNote(ID)
 
@@ -81,7 +76,7 @@ func makeNote(us_id string) string {
 		}
 		permission, err := strconv.Atoi(userRoleID)
 		if err != nil {
-			fmt.Printf("Error converting user role id: %v\n", err)
+			log.Error.KV("err",err).KV("userID", userID).KV("conversationID", conversationID).Println("Error converting user role id for adding in yumiNote")
 		}
 
 		if businessPermission == "constant-roles" {
