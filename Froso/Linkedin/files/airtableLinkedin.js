@@ -6,6 +6,13 @@ var base = new Airtable({apiKey: 'keyrYSQEONtptwMth'}).base('appfcatXnrEsiTmFB')
 var browser = "";
 var webpage = "";
 
+var allData = new Array();
+
+function data (ID, Location) {
+     this.ID = ID;
+     this.Location = Location;
+ }
+
 run();
 
 async function run () {
@@ -34,65 +41,51 @@ async function run () {
   await webpage.waitForNavigation();
   try{
     base('Data').select({
-        // maxRecords: 10,
+        maxRecords: 10,
         // pageSize:1,
         sort: [{field: "full_name", direction: "asc"}],
         view: "Master"
     }).eachPage(function page(records, fetchNextPage) {
         records.forEach(function(record) {
           (async () => {
-            log("Opening profile");
-            await webpage.goto(record.get('linkedin_url'));
-            // await webpage.waitFor(20000);
-
-            log("Pausing for 30 seconds");
-            await new Promise(function(resolve) { 
-              setTimeout(resolve, 30000)
-            });
-            /*log("Scrolling");
-            await webpage.evaluate(_ => {
-              window.scrollBy(0, window.innerHeight);
-            });
-            log("Done scrolling. Pausing for 2 seconds")
-
-            await webpage.waitFor(2 * 1000);*/
-
-            log("Getting name and location")
-
             var name = "";
-            name = await webpage.evaluate(() => document.querySelector('div.pv-top-card-v2-section__info.mr5 > div:nth-child(1) > h1').textContent);
-            var location = "";
-            location = await webpage.evaluate(() => document.querySelector('div.pv-top-card-v2-section__info.mr5 > h3').textContent);
-            log("Got the name and location. Pausing for 2 seconds")
+            
+            await webpage.goto(record.get('linkedin_url'));
+            await webpage.waitFor(2 * 1000);
 
-            // await webpage.waitFor(2 * 1000);
-            log("calling update func");
-            base('Data').update(record.getId(),{
-              "location": location,
-              // "new_name": name
-            },function(err, record) {
-                if (err) {
-                  console.error("I'm printing an error");
-                  console.error(err);
-                  return;
-                }
-                else{ 
-                  log("Location updated for:"+record.get('full_name'));
-                }
-            });
-            // log("Completed update. Pausing for 2 seconds")
-            // await webpage.waitFor(2 * 1000);
+            location = await webpage.evaluate(() => document.querySelector('div.pv-top-card-v2-section__info.mr5 > h3').textContent);
+
+            await webpage.waitFor(2 * 1000);
+            var obj = new data(record.getId(),location)
+            allData.push(obj)
+            log("pushing data. Very hard:"+record.getId()+location);
             await browser.close();
          })();
        });
       fetchNextPage();
       }, function done(err) {
-      if (err) { 
+          console.log("Done")
+      if (err) {
         log("I'm Done (w/you)");
         console.error(err); 
-        return; 
+        return;
       }
     });
+
+    for (var i = 0; i < allData.length; i++) {
+      log(allData[i].Location)
+      base('Data').update(allData[i].ID,{
+        "location": allData[i].Location,
+      },function(err, record) {
+          if (err) {
+            console.error("I'm printing an error"+ err);
+            return;
+          }
+          else{
+            log("Location updated for:"+record.get('full_name'));
+          }
+        });
+      }
   }//try
   catch(error){
     console.log("I'm catch and I'm catching bad boys today");
