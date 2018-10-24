@@ -20,7 +20,7 @@ func showAllAdmins(user User, conversationID string, params ...string) {
 	}
 	adminsRec := getAdmins(userID)
 	for _, admin := range adminsRec {
-		if strings.Contains(admin.Detail, "hpy.io") || strings.Contains(admin.Detail, "happy.co") {
+		if strings.Contains(admin.Detail, "hpy.io") || strings.Contains(admin.Detail, "happy.co") || strings.Contains(admin.Detail, "happyco.com") {
 			continue
 		}
 		message += admin.Detail
