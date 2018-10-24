@@ -67,7 +67,7 @@ func processNewConversation(user User, conversationID string, conversationMessag
 			happyCoTeam := strings.Contains(user.Email, "@happy.co")
 			if conversationSubject == "" {
 				if !buildiumSupport && !happyCoTeam {
-					sendBuildiumReply(user, YumiBot, conversationID)
+					sendBuildiumReply(user, yumiBot, conversationID)
 				}
 			} else {
 				conversationSubject = strings.ToLower(conversationSubject)
@@ -82,7 +82,7 @@ func processNewConversation(user User, conversationID string, conversationMessag
 					}
 				}
 				if !buildiumSupport && !happyCoTeam && !autoRepliedMessage {
-					sendBuildiumReply(user, YumiBot, conversationID)
+					sendBuildiumReply(user, yumiBot, conversationID)
 					return
 				}
 			}
@@ -109,7 +109,7 @@ func processNewConversation(user User, conversationID string, conversationMessag
 	}
 
 	if passwordReply {
-		sendPasswordReply(user, YumiBot, conversationID)
+		sendPasswordReply(user, yumiBot, conversationID)
 		return
 	}
 
@@ -119,12 +119,12 @@ func processNewConversation(user User, conversationID string, conversationMessag
 	}
 	//Sending a message to a user trying to login without signing up
 	if strings.Contains(conversationMessage, "\"NSLocalizedDescription\" : \"Not Found\"") {
-		addReply(YumiBot.ID, conversationID, signUpMessage(userName))
+		addReply(yumiBot.ID, conversationID, signUpMessage(userName))
 		return
 	}
 
 	//Sending welcome message for each new conversation if not already responded to
 	if user.Type == "user" {
-		addReply(YumiBot.ID, conversationID, welcomeMessage(userName))
+		addReply(yumiBot.ID, conversationID, welcomeMessage(userName))
 	}
 }
