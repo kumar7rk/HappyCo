@@ -27,7 +27,7 @@ type Author struct {
 	ID   string
 }
 
-var YumiBot = Author{Name: "HappyBot", ID: "207278"}
+var yumiBot = Author{Name: "HappyBot", ID: "207278"}
 
 type Part struct {
 	Body   string
