@@ -1,9 +1,10 @@
 package main
 
 import (
-	"fmt"
 	"strconv"
 	"time"
+
+	"happyco/libs/log"
 )
 
 func init() {
@@ -18,7 +19,7 @@ func showRecentReports(user User, conversationID string, params ...string) {
 	if len(params) > 0 {
 		limit, err = strconv.Atoi(params[0])
 		if err != nil {
-			fmt.Printf("Wrong parameters: %v\n", err)
+			log.Error.KV("err",err).KV("params", params).KV("conversationID", conversationID).Println("could not parse number of snooze days for showing recent reports")
 		}
 	}
 	reportsRec := getReports(user.UserID, limit)
