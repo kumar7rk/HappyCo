@@ -135,7 +135,10 @@ func listOpenedConversations() []intercom.Conversation {
 			// for all conversations
 			for j := 0; j < totalConversations; j++ {
 				convoID := convoList.Conversations[j].ID
-				convo, _ := ic.Conversations.Find(convoID)
+				convo, err := ic.Conversations.Find(convoID)
+				if err != nil {
+					fmt.Printf("Error from Intercom find a conversation: %v\n", err)
+				}
 				allOpenedConversations = append(allOpenedConversations, convo)
 			}
 		}
