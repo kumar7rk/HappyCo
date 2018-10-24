@@ -2,10 +2,11 @@ package main
 
 import (
 	"encoding/json"
-	"fmt"
 	"io/ioutil"
 	"net/http"
 	"strings"
+
+	"happyco/libs/log"
 )
 
 //********************************************New adming note********************************************
@@ -61,7 +62,7 @@ func processNewAdminNote(user User, author Author, conversationID string, note s
 		if cmd, ok := repCommands[params[0]]; ok {
 			cmd.Func(user, author, conversationID, params[1:]...)
 		} else {
-			fmt.Println("Unable to run", params)
+			log.Info.KV("err",err).KV("params", params).KV("conversationID", conversationID).Println("Unable to run command")
 			listRunCommands(author.Name, conversationID)
 		}
 	}
@@ -75,7 +76,7 @@ func processNewAdminNote(user User, author Author, conversationID string, note s
 		if cmd, ok := getCommands[params[0]]; ok {
 			cmd.Func(user, conversationID, params[1:]...)
 		} else {
-			fmt.Println("Unable to run", params)
+			log.Info.KV("err",err).KV("params", params).KV("conversationID", conversationID).Println("Unable to run command")
 			listRunCommands(author.Name, conversationID)
 		}
 	}
