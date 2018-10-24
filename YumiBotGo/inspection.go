@@ -2,9 +2,10 @@ package main
 
 import (
 	"encoding/json"
-	"fmt"
 	"strconv"
 	"time"
+
+	"happyco/libs/log"
 )
 
 type Asset struct {
@@ -34,7 +35,7 @@ func showRecentInspections(user User, conversationID string, params ...string) {
 	if len(params) > 0 {
 		limit, err = strconv.Atoi(params[0])
 		if err != nil {
-			fmt.Printf("Wrong parameters: %v\n", err)
+			log.Error.KV("err",err).KV("params", params).KV("conversationID", conversationID).Println("could not parse number of snooze days for showing recent inspections")
 		}
 	}
 	inspectionsRec := getInspections(user.UserID, limit)
