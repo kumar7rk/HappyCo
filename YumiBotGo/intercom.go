@@ -69,7 +69,7 @@ type Message struct {
 func addNote(conversationID, note string) {
 	_, err := ic.Conversations.Reply(conversationID, intercom.Admin{ID: "207278"}, intercom.CONVERSATION_NOTE, note)
 	if err != nil {
-		log.Error.KV("err",err).KV("conversationID", conversaticonID).Println("Error from Intercom while adding note")
+		log.Error.KV("err",err).KV("conversationID", conversationID).Println("Error from Intercom while adding note")
 	}
 }
 
@@ -77,7 +77,7 @@ func addNote(conversationID, note string) {
 func addReply(authorID, conversationID string, reply string) {
 	_, err := ic.Conversations.Reply(conversationID, intercom.Admin{ID: json.Number(authorID)}, intercom.CONVERSATION_COMMENT, reply)
 	if err != nil {
-		log.Error.KV("err",err).KV("conversationID", conversaticonID).Println("Error from Intercom while adding reply")
+		log.Error.KV("err",err).KV("conversationID", conversationID).Println("Error from Intercom while adding reply")
 	}
 }
 
@@ -103,7 +103,7 @@ func snoozeConversation(conversationID string, duration time.Duration) {
 	resp, err := client.Do(req)
 
 	if err != nil {
-		log.Error.KV("err",err).KV("conversationID", conversationID).Println("Error from Intercom snoozing conversation")
+		log.Error.KV("err",err).KV("conversationID", conversationID).KV("SnoozeDuration", duration).Println("Error from Intercom snoozing conversation")
 	}
 
 	defer resp.Body.Close()
@@ -123,14 +123,14 @@ func listOpenedConversations() []intercom.Conversation {
 		//running here to get the totalPages of opened conversations for a box
 		convoList, err := ic.Conversations.ListByAdmin(&intercom.Admin{ID: json.Number(inbox)}, intercom.SHOW_OPEN, intercom.PageParams{})
 		if err != nil {
-			log.Error.KV("err",err).KV("inbox",inbox)Println("Error from Intercom listing all opened conversations")
+			log.Error.KV("err",err).KV("inbox",inbox).Println("Error from Intercom listing all opened conversations for an inbox")
 		}
 
 		//running on all the pages
 		for i := 1; i <= int(convoList.Pages.TotalPages); i++ {
 			convoList, err := ic.Conversations.ListByAdmin(&intercom.Admin{ID: json.Number(inbox)}, intercom.SHOW_OPEN, intercom.PageParams{Page: int64(i)})
 			if err != nil {
-				log.Error.KV("err",err).KV("Page",i).Println("Error from Intercom listing all opened conversations for a page")
+				log.Error.KV("err",err).KV("inbox",inbox).KV("Page",i).Println("Error from Intercom listing all opened conversations for a page in an inbox")
 			}
 			totalConversations := len(convoList.Conversations)
 
@@ -139,7 +139,7 @@ func listOpenedConversations() []intercom.Conversation {
 				convoID := convoList.Conversations[j].ID
 				convo, err := ic.Conversations.Find(convoID)
 				if err != nil {
-					log.Error.KV("err",err).KV("conversationID",convoID).Println("Error from Intercom find a conversation")
+					log.Error.KV("err",err).KV("conversationID",convoID).Println("Error from Intercom finding a conversation")
 				}
 				allOpenedConversations = append(allOpenedConversations, convo)
 			}
