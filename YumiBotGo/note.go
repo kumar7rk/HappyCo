@@ -76,7 +76,7 @@ func makeNote(userID string) string {
 		}
 		permission, err := strconv.Atoi(userRoleID)
 		if err != nil {
-			log.Error.KV("err",err).KV("userID", userID).KV("conversationID", conversationID).Println("Error converting user role id for adding in yumiNote")
+			log.Error.KV("err",err).KV("userID", userID).Println("Error converting user role id for adding in yumiNote")
 		}
 
 		if businessPermission == "constant-roles" {
