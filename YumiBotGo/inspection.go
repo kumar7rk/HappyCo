@@ -2,6 +2,7 @@ package main
 
 import (
 	"encoding/json"
+	"fmt"
 	"strconv"
 	"time"
 )
@@ -28,6 +29,7 @@ func init() {
 //********************************************Adding commands********************************************
 func showRecentInspections(user User, conversationID string, params ...string) {
 	var limit = 5
+	var err = ""
 	if len(params) > 0 {
 		limit, err = strconv.Atoi(params[0])
 	}
