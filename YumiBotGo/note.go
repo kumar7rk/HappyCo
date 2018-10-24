@@ -48,12 +48,12 @@ func getUserData(ID string) (businessRec []Business, iapRec []IAP, integrationNa
 }
 
 //********************************************Building note********************************************
-func makeNote(us_id string) string {
+func makeNote(userID string) string {
 	var note string
 	var formattedDate string
 
 	//getting user data from the database
-	businessRec, iapRec, integrationName, planRecs := getUserData(us_id)
+	businessRec, iapRec, integrationName, planRecs := getUserData(userID)
 
 	note = "<b>🐶Note</b><br/><br/>"
 
