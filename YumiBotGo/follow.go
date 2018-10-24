@@ -39,15 +39,9 @@ func followUpProcess() {
 		followUpTime := time.Now().Add(-followUpDuration).Unix()
 		closeTime := time.Now().Add(-closeDuration).Unix()
 
-		canFollowUp := false
-		if followUpTime > noteAddedTime {
-			canFollowUp = true
-		}
+		canFollowUp := followUpTime > noteAddedTime
+		canClose := closeTime > noteAddedTime
 
-		canClose := false
-		if closeTime > noteAddedTime {
-			canClose = true
-		}
 		if !canFollowUp && !canClose {
 			continue
 		}
