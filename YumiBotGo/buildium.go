@@ -1,10 +1,11 @@
 package main
 
 import (
-	"fmt"
 	"strconv"
 	"strings"
 	"time"
+
+	"happyco/libs/log"
 )
 
 // P2ABoxID represents intercom's P2A inbox ID
@@ -32,7 +33,7 @@ func sendBuildiumReply(user User, author Author, conversationID string, params .
 		//checking if the second param is a number or not
 		val, err := strconv.Atoi(params[1])
 		if err != nil {
-			fmt.Printf("Wrong parameters: %v\n", err)
+			log.Error.KV("err",err).KV("params", params).KV("conversationID", conversationID).Println("could not parse number of snooze days for send buildium reply")
 		} else {
 			snoozeDuration = time.Duration(val) * 24 * time.Hour
 		}
