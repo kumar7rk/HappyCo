@@ -33,7 +33,7 @@ func sendBuildiumReply(user User, author Author, conversationID string, params .
 		//checking if the second param is a number or not
 		val, err := strconv.Atoi(params[1])
 		if err != nil {
-			log.Error.KV("err",err).KV("params", params).KV("conversationID", conversationID).Println("could not parse number of snooze days for sending buildium reply")
+			log.Error.KV("err", err).KV("params", params).KV("conversationID", conversationID).Println("could not parse number of snooze days for sending buildium reply")
 		} else {
 			snoozeDuration = time.Duration(val) * 24 * time.Hour
 		}

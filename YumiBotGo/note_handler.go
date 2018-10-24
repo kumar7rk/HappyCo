@@ -62,7 +62,7 @@ func processNewAdminNote(user User, author Author, conversationID string, note s
 		if cmd, ok := repCommands[params[0]]; ok {
 			cmd.Func(user, author, conversationID, params[1:]...)
 		} else {
-			log.Info.KV("err",ok).KV("params", params).KV("conversationID", conversationID).Println("Unable to run command")
+			log.Info.KV("err", ok).KV("params", params).KV("conversationID", conversationID).Println("Unable to run command")
 			listRunCommands(author.Name, conversationID)
 		}
 	}
@@ -76,7 +76,7 @@ func processNewAdminNote(user User, author Author, conversationID string, note s
 		if cmd, ok := getCommands[params[0]]; ok {
 			cmd.Func(user, conversationID, params[1:]...)
 		} else {
-			log.Info.KV("err",ok).KV("params", params).KV("conversationID", conversationID).Println("Unable to run command")
+			log.Info.KV("err", ok).KV("params", params).KV("conversationID", conversationID).Println("Unable to run command")
 			listRunCommands(author.Name, conversationID)
 		}
 	}

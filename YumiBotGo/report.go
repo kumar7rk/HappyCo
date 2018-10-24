@@ -19,7 +19,7 @@ func showRecentReports(user User, conversationID string, params ...string) {
 	if len(params) > 0 {
 		limit, err = strconv.Atoi(params[0])
 		if err != nil {
-			log.Error.KV("err",err).KV("params", params).KV("conversationID", conversationID).Println("could not parse number of snooze days for showing recent reports")
+			log.Error.KV("err", err).KV("params", params).KV("conversationID", conversationID).Println("could not parse number of snooze days for showing recent reports")
 		}
 	}
 	reportsRec := getReports(user.UserID, limit)

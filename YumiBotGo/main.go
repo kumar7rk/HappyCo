@@ -8,9 +8,9 @@ import (
 
 	"happyco/apps/tools/libs/buildvars"
 	"happyco/libs/log"
-	
+
 	"github.com/jmoiron/sqlx"
-	
+
 	_ "github.com/lib/pq"
 )
 

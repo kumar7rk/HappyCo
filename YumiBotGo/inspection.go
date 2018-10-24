@@ -31,11 +31,11 @@ func init() {
 func showRecentInspections(user User, conversationID string, params ...string) {
 	var limit = 5
 	var err error
-	
+
 	if len(params) > 0 {
 		limit, err = strconv.Atoi(params[0])
 		if err != nil {
-			log.Error.KV("err",err).KV("params", params).KV("conversationID", conversationID).Println("could not parse number of snooze days for showing recent inspections")
+			log.Error.KV("err", err).KV("params", params).KV("conversationID", conversationID).Println("could not parse number of snooze days for showing recent inspections")
 		}
 	}
 	inspectionsRec := getInspections(user.UserID, limit)
