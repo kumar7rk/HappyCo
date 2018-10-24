@@ -29,12 +29,13 @@ func init() {
 //********************************************Adding commands********************************************
 func showRecentInspections(user User, conversationID string, params ...string) {
 	var limit = 5
-	var err = ""
+	var err error
+	
 	if len(params) > 0 {
 		limit, err = strconv.Atoi(params[0])
-	}
-	if err != nil {
-		fmt.Printf("Wrong parameters: %v\n", err)
+		if err != nil {
+			fmt.Printf("Wrong parameters: %v\n", err)
+		}
 	}
 	inspectionsRec := getInspections(user.UserID, limit)
 	message := "<b>Showing " + strconv.Itoa(len(inspectionsRec)) + " recent inspections created by " + user.Name + " in last 30 days</b>"

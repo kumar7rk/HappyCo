@@ -13,13 +13,13 @@ func init() {
 //********************************************Adding commands********************************************
 func showRecentReports(user User, conversationID string, params ...string) {
 	var limit = 5
-	var err = ""
+	var err error
 
 	if len(params) > 0 {
 		limit, err = strconv.Atoi(params[0])
-	}
-	if err != nil {
-		fmt.Printf("Wrong parameters: %v\n", err)
+		if err != nil {
+			fmt.Printf("Wrong parameters: %v\n", err)
+		}
 	}
 	reportsRec := getReports(user.UserID, limit)
 
