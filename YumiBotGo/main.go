@@ -2,15 +2,16 @@ package main
 
 import (
 	"errors"
-	"fmt"
 	"net/http"
 	"os"
 	"time"
 
-	"github.com/jmoiron/sqlx"
-	_ "github.com/lib/pq"
-
 	"happyco/apps/tools/libs/buildvars"
+	"happyco/libs/log"
+	
+	"github.com/jmoiron/sqlx"
+	
+	_ "github.com/lib/pq"
 )
 
 var db *sqlx.DB
@@ -21,16 +22,16 @@ func main() {
 
 	postgresURI := os.Getenv("POSTGRES_URI")
 	if postgresURI == "" {
-		fmt.Println("URI error")
+		log.Error.Println("URI Error")
 	}
 
 	db, err = sqlx.Connect("postgres", postgresURI)
 
 	if err == nil {
-		fmt.Println("DB Connected")
+		log.Info.Println("Connected to database")
 	}
 	if err != nil {
-		fmt.Fprintf(os.Stderr, "Error connecting to DB%v: %v\n", "", err)
+		log.Error.KV("err", err).Println("Error connecting to database")
 		return
 	}
 
