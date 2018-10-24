@@ -32,16 +32,16 @@ func newConversation(w http.ResponseWriter, r *http.Request) {
 
 	/* getting attributes from the received json
 	user- user's attributes - name id email type
-	conversationId - Intercom conversation ID
+	conversationID - Intercom conversation ID
 	conversationmessage- user's message
 	*/
 
 	user := msg.Data.Item.User
-	conversationId := msg.Data.Item.ConversationID
+	conversationID := msg.Data.Item.ConversationID
 	conversationMessage := msg.Data.Item.ConversationMessage.Body
 	conversationSubject := msg.Data.Item.ConversationMessage.Subject
 
-	go processNewConversation(user, conversationId, conversationMessage, conversationSubject)
+	go processNewConversation(user, conversationID, conversationMessage, conversationSubject)
 	w.WriteHeader(http.StatusOK)
 	w.Write([]byte("Received"))
 }
