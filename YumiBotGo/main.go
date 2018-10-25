@@ -23,6 +23,7 @@ func main() {
 	postgresURI := os.Getenv("POSTGRES_URI")
 	if postgresURI == "" {
 		log.Error.Println("No Postgres URI provided")
+		return
 	}
 
 	db, err = sqlx.Connect("postgres", postgresURI)
