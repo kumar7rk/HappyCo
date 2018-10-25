@@ -123,6 +123,7 @@ func listOpenedConversations() []intercom.Conversation {
 		//running here to get the totalPages of opened conversations for a box
 		convoList, err := ic.Conversations.ListByAdmin(&intercom.Admin{ID: json.Number(inbox)}, intercom.SHOW_OPEN, intercom.PageParams{})
 		if err != nil {
+			continue
 			log.Error.KV("err", err).KV("inbox", inbox).Println("Error from Intercom listing all opened conversations for an inbox")
 		}
 
@@ -130,6 +131,7 @@ func listOpenedConversations() []intercom.Conversation {
 		for i := 1; i <= int(convoList.Pages.TotalPages); i++ {
 			convoList, err := ic.Conversations.ListByAdmin(&intercom.Admin{ID: json.Number(inbox)}, intercom.SHOW_OPEN, intercom.PageParams{Page: int64(i)})
 			if err != nil {
+				continue
 				log.Error.KV("err", err).KV("inbox", inbox).KV("Page", i).Println("Error from Intercom listing all opened conversations for a page in an inbox")
 			}
 			totalConversations := len(convoList.Conversations)
@@ -140,6 +142,7 @@ func listOpenedConversations() []intercom.Conversation {
 				convo, err := ic.Conversations.Find(convoID)
 				if err != nil {
 					log.Error.KV("err", err).KV("conversationID", convoID).Println("Error from Intercom finding a conversation")
+					continue
 				}
 				allOpenedConversations = append(allOpenedConversations, convo)
 			}
