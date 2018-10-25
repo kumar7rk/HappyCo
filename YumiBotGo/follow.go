@@ -1,6 +1,7 @@
 package main
 
 import (
+	"strings"
 	"time"
 )
 
@@ -53,10 +54,10 @@ func followUpProcess() {
 		if lastNote.PartType == "note" && lastNote.Body == "<p>yumi rep follow</p>" && canFollowUp {
 			addReply(authorID, convo.ID, followUpMessage(userName, authorName))
 			snoozeConversation(convo.ID, 7*24*time.Hour)
-			addNote(convo.ID, "followed up")
+			addNote(convo.ID, "Followed up")
 		}
 		//check if conversation can be closed
-		if lastNote.PartType == "note" && lastNote.Body == "<p>followed up</p>" && canClose {
+		if lastNote.PartType == "note" && strings.EqualFold(lastNote.Body) == "<p>Followed up</p>" && canClose {
 			addReply(authorID, convo.ID, closingMessage(userName, authorName))
 			addNote(convo.ID, "Conversation closed")
 		}
