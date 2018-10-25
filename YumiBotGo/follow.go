@@ -13,7 +13,7 @@ func init() {
 	After 4 days a closing message is sent.
 	<b>Want to cancel? You can't. JK. Just enter a note during this time</b>
 	It will also cancel if a customer messages or we reply.
-	Currently, this job runs every 12 hours.`}
+	Currently, this job runs every 4 hours.`}
 }
 
 //********************************************Follow up********************************************
