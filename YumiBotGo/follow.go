@@ -7,7 +7,7 @@ import (
 
 //********************************************Init********************************************
 func init() {
-	repCommands["follow"] = RepCommand{Func: followUpConversation, Description: `A conversation is snoozed for 3 days. 
+	replyCommands["follow"] = ReplyCommand{Func: followUpConversation, Description: `A conversation is snoozed for 3 days. 
 	After 2 days a follow up message is sent from you. (a note "followed up" is added from HappyBot)
 	The conversation is snoozed for 5 days.
 	After 4 days a closing message is sent.
@@ -51,7 +51,7 @@ func followUpProcess() {
 		userName := getUserName(convo.User.ID)
 
 		//checking if a conversation meets the parameters for following up
-		if lastNote.PartType == "note" && lastNote.Body == "<p>yumi rep follow</p>" && canFollowUp {
+		if lastNote.PartType == "note" && lastNote.Body == "<p>yumi reply follow</p>" && canFollowUp {
 			addReply(authorID, convo.ID, followUpMessage(userName, authorName))
 			snoozeConversation(convo.ID, 7*24*time.Hour)
 			addNote(convo.ID, "Followed up")
