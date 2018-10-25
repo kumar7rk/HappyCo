@@ -16,7 +16,7 @@ func init() {
 	replyCommands["buildium"] = ReplyCommand{Func: sendBuildiumReply, Description: `Sends a buildium message to a user
 		<b>Default</b> snooze is 7 days.
 		<b>Arguments</b> either name or snooze time.
-		<b>Example</b> yumi rep buildium [name] or [days to snooze]`}
+		<b>Example</b> yumi reply buildium [name] or [days to snooze]`}
 }
 
 //********************************************Sending Buildium reply********************************************

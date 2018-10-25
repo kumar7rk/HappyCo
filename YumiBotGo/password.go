@@ -16,7 +16,7 @@ func init() {
 	replyCommands["password"] = ReplyCommand{Func: sendPasswordReply, Description: `Sends password reset instructions.
 		<b>Default</b> snooze is 3 days.
 		<b>Arguments</b> either name or snooze time.
-		<b>Example</b> yumi rep password [name] or [days to snooze]`}
+		<b>Example</b> yumi reply password [name] or [days to snooze]`}
 }
 
 //********************************************Sending password reply********************************************
