@@ -53,13 +53,13 @@ func processNewAdminNote(user User, author Author, conversationID string, note s
 		return
 	}
 
-	if strings.HasPrefix(note, "<p>yumi rep ") {
-		note = strings.TrimSuffix(note[12:], "</p>")
+	if strings.HasPrefix(note, "<p>yumi reply ") {
+		note = strings.TrimSuffix(note[14:], "</p>")
 		if strings.Contains(note, "<br>") {
 			note = strings.TrimSuffix(note, "<br>")
 		}
 		params := strings.Split(note, " ")
-		if cmd, ok := repCommands[params[0]]; ok {
+		if cmd, ok := replyCommands[params[0]]; ok {
 			cmd.Func(user, author, conversationID, params[1:]...)
 		} else {
 			log.Info.KV("err", ok).KV("params", params).KV("conversationID", conversationID).Println("Unable to run command")
@@ -82,7 +82,7 @@ func processNewAdminNote(user User, author Author, conversationID string, note s
 	}
 }
 
-type RepCommand struct {
+type ReplyCommand struct {
 	Description string
 	Func        func(user User, author Author, conversationID string, params ...string)
 }
@@ -92,5 +92,5 @@ type GetCommand struct {
 	Func        func(user User, conversationID string, params ...string)
 }
 
-var repCommands map[string]RepCommand = make(map[string]RepCommand)
+var replyCommands map[string]ReplyCommand = make(map[string]ReplyCommand)
 var getCommands map[string]GetCommand = make(map[string]GetCommand)
