@@ -22,18 +22,16 @@ func main() {
 
 	postgresURI := os.Getenv("POSTGRES_URI")
 	if postgresURI == "" {
-		log.Error.Println("URI Error")
+		log.Error.Println("No Postgres URI provided")
 	}
 
 	db, err = sqlx.Connect("postgres", postgresURI)
 
-	if err == nil {
-		log.Info.Println("Connected to database")
-	}
 	if err != nil {
 		log.Error.KV("err", err).Println("Error connecting to database")
 		return
 	}
+	log.Info.Println("Connected to database")
 
 	go runFollowupChecker()
 
