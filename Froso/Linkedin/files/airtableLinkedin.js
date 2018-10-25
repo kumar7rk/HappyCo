@@ -42,50 +42,62 @@ async function run () {
   try{
     base('Data').select({
         maxRecords: 10,
-        // pageSize:1,
+        pageSize:1,
         sort: [{field: "full_name", direction: "asc"}],
         view: "Master"
     }).eachPage(function page(records, fetchNextPage) {
         records.forEach(function(record) {
           (async () => {
-            var name = "";
             
             await webpage.goto(record.get('linkedin_url'));
-            await webpage.waitFor(2 * 1000);
+            log("fetching: "+record.get('linkedin_url'))
+            await new Promise(function(resolve) {
+              setTimeout(resolve, 2000);
+            });
+            // await webpage.waitFor(2 * 1000);
+            var location = await webpage.evaluate(() => document.querySelector('div.pv-top-card-v2-section__info.mr5 > h3').textContent);
 
-            location = await webpage.evaluate(() => document.querySelector('div.pv-top-card-v2-section__info.mr5 > h3').textContent);
-
-            await webpage.waitFor(2 * 1000);
+            await new Promise(function(resolve) {
+              setTimeout(resolve, 2000);
+            });
+            // await webpage.waitFor(2 * 1000);
             var obj = new data(record.getId(),location)
             allData.push(obj)
-            log("pushing data. Very hard:"+record.getId()+location);
-            await browser.close();
+            log("Pushing data. Very hard:"+record.getId()+record.get('full_name')+location);
+            // await browser.close();
+            await new Promise(function(resolve) {
+              setTimeout(resolve, 2000);
+            });
+            // await webpage.waitFor(2 * 1000);
          })();
        });
       fetchNextPage();
+
       }, function done(err) {
           console.log("Done")
       if (err) {
-        log("I'm Done (w/you)");
+        log("I'm done (w/you)");
         console.error(err); 
         return;
       }
+
+      log("Total record fetched: "+allData.length)
+      for (var i = 0; i < allData.length; i++) {
+        log(allData[i].Location)
+        base('Data').update(allData[i].ID,{
+          "location": allData[i].Location,
+        },function(err, record) {
+            if (err) {
+              console.error("I'm printing an error"+ err);
+              return;
+            }
+            else{
+              log("Location updated for:"+record.get('full_name'));
+            }
+          });
+      }
     });
 
-    for (var i = 0; i < allData.length; i++) {
-      log(allData[i].Location)
-      base('Data').update(allData[i].ID,{
-        "location": allData[i].Location,
-      },function(err, record) {
-          if (err) {
-            console.error("I'm printing an error"+ err);
-            return;
-          }
-          else{
-            log("Location updated for:"+record.get('full_name'));
-          }
-        });
-      }
   }//try
   catch(error){
     console.log("I'm catch and I'm catching bad boys today");
