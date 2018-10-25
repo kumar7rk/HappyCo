@@ -43,7 +43,7 @@ try{
   first_sheet_name = workbook.SheetNames[0];
   worksheet = workbook.Sheets[first_sheet_name];
 
-  for (var i = 2; i < 11; i++) {
+  for (var i = 2; i < 4; i++) {
     console.log("Row: "+i);
     var address = 'R'+i;
     var cell = workbook[address];
@@ -200,8 +200,23 @@ try{
         }
       }
     }
+    var today = new Date();
+    var dd = today.getDate();
+    var mm = today.getMonth()+1;
+    var yyyy = today.getFullYear();
+
+    if(dd<10) {
+        dd = '0'+dd
+    } 
+
+    if(mm<10) {
+        mm = '0'+mm
+    } 
+
+    today = mm + '-' + dd + '-' + yyyy;
+
     if (i%2==0) {
-      XLSX.writeFile(workbook ,'output.xlsx')
+      XLSX.writeFile(workbook ,'output '+today+'.xlsx')
     }
   }//for
 }//try
@@ -267,5 +282,5 @@ async function hasValueChanged(readCell,data, writeCell) {
 }
 //********************************************Log********************************************
 async function log(value){
-  console.log(value);
+  // console.log(value);
 }
