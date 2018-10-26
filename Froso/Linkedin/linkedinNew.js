@@ -223,9 +223,7 @@ try{
 
     today = mm + '-' + dd + '-' + yyyy;
 
-    if (i%2==0) {
-      XLSX.writeFile(workbook ,'output '+today+'.xlsx')
-    }
+    XLSX.writeFile(workbook ,'output '+today+'.xlsx')
   }//for
 }//try
 catch(error){
