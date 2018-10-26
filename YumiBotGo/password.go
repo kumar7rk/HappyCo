@@ -59,19 +59,14 @@ func hasIdentifiableName(user User) bool {
 	firstName := strings.Split(user.Name, " ")[0]
 	userNameInLowerCase := strings.ToLower(user.Name)
 
-	//checking certain keywords
-	var excludeList = []string{"property", "inspector", "management", "maintenance", "department", "mgmt", "dept"}
+	//checking certain keywords and numbers
+	var excludeList = []string{"property", "inspector", "management", "maintenance", "department", "mgmt", "dept","0","1","2","3","4","5","6","7","8","9"}
 	for _, name := range excludeList {
 		if strings.Contains(userNameInLowerCase, name) {
 			return false
 		}
 	}
-	//checking numbers
-	for i := 0; i < 9; i++ {
-		if strings.Contains(user.Name, strconv.Itoa(i)) {
-			return false
-		}
-	}
+
 	//checking acronyms
 	if firstName == strings.ToUpper(firstName) {
 		return false
