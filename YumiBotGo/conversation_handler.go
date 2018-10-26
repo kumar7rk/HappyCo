@@ -49,11 +49,11 @@ func newConversation(w http.ResponseWriter, r *http.Request) {
 //********************************************Checking for different attributes********************************************
 func processNewConversation(user User, conversationID string, conversationMessage string, conversationSubject string) {
 
-	var isBuildiumUser bool
 	// user.type = lead/user
 	if user.Type == "user" {
 		makeAndSendNote(user, conversationID)
 
+		var isBuildiumUser bool
 		planRecs := getUserPlans(user.UserID)
 		for _, plan := range planRecs {
 			if plan.ID == BuildiumPlanID {
