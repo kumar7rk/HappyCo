@@ -247,8 +247,7 @@ async function getData(selector) {
     if (document.querySelector(selector) != null) {
         if (document.querySelector(selector).textContent != null) {
           val = document.querySelector(selector).textContent;
-          val = val.trim();
-          return val;
+          return val.trim();
        }
     }
   }, selector);
