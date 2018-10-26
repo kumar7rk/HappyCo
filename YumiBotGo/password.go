@@ -60,7 +60,7 @@ func hasIdentifiableName(user User) bool {
 	userNameInLowerCase := strings.ToLower(user.Name)
 
 	//checking certain keywords and numbers
-	var excludeList = []string{"property", "inspector", "management", "maintenance", "department", "mgmt", "dept","0","1","2","3","4","5","6","7","8","9"}
+	var excludeList = []string{"property", "inspector", "management", "maintenance", "department", "mgmt", "dept", "0", "1", "2", "3", "4", "5", "6", "7", "8", "9"}
 	for _, name := range excludeList {
 		if strings.Contains(userNameInLowerCase, name) {
 			return false
