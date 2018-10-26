@@ -6,11 +6,13 @@ const {performance} = require('perf_hooks');
 //puppeteer variables
 var browser;
 var page;
+
 //SheetJS variables
 var workbook;
 var first_sheet_name;
 var worksheet;
 
+//call main func
 run();
 
 //********************************************Main function********************************************
@@ -45,13 +47,12 @@ try{
 
   for (var i = 2; i < 4; i++) {
     console.log("Row: "+i);
+
     var address = 'R'+i;
     var cell = workbook[address];
     var profileUnavailable = (cell ? cell.v : undefined);
     //if profile was unavailable last time and wasn't removed- skip the row
     if (profileUnavailable === "TRUE") {
-      setData('R'+i,"TRUE");
-      setTodaysDate(i);
       continue;
     }
     address = 'B'+i;
@@ -63,53 +64,56 @@ try{
     await page.evaluate(_ => {
       window.scrollBy(0, window.innerHeight);
     });
+    
     var data = "";  
     var multiPosition = false;
     var jobExists = false;
 
-    //exiting if the profile is unavailable/deleted
+    //exit if the profile is unavailable/deleted
     if (await page.url().includes("linkedin.com/in/unavailable")) {
       setData('R'+i,"TRUE");
       setTodaysDate(i);
       continue;
     }
 
-    //getting current job - all information
+    //check if a job exists
     if (await page.evaluate(() => document.getElementsByClassName
       ('pv-entity__position-group-pager ember-view'))!==null) {
       log("Job is not null");
+    //if it does, does it have any data
       if (await page.evaluateHandle(() => document.getElementsByClassName
       ('pv-entity__position-group-pager ember-view').textContent)!==null) {
           log("Job has some data too");
           jobExists = true
+          //gett all information for the current/most recent job 
           data = await page.evaluateHandle(() => {
           return Array.from(document.getElementsByClassName('pv-entity__position-group-pager ember-view')).map(elem => elem.textContent.trim()).slice(0,1);
         });
       }
     }
 
-    //converting json to string
+    //convert json to string
     var str = JSON.stringify(await data.jsonValue())
     //if text starts with `["Company Name...` --> the (current) job has multiple positions
     log("str:"+str);
     if (str.trim().startsWith('["Company Name')) {
       multiPosition = true;
     }
+
     var sel = "";
-    //if job exists we can get job specific information else get basic information
+    //if job exists get job specific information (else get basic information)
     if (jobExists && str!=="[]") {
       //only one position in the current job
       if (!multiPosition) {
         console.log("single position")
 
-        //adding title, company name, current job duration
+        //add title, company name, current job duration into excel
         sel = 'div.pv-entity__summary-info.pv-entity__summary-info--v2 >h3';
         await page.waitFor(2 * 1000);
         var title = await getData(sel);
         if (title !== undefined) {
           title = title.replace('Title','').trim();
         }
-        // log("Title",title)
         setData('J'+i,title);
        
         sel = 'div > h4 > span:nth-child(2)';
@@ -122,11 +126,11 @@ try{
         log("Current Job Duration:"+currentJobDuration);
         setData('N'+i,currentJobDuration);
       }
-     //multiple positions in the current job
+      //multiple positions in the current job
       else{
         console.log("multiple positions")
         
-        //adding title, company name, current job duration
+        //add title, company name, current job duration into excel
         // sel = 'div > div > div.pv-entity__summary-info-v2.pv-entity__summary-info--v2.pv-entity__summary-info-margin-top.mb2 > h3 > span:nth-child(2)';
         sel = 'div > div > div > h3 > span:nth-child(2)';
         var title = await getData(sel);
@@ -137,6 +141,7 @@ try{
         var companyName = await getData(sel);
         log("Company Name:"+companyName);
         setData('L'+i,companyName);
+        
         sel = 'div > div > div.pv-entity__summary-info-v2.pv-entity__summary-info--v2.pv-entity__summary-info-margin-top.mb2 > div > h4:nth-child(2) > span.pv-entity__bullet-item-v2';
         var currentJobDuration = await getData(sel);
         log("Current Job Duration:"+currentJobDuration);
@@ -144,16 +149,16 @@ try{
       }//end of else
     }//jobExists
 
-    //getting name
+    //get name
     var name = ""
     sel = 'div.pv-top-card-v2-section__info.mr5 > div:nth-child(1) > h1';
     var name = await getData(sel);
     name = name.trim();
     log("Name:"+name);
     
-    //adding phone location birthday
+    //add phone location birthday into excel
     const clickElement = 'span.pv-top-card-v2-section__entity-name.pv-top-card-v2-section__contact-info.ml2'
-    if (name !="") {
+    if (name !="") {//??note sure why - cause if a profile is unavailable if skip. what else it can be. but better check than not
       await page.click(clickElement);
       await page.waitFor(1 * 1000);
 
@@ -177,16 +182,15 @@ try{
       setData('Q'+i,birthday);
     }
 
-    //adding today's date to track when was profile last visited
+    //add today's date to track when a profile was last visited
     setTodaysDate(i);
 
-    //check if name title company has changed
-    //if so print true in the excel
-    hasValueChanged('D'+i,name,'I'+i);
-    hasValueChanged('E'+i,title,'K'+i);
-    hasValueChanged('F'+i,companyName,'M'+i);
+    //add in excel if name title company has changed
+    valueChanged('D'+i,name,'I'+i);
+    valueChanged('E'+i,title,'K'+i);
+    valueChanged('F'+i,companyName,'M'+i);
 
-    //checking if the current job is less than 3 months old
+    //add in excel if the current job is less than 3 months old
     if (currentJobDuration != "" && currentJobDuration != undefined) {
       var ym = currentJobDuration.split(" ");
       if (ym.length ==2) {
@@ -200,6 +204,7 @@ try{
         }
       }
     }
+    //get today's date for output file name
     var today = new Date();
     var dd = today.getDate();
     var mm = today.getMonth()+1;
@@ -234,29 +239,29 @@ await browser.close();
 })*/
 }//run()
 
-//********************************************Getting data from LinkedIn********************************************
+//********************************************Get data from LinkedIn********************************************
 async function getData(selector) {
-  var resultsString = "Null";
+  var val = "Null";
   const result = await page.evaluate((selector) => {
     if (document.querySelector(selector) != null) {
         if (document.querySelector(selector).textContent != null) {
-          resultsString = document.querySelector(selector).textContent;
-          resultsString = resultsString.trim();
-          return resultsString;
+          val = document.querySelector(selector).textContent;
+          val = val.trim();
+          return val;
        }
     }
   }, selector);
   return result;
 }
 
-//********************************************Adding data to cell********************************************
+//********************************************Add data to cell********************************************
 async function setData(writeCell, data) {
   if (!worksheet[writeCell]) {
      worksheet[writeCell] = {}
   }
   worksheet[writeCell].v = data;
 }
-//********************************************Setting today's date as a profile's last visited date********************************************
+//********************************************Set today's date as a profile's last visited date********************************************
 async function setTodaysDate(i) {
   var today = new Date();
   var dd = today.getDate();
@@ -272,8 +277,8 @@ async function setTodaysDate(i) {
     setData('P'+i,lastVisitedDate);
 }
 
-//********************************************Comparing values********************************************
-async function hasValueChanged(readCell,data, writeCell) {
+//********************************************Compare values********************************************
+async function valueChanged(readCell,data, writeCell) {
   var cell = worksheet[readCell];
   var value = (cell ? cell.v : undefined);
   if (value !== data && (data !==""|| value !=="")) {
