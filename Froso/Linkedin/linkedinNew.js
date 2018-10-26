@@ -135,6 +135,7 @@ try{
         //add title, company name, current job duration into excel
         // sel = 'div > div > div.pv-entity__summary-info-v2.pv-entity__summary-info--v2.pv-entity__summary-info-margin-top.mb2 > h3 > span:nth-child(2)';
         sel = 'div > div > div > h3 > span:nth-child(2)';
+        await page.waitFor(2 * 1000);
         var title = await getData(sel);
         log("I got this title:"+title);
         setData('J'+i,title);
