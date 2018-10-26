@@ -61,9 +61,11 @@ try{
 
     await page.goto(url);
     await page.waitFor(3 * 1000);
-    await page.evaluate(_ => {
-      window.scrollBy(0, window.innerHeight);
-    });
+    for (var j = 0; j < 2; j++) {
+      await page.evaluate(_ => {
+        window.scrollBy(0, window.innerHeight);
+      });
+    }
     
     var data = "";  
     var multiPosition = false;
