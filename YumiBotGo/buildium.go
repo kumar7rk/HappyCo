@@ -15,8 +15,8 @@ const P2ABoxID = "1615207"
 func init() {
 	replyCommands["buildium"] = ReplyCommand{Func: sendBuildiumReply, Description: `Sends a buildium message to a user
 		<b>Default</b> snooze is 7 days.
-		<b>Arguments</b> either name or snooze time.
-		<b>Example</b> yumi reply buildium [name] or [days to snooze]`}
+		<b>Arguments</b> either name/snooze time or both
+		<b>Example</b> yumi reply buildium [name] [days to snooze]`}
 }
 
 //********************************************Sending Buildium reply********************************************
