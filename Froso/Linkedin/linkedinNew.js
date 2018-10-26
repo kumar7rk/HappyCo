@@ -20,7 +20,7 @@ async function run () {
   browser = await puppeteer.launch({
     headless: false
   });
- 
+
   page = await browser.newPage();
   await page.goto("https://www.linkedin.com");
 
@@ -36,7 +36,7 @@ async function run () {
   
   await page.click(BUTTON_SELECTOR);
   await page.waitForNavigation();
-    
+
   var t0 = performance.now();
 try{
   if(typeof require !== 'undefined') XLSX = require('xlsx');
@@ -45,7 +45,7 @@ try{
   first_sheet_name = workbook.SheetNames[0];
   worksheet = workbook.Sheets[first_sheet_name];
 
-  for (var i = 2; i < 4; i++) {
+  for (var i = 2; i < 11; i++) {
     console.log("Row: "+i);
 
     var address = 'R'+i;
@@ -212,11 +212,11 @@ try{
 
     if(dd<10) {
         dd = '0'+dd
-    } 
+    }
 
     if(mm<10) {
         mm = '0'+mm
-    } 
+    }
 
     today = mm + '-' + dd + '-' + yyyy;
 
