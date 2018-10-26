@@ -36,6 +36,7 @@ func showRecentInspections(user User, conversationID string, params ...string) {
 		limit, err = strconv.Atoi(params[0])
 		if err != nil {
 			log.Error.KV("err", err).KV("params", params).KV("conversationID", conversationID).Println("could not parse number of snooze days for showing recent inspections")
+			limit = 5
 		}
 	}
 	inspectionsRec := getInspections(user.UserID, limit)
