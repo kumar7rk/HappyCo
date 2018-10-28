@@ -27,7 +27,7 @@ type Author struct {
 	ID   string
 }
 
-var yumiBot = Author{Name: "HappyBot", ID: "207278"}
+var yumiBot = Author{Name: "HappyBot", ID: "2708121"}
 
 type Part struct {
 	Body   string
@@ -67,7 +67,7 @@ type Message struct {
 
 //********************************************Add note********************************************
 func addNote(conversationID, note string) {
-	_, err := ic.Conversations.Reply(conversationID, intercom.Admin{ID: "207278"}, intercom.CONVERSATION_NOTE, note)
+	_, err := ic.Conversations.Reply(conversationID, intercom.Admin{ID: json.Number(yumiBot.ID)}, intercom.CONVERSATION_NOTE, note)
 	if err != nil {
 		log.Error.KV("err", err).KV("conversationID", conversationID).Println("Error from Intercom while adding note")
 	}
@@ -83,7 +83,7 @@ func addReply(authorID, conversationID string, reply string) {
 
 //********************************************Assign conversation********************************************
 func assignConversation(conversationID string, inboxTo string) {
-	_, err := ic.Conversations.Assign(conversationID, &intercom.Admin{ID: "207278"}, &intercom.Admin{ID: json.Number(inboxTo)})
+	_, err := ic.Conversations.Assign(conversationID, &intercom.Admin{ID: "2708121"}, &intercom.Admin{ID: json.Number(inboxTo)})
 	if err != nil {
 		log.Error.KV("err", err).KV("conversationID", conversationID).KV("inboxTo", inboxTo).Println("Error from Intercom while assigning conversation")
 	}
@@ -92,7 +92,7 @@ func assignConversation(conversationID string, inboxTo string) {
 //********************************************Snooze conversation********************************************
 func snoozeConversation(conversationID string, duration time.Duration) {
 	url := "https://api.intercom.io/conversations/" + conversationID + "/reply"
-	payload := []byte(`{ "admin_id":"207278", "message_type":"snoozed", "snoozed_until":` + strconv.FormatInt(time.Now().Add(duration).Unix(), 10) + `}`)
+	payload := []byte(`{ "admin_id":"2708121", "message_type":"snoozed", "snoozed_until":` + strconv.FormatInt(time.Now().Add(duration).Unix(), 10) + `}`)
 
 	req, _ := http.NewRequest("POST", url, bytes.NewBuffer(payload))
 	req.Header.Set("Authorization", "Bearer "+os.Getenv("INTERCOM_ACCESS_TOKEN"))
