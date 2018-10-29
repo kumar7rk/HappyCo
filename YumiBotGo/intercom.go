@@ -83,7 +83,7 @@ func addReply(authorID, conversationID string, reply string) {
 
 //********************************************Assign conversation********************************************
 func assignConversation(conversationID string, inboxTo string) {
-	_, err := ic.Conversations.Assign(conversationID, &intercom.Admin{ID: "2708121"}, &intercom.Admin{ID: json.Number(inboxTo)})
+	_, err := ic.Conversations.Assign(conversationID, &intercom.Admin{ID: json.Number(yumiBot.ID)}, &intercom.Admin{ID: json.Number(inboxTo)})
 	if err != nil {
 		log.Error.KV("err", err).KV("conversationID", conversationID).KV("inboxTo", inboxTo).Println("Error from Intercom while assigning conversation")
 	}
@@ -92,7 +92,7 @@ func assignConversation(conversationID string, inboxTo string) {
 //********************************************Snooze conversation********************************************
 func snoozeConversation(conversationID string, duration time.Duration) {
 	url := "https://api.intercom.io/conversations/" + conversationID + "/reply"
-	payload := []byte(`{ "admin_id":"2708121", "message_type":"snoozed", "snoozed_until":` + strconv.FormatInt(time.Now().Add(duration).Unix(), 10) + `}`)
+	payload := []byte(`{ "admin_id":`+yumiBot.ID+`, "message_type":"snoozed", "snoozed_until":` + strconv.FormatInt(time.Now().Add(duration).Unix(), 10) + `}`)
 
 	req, _ := http.NewRequest("POST", url, bytes.NewBuffer(payload))
 	req.Header.Set("Authorization", "Bearer "+os.Getenv("INTERCOM_ACCESS_TOKEN"))
