@@ -62,6 +62,7 @@ func followUpProcess() {
 		//check if conversation can be closed		
 		if strings.Contains(lastNote.PartType,"note") && strings.EqualFold(lastNote.Body, "<p>Followed up</p>") && canClose {
 			addReply(authorID, convo.ID, closingMessage(userName, authorName))
+			closeConversation(convo.ID)
 			addNote(convo.ID, "Conversation closed")
 		}
 	}
