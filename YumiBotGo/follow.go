@@ -45,7 +45,11 @@ func followUpProcess() {
 		if !canFollowUp && !canClose {
 			continue
 		}
+		//if note is from happybot set authorID to Richelle's
 		authorID := lastNote.Author.ID
+		if authorID == "2708121" {
+			authorID = "424979"
+		}
 		authorName := m[authorID]
 		userName := getUserName(convo.User.ID)
 
