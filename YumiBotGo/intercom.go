@@ -93,7 +93,7 @@ func assignConversation(conversationID string, inboxTo string) {
 //********************************************Snooze conversation********************************************
 func snoozeConversation(conversationID string, duration time.Duration) {
 	url := "https://api.intercom.io/conversations/" + conversationID + "/reply"
-	payload := []byte(`{ "admin_id":`+yumiBot.ID+`, "message_type":"snoozed", "snoozed_until":` + strconv.FormatInt(time.Now().Add(duration).Unix(), 10) + `}`)
+	payload := []byte(`{ "admin_id":` + yumiBot.ID + `, "message_type":"snoozed", "snoozed_until":` + strconv.FormatInt(time.Now().Add(duration).Unix(), 10) + `}`)
 
 	req, _ := http.NewRequest("POST", url, bytes.NewBuffer(payload))
 	req.Header.Set("Authorization", "Bearer "+os.Getenv("INTERCOM_ACCESS_TOKEN"))
@@ -158,9 +158,9 @@ func getUserName(ID string) string {
 	if err != nil {
 		log.Error.KV("err", err).KV("intercomUserID", ID).Println("Error from Intercom finding a user")
 	}
-		
 	return strings.Split(user.Name, " ")[0]
 }
+
 //********************************************Close conversation********************************************
 func closeConversation(conversationID string) {
 	_, err := ic.Conversations.Close(conversationID, &intercom.Admin{ID: json.Number(yumiBot.ID)})
