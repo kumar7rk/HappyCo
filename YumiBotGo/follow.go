@@ -47,7 +47,7 @@ func followUpProcess() {
 		}
 		//if note is from happybot set authorID to Richelle's
 		authorID := lastNote.Author.ID
-		if authorID == "2708121" {
+		if authorID == yumiBot.ID {
 			authorID = "424979"
 		}
 		authorName := m[authorID]
@@ -67,3 +67,4 @@ func followUpProcess() {
 		}
 	}
 }
+ 
