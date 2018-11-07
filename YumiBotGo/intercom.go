@@ -7,6 +7,7 @@ import (
 	"net/http"
 	"os"
 	"strconv"
+	"strings"
 	"time"
 
 	"happyco/libs/log"
@@ -151,12 +152,13 @@ func listOpenedConversations() []intercom.Conversation {
 	return allOpenedConversations
 }
 
-//********************************************Getting user name********************************************
-
+//********************************************Get user name********************************************
 func getUserName(ID string) string {
 	user, err := ic.Users.FindByID(ID)
 	if err != nil {
 		log.Error.KV("err", err).KV("intercomUserID", ID).Println("Error from Intercom finding a user")
 	}
-	return user.Name
+		
+	return strings.Split(user.Name, " ")[0]
+}
 }
