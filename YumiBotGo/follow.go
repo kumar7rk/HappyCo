@@ -54,13 +54,13 @@ func followUpProcess() {
 		userName := getUserName(convo.User.ID)
 
 		//checking if a conversation meets the parameters for following up
-		if lastNote.PartType == "note" && lastNote.Body == "<p>yumi reply follow</p>" && canFollowUp {
+		if strings.Contains(lastNote.PartType,"note") && lastNote.Body == "<p>yumi reply follow</p>" && canFollowUp {
 			addReply(authorID, convo.ID, followUpMessage(userName, authorName))
-			snoozeConversation(convo.ID, 5*24*time.Hour)
 			addNote(convo.ID, "Followed up")
+			snoozeConversation(convo.ID, 5*24*time.Hour)
 		}
-		//check if conversation can be closed
-		if lastNote.PartType == "note" && strings.EqualFold(lastNote.Body, "<p>Followed up</p>") && canClose {
+		//check if conversation can be closed		
+		if strings.Contains(lastNote.PartType,"note") && strings.EqualFold(lastNote.Body, "<p>Followed up</p>") && canClose {
 			addReply(authorID, convo.ID, closingMessage(userName, authorName))
 			addNote(convo.ID, "Conversation closed")
 		}
