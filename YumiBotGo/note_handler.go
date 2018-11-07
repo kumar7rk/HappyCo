@@ -81,7 +81,7 @@ func processNewAdminNote(user User, author Author, conversationID string, note s
 			listRunCommands(author.Name, conversationID)
 		}
 	}
-	if note == "<p>Followed up</p>" {
+	if note == "<p>followed up</p>" {
 		snoozeConversation(conversationID, 5*24*time.Hour)
 	}
 }
