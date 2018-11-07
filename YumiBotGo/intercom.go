@@ -161,4 +161,10 @@ func getUserName(ID string) string {
 		
 	return strings.Split(user.Name, " ")[0]
 }
+//********************************************Close conversation********************************************
+func closeConversation(conversationID string) {
+	_, err := ic.Conversations.Close(conversationID, &intercom.Admin{ID: json.Number(yumiBot.ID)})
+	if err != nil {
+		log.Error.KV("err", err).KV("conversationID", conversationID).Println("Error from Intercom while closing conversation")
+	}
 }
