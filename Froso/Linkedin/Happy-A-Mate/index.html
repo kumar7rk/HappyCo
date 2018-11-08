@@ -25,7 +25,6 @@
       document.getElementById("signin").addEventListener('click', function() {
         email = document.getElementById("email").value;
         password = document.getElementById("password").value;
-        // excel = document.getElementById("excel").value;
         excel = document.getElementById("excel").files[0].path;
         ipcRenderer.send('email', email)
         ipcRenderer.send('password', password)
