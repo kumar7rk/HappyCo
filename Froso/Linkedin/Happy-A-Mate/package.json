@@ -1,0 +1,21 @@
+{
+  "name": "Happy-A-Mate",
+  "version": "1.0.0",
+  "description": "Next level automation",
+  "main": "main.js",
+  "scripts": {
+    "start": "electron ."
+  },
+  "keywords": [
+    "Linkedin"
+  ],
+  "author": "HappyCo",
+  "license": "CC0-1.0",
+  "devDependencies": {
+    "electron": "^3.0.4",
+    "electron-packager": "^12.2.0"
+  },
+  "dependencies": {
+    "node": "^11.0.0"
+  }
+}

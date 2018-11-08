@@ -1,0 +1,55 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta charset="UTF-8">
+    <link rel="stylesheet" type="text/css" href="style.css">
+    <title>Happy-A-Mate!</title>
+  </head>
+
+  <body>
+    <h2>Please input your LinkedIn credentials<h2>
+    <form>
+      <input type = "text"     id = "email"    placeholder="Email" autofocus>&nbsp&nbsp&nbsp
+      <input type = "password" id = "password" placeholder="Password"><br><br>
+      <input type = "file"     id = "excel"    accept = ".xlsx"><br><br>
+      <!-- <input type = "button"   id = "signin"   value = "Let's do it"> -->
+      
+      <input type = "button"   id = "signin"   value = "Let's do it">
+
+      <!-- onclick = smashIt(); -->
+      <!-- <button                  id = "signin"   value = "Let's do it" onclick = "smashIt()">Let's do it</button> -->
+    </form>
+    <script type=“text/javascript” src=“resources/scripts/main.js”></script>
+    <script src="main.js"></script>
+    
+    <script>
+      const {ipcRenderer} = require('electron')
+      let email = "Null";
+      let password = "Null";
+      let excel = "Null";
+      document.getElementById("signin").addEventListener('click', function() {
+        email = document.getElementById("email").value;
+        password = document.getElementById("password").value;
+        excel = document.getElementById("excel").value;
+        ipcRenderer.send('email', email)
+        ipcRenderer.send('password', password)
+        ipcRenderer.send('excel', excel)
+
+        // ipcRenderer.on('asynchronous-reply')
+      });
+
+      function fu() {
+        smashIt(email, password, excel)
+      }
+      document.getElementById("signin").addEventListener('click',function(){
+        fu();
+      });
+
+      // document.getElementById("signin").addEventListener('click',smashIt); // calls when button is clicked
+      // document.getElementById("signin").addEventListener('click',smashIt());// calls when window opens
+
+    </script>
+  </body>
+</html>
+
+
