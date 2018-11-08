@@ -8,7 +8,7 @@ ipcMain.on('email', (event, email) => {
   console.log("email:"+email);
 });
 ipcMain.on('password', (event, password) => {
-  console.log(password);
+  console.log("***********");
 });
 ipcMain.on('excel', (event, excel) => {
   console.log(excel);
