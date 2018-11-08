@@ -13,25 +13,28 @@ YumiBotGo/Next step
 YumiBotGo/files/push gerrit.txt
 YumiBotGo/files/intercomAdminIds
 YumiBotGo/files/Integration.numbers
+YumiBotGo/.env
+YumiBotGo/files/.env
+YumiBotGo/files/commented code
+YumiBotGo/files/Conflict Git
+YumiBotGo/files/jira workflow
 
 .DS_Store
 
 *.zip
 *.xlsx
 
-Froso/node_modules/
-Froso/nextStepFroso
-Froso/Linkedin/files/creds.js
-Froso/linkedin/creds.js
-YumiBotGo/.env
-YumiBotGo/files/.env
 yardicsv/yardicsv
 yardicsv/main.go
-YumiBotGo/files/commented code
-YumiBotGo/files/Conflict Git
+
+Froso/node_modules/
+Froso/nextStepFroso
+
 Froso/Entrata/using scrape for Entrata.js
+
+Froso/Linkedin/files/creds.js
+Froso/linkedin/creds.js
 Froso/Linkedin/files/final step:ui
-YumiBotGo/files/jira workflow
 Froso/Linkedin/Happy-A-Mate/creds.js
 Froso/Linkedin/Happy-A-Mate/node_modules/
-Froso/Linkedin/Happy-A-Mate/Happy-A-Mate
+Froso/Linkedin/Happy-A-Mate/exec-darwin-x64
