@@ -2,6 +2,7 @@ const puppeteer = require('puppeteer');
 const CREDS = require('./files/creds');
 const player = require('play-sound')(opts = {});
 const {performance} = require('perf_hooks');
+const {file} = require('fs');
 
 //puppeteer variables
 var browser;
@@ -45,7 +46,7 @@ try{
   first_sheet_name = workbook.SheetNames[0];
   worksheet = workbook.Sheets[first_sheet_name];
 
-  for (var i = 2; i < 11; i++) {
+  for (var i = 2; i < 4; i++) {
     console.log("Row: "+i);
 
     var address = 'R'+i;
@@ -235,9 +236,16 @@ catch(error){
 var t1 = performance.now();
 log((t1-t0)/1000+ " seconds");
 await browser.close();
-/*player.play('./files/completed.mp3', function(err){
-  if (err) throw err
-})*/
+/*var completionSound = new File('./files/completed.mp3');
+
+if (!completionSound.exists) {
+    alert(completionSound + " could not be found!");
+}
+else {
+  player.play(completionSound, function(err){
+    if (err) throw err
+  }) 
+}*/
 }//run()
 
 //********************************************Get data from LinkedIn********************************************
