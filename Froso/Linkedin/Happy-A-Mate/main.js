@@ -5,12 +5,9 @@ const player = require('play-sound')(opts = {});
 const {performance} = require('perf_hooks');
 const {file} = require('fs');
 
-var weAreDoneHere = ""
 ipcMain.on('email', (event, email) => {
-  // weAreDoneHere = email
   console.log("email:"+email);
 });
-// console.log("weAreDoneHere:"+weAreDoneHere)
 ipcMain.on('password', (event, password) => {
   console.log(password);
 });
