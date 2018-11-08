@@ -17,6 +17,7 @@
   },
   "dependencies": {
     "node": "^11.0.0",
-    "puppeteer": "^1.10.0"
+    "puppeteer": "^1.10.0",
+    "xlsx": "^0.14.0"
   }
 }
