@@ -26,6 +26,7 @@
         email = document.getElementById("email").value;
         password = document.getElementById("password").value;
         excel = document.getElementById("excel").files[0].path;
+
         ipcRenderer.send('email', email)
         ipcRenderer.send('password', password)
         ipcRenderer.send('excel', excel)
@@ -33,11 +34,11 @@
         // ipcRenderer.on('asynchronous-reply')
       });
 
-      function fu() {
+      function func() {
         smashIt(email, password, excel)
       }
       document.getElementById("signin").addEventListener('click',function(){
-        fu();
+        func();
       });
 
       // document.getElementById("signin").addEventListener('click',smashIt); // calls when button is clicked
