@@ -1,7 +1,6 @@
 const {app, BrowserWindow, ipcMain} = require('electron')
 
 const puppeteer = require('puppeteer');
-const player = require('play-sound')(opts = {});
 const {performance} = require('perf_hooks');
 const {file} = require('fs');
 
