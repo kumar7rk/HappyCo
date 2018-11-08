@@ -282,7 +282,8 @@ async function valueChanged(readCell,data, writeCell) {
   var cell = worksheet[readCell];
   var value = (cell ? cell.v : undefined);
   if (value !== data && (data !==""|| value !=="")) {
-    setData(writeCell,"TRUE")
+    setData(writeCell, "TRUE")
+    setData(readCell, data)
   }
 }
 //********************************************Log********************************************
