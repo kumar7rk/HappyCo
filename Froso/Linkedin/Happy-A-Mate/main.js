@@ -73,6 +73,12 @@ async function run (email, pw, excel) {
   });
 
   page = await browser.newPage();
+
+  await page.setViewport({
+      width: 1200,
+      height: 800
+  });
+
   await page.goto("https://www.linkedin.com");
 
   const USERNAME_SELECTOR = '#login-email';
