@@ -322,7 +322,7 @@ async function setTodaysDate(i) {
     if(mm<10) {
         mm = '0'+mm
     } 
-    var lastVisitedDate = dd + '/' + mm + '/' + yyyy;
+    var lastVisitedDate = mm + '/' + dd + '/' + yyyy;
     setData('P'+i,lastVisitedDate);
 }
 
