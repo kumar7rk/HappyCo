@@ -14,7 +14,6 @@
       <input type = "file"     id = "excel"    accept = ".xlsx"><br><br>
       <input type = "button"   id = "signin"   value = "Let's do it">
     </form>
-    <!-- <script type=“text/javascript” src=“resources/scripts/main.js”></script> -->
     <script src="main.js"></script>
     
     <script>
@@ -30,8 +29,6 @@
         ipcRenderer.send('email', email)
         ipcRenderer.send('password', password)
         ipcRenderer.send('excel', excel)
-
-        // ipcRenderer.on('asynchronous-reply')
       });
 
       function func() {
@@ -40,10 +37,6 @@
       document.getElementById("signin").addEventListener('click',function(){
         func();
       });
-
-      // document.getElementById("signin").addEventListener('click',smashIt); // calls when button is clicked
-      // document.getElementById("signin").addEventListener('click',smashIt());// calls when window opens
-
     </script>
   </body>
 </html>
