@@ -8,24 +8,21 @@ ipcMain.on('email', (event, email) => {
   console.log("email:"+email);
 });
 ipcMain.on('password', (event, password) => {
-  console.log("***********");
+  console.log("password:*************");
 });
 ipcMain.on('excel', (event, excel) => {
-  console.log(excel);
+  console.log("Excel:"+excel);
 });
-
 
 let mainWindow
 
 //********************************************Creating main window********************************************
 function createWindow () {
-
   mainWindow = new BrowserWindow({width: 800, height: 600})
   console.log("loaded");
   mainWindow.loadFile('index.html')
   
   // mainWindow.webContents.executeJavaScript(`document.getElementById("signin").addEventListener('click', smashIt())`)
-    
   // document.getElementById("signin").click = smashIt)
   mainWindow.on('closed', function () {  
     mainWindow = null
@@ -35,9 +32,9 @@ function createWindow () {
 
 function smashIt(email, password, excel) {
   run(email, password, excel).then(result => {
-        // console.log("running something:"+result)
-      }).catch(error => {
-        // console.log("some error your way:"+error);
+    log("Running something:"+result)
+  }).catch(error => {
+    log("Error running something:"+error)
   })
 }
 app.on('ready', createWindow)
@@ -67,7 +64,7 @@ var worksheet;
 
 //********************************************Main function********************************************
 async function run (email, pw, excel) {
-  console.log("Run. Run for your life");
+  log("Run. Run for your life");
   browser = await puppeteer.launch({
     headless: false
   });
@@ -100,9 +97,8 @@ try{
   first_sheet_name = workbook.SheetNames[0];
   worksheet = workbook.Sheets[first_sheet_name];
 
-  for (var i = 2; i < 4; i++) {
-    console.log("Row: "+i);
-
+  for (var i = 2; i < 5; i++) {
+    log("Row:"+i)
     var address = 'R'+i;
     var cell = workbook[address];
     var profileUnavailable = (cell ? cell.v : undefined);
@@ -116,11 +112,12 @@ try{
 
     await page.goto(url);
     await page.waitFor(3 * 1000);
-    for (var j = 0; j < 2; j++) {
+    // for (var j = 0; j < 2; j++) {
       await page.evaluate(_ => {
         window.scrollBy(0, window.innerHeight);
       });
-    }
+    // }
+    // await page.waitFor(3 * 1000);
     
     var data = "";  
     var multiPosition = false;
@@ -282,7 +279,7 @@ try{
   }//for
 }//try
 catch(error){
-  console.log(error);
+  log("Caught an error:"+error);
 }
 var t1 = performance.now();
 log((t1-t0)/1000+ " seconds");
