@@ -274,7 +274,7 @@ try{
     }
 
     today = mm + '-' + dd + '-' + yyyy;
-    
+
     log("Today's date:"+today)
     var pathTo = excel.substring(0,excel.lastIndexOf("/")+1);
     XLSX.writeFile(workbook ,pathTo+'/output '+today+'.xlsx')
@@ -330,7 +330,7 @@ async function setTodaysDate(i) {
 async function valueChanged(readCell,data, writeCell) {
   var cell = worksheet[readCell];
   var value = (cell ? cell.v : undefined);
-  if (value !== data && (data !==""|| value !=="")) {
+  if (value !== data && data !== "") {
     setData(writeCell, "TRUE")
     setData(readCell, data)
   }
