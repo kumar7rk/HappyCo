@@ -274,8 +274,10 @@ try{
     }
 
     today = mm + '-' + dd + '-' + yyyy;
-
-    XLSX.writeFile(workbook ,'output '+today+'.xlsx')
+    
+    log("Today's date:"+today)
+    var pathTo = excel.substring(0,excel.lastIndexOf("/")+1);
+    XLSX.writeFile(workbook ,pathTo+'/output '+today+'.xlsx')
   }//for
 }//try
 catch(error){
