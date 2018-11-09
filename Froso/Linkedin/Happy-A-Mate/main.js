@@ -22,8 +22,6 @@ function createWindow () {
   console.log("loaded");
   mainWindow.loadFile('index.html')
   
-  // mainWindow.webContents.executeJavaScript(`document.getElementById("signin").addEventListener('click', smashIt())`)
-  // document.getElementById("signin").click = smashIt)
   mainWindow.on('closed', function () {  
     mainWindow = null
     console.log("window's closed game over");
