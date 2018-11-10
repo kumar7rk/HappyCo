@@ -14,6 +14,13 @@ ipcMain.on('excel', (event, excel) => {
   console.log("Excel:"+excel);
 });
 
+ipcMain.on('start row', (event, startRow) => {
+  console.log("Start row:"+startRow);
+});
+ipcMain.on('end row', (event, endRow) => {
+  console.log("End row:"+endRow);
+});
+
 let mainWindow
 
 //********************************************Creating main window********************************************
@@ -28,7 +35,7 @@ function createWindow () {
   })
 }
 
-function smashIt(email, password, excel) {
+function smashIt(email, password, excel, startRow, endRow) {
   run(email, password, excel).then(result => {
     log("Running something:"+result)
   }).catch(error => {
@@ -95,7 +102,7 @@ try{
   first_sheet_name = workbook.SheetNames[0];
   worksheet = workbook.Sheets[first_sheet_name];
 
-  for (var i = 2; i < 5; i++) {
+  for (var i = startRow; i < endRow; i++) {
     log("Row:"+i)
     var address = 'R'+i;
     var cell = workbook[address];
@@ -110,6 +117,7 @@ try{
 
     await page.goto(url);
     await page.waitFor(3 * 1000);
+    // await page.waitForSelector("pv-entity__position-group-pager ember-view")
     // for (var j = 0; j < 2; j++) {
       await page.evaluate(_ => {
         window.scrollBy(0, window.innerHeight);
@@ -284,6 +292,7 @@ catch(error){
 var t1 = performance.now();
 log((t1-t0)/1000+ " seconds");
 await browser.close();
+alert("Please check output file (output" +today +".xlsx) in source file directory")
 }//run()
 
 //********************************************Get data from LinkedIn********************************************
