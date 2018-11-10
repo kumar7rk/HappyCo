@@ -7,11 +7,14 @@
   </head>
 
   <body>
-    <h2>Please input your LinkedIn credentials<h2>
+    <h2>Please input your LinkedIn credentials</h2>
     <form>
       <input type = "text"     id = "email"    placeholder="Email" autofocus>&nbsp&nbsp&nbsp
       <input type = "password" id = "password" placeholder="Password"><br><br>
       <input type = "file"     id = "excel"    accept = ".xlsx"><br><br>
+      <p>Record range</p>
+      <input type = "text"     id = "start"    placeholder="Start row">&nbsp&nbsp&nbsp
+      <input type = "text"     id = "end"      placeholder="End row"><br><br>
       <input type = "button"   id = "signin"   value = "Let's do it">
     </form>
     <script src="main.js"></script>
@@ -21,18 +24,24 @@
       let email = "Null";
       let password = "Null";
       let excel = "Null";
+      let startRow = "1";
+      let endRow = "200";
       document.getElementById("signin").addEventListener('click', function() {
         email = document.getElementById("email").value;
         password = document.getElementById("password").value;
         excel = document.getElementById("excel").files[0].path;
+        startRow = document.getElementById("start").value;
+        endRow = document.getElementById("end").value;
 
         ipcRenderer.send('email', email)
         ipcRenderer.send('password', password)
         ipcRenderer.send('excel', excel)
+        ipcRenderer.send('start row', startRow)
+        ipcRenderer.send('end row', endRow)
       });
 
       function func() {
-        smashIt(email, password, excel)
+        smashIt(email, password, excel, startRow, endRow)
       }
       document.getElementById("signin").addEventListener('click',function(){
         func();
