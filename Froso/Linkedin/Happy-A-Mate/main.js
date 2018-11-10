@@ -102,7 +102,7 @@ try{
   first_sheet_name = workbook.SheetNames[0];
   worksheet = workbook.Sheets[first_sheet_name];
 
-  for (var i = startRow; i < endRow; i++) {
+  for (var i = startRow; i <= endRow; i++) {
     log("Row:"+i)
     var address = 'R'+i;
     var cell = workbook[address];
@@ -125,7 +125,7 @@ try{
     // }
     // await page.waitFor(3 * 1000);
     
-    var data = "";  
+    var data = "";
     var multiPosition = false;
     var jobExists = false;
 
