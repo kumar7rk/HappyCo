@@ -24,7 +24,7 @@
       let email = "Null";
       let password = "Null";
       let excel = "Null";
-      let startRow = "1";
+      let startRow = "2";
       let endRow = "200";
       document.getElementById("signin").addEventListener('click', function() {
         email = document.getElementById("email").value;
@@ -32,7 +32,12 @@
         excel = document.getElementById("excel").files[0].path;
         startRow = document.getElementById("start").value;
         endRow = document.getElementById("end").value;
-
+        if (startRow == "") {
+          startRow = "2"
+        }
+        if (endRow == "") {
+          endRow = "200"
+        }
         ipcRenderer.send('email', email)
         ipcRenderer.send('password', password)
         ipcRenderer.send('excel', excel)
