@@ -32,7 +32,7 @@
         excel = document.getElementById("excel").files[0].path;
         startRow = document.getElementById("start").value;
         endRow = document.getElementById("end").value;
-        if (startRow == "") {
+        if (startRow == "" || startRow = "1") {
           startRow = "2"
         }
         if (endRow == "") {
