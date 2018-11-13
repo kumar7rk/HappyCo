@@ -319,7 +319,10 @@ catch(error){
 var t1 = performance.now();
 log((t1-t0)/1000+ " seconds");
 await browser.close();
-alert("Please check output file (output" +today +".xlsx) in source file directory")
+if (today !=undefined) {
+  alert("Please check output file (output " +today +".xlsx) in source file directory")
+}
+
 }//run()
 
 //********************************************Get data from LinkedIn********************************************
