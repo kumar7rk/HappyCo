@@ -203,8 +203,12 @@ try{
         var companyName = await getData(sel);
         log("Company Name:"+companyName)
         setData('L'+i,companyName);
-        
-        sel = 'div.pv-entity__summary-info.pv-entity__summary-info--v2 > div > h4:nth-child(2) > span.pv-entity__bullet-item-v2';
+        if (singleAll) {
+          sel = 'div.pv-entity__summary-info.pv-entity__summary-info--background-section.mb2 > div > h4:nth-child(2) > span.pv-entity__bullet-item-v2'
+        }        
+        else {
+          sel = 'div.pv-entity__summary-info.pv-entity__summary-info--background-section > div > h4:nth-child(2) > span.pv-entity__bullet-item-v2'
+        }
         var currentJobDuration = await getData(sel);
         log("Current Job Duration:"+currentJobDuration);
         setData('N'+i,currentJobDuration);
