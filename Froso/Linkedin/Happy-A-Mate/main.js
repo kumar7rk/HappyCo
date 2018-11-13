@@ -125,7 +125,6 @@ try{
     await page.evaluate(_ => {
       window.scrollBy(0, window.innerHeight);
     });
-    // await page.waitFor(1 * 1000);
     var singleAll = false;
     try{
       await page.waitForSelector('div.pv-entity__summary-info.pv-entity__summary-info--background-section.mb2 > h3',{timeout:2000})
@@ -191,7 +190,7 @@ try{
         else{
           sel = 'div.pv-entity__summary-info.pv-entity__summary-info--background-section > h3';
         }
-        await page.waitFor(2 * 1000);
+        // await page.waitFor(2 * 1000);
         var title = await getData(sel);
         if (title !== undefined) {
           title = title.replace('Title','').trim();
@@ -219,7 +218,7 @@ try{
         //add title, company name, current job duration into excel
         // sel = 'div > div > div.pv-entity__summary-info-v2.pv-entity__summary-info--v2.pv-entity__summary-info-margin-top.mb2 > h3 > span:nth-child(2)';
         sel = 'div > div > div > h3 > span:nth-child(2)';
-        await page.waitFor(2 * 1000);
+        // await page.waitFor(2 * 1000);
         var title = await getData(sel);
         log("I got this title:"+title);
         setData('J'+i,title);
