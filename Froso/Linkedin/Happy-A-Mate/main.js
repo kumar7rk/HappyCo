@@ -123,14 +123,6 @@ try{
     var url = (cell ? cell.v : undefined);
 
     await page.goto(url);
-    await page.waitFor(3 * 1000);
-    // await page.waitForSelector("pv-entity__position-group-pager ember-view")
-    // for (var j = 0; j < 2; j++) {
-      await page.evaluate(_ => {
-        window.scrollBy(0, window.innerHeight);
-      });
-    // }
-    // await page.waitFor(3 * 1000);
     await page.evaluate(_ => {
       window.scrollBy(0, window.innerHeight);
     });
@@ -193,7 +185,6 @@ try{
       //only one position in the current job
       if (!multiPosition) {
         console.log("single position")
-
         //add title, company name, current job duration into excel
         sel = 'div.pv-entity__summary-info.pv-entity__summary-info--v2 >h3';
         await page.waitFor(2 * 1000);
