@@ -230,7 +230,7 @@ try{
         log("Company Name:"+companyName);
         setData('L'+i,companyName);
         
-        sel = 'div > div > div.pv-entity__summary-info-v2.pv-entity__summary-info--v2.pv-entity__summary-info-margin-top.mb2 > div > h4:nth-child(2) > span.pv-entity__bullet-item-v2';
+        sel = 'div > div > div > div > h4:nth-child(2) > span.pv-entity__bullet-item-v2'
         var currentJobDuration = await getData(sel);
         log("Current Job Duration:"+currentJobDuration);
         setData('N'+i,currentJobDuration);
