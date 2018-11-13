@@ -186,7 +186,12 @@ try{
       if (!multiPosition) {
         console.log("single position")
         //add title, company name, current job duration into excel
-        sel = 'div.pv-entity__summary-info.pv-entity__summary-info--v2 >h3';
+        if (singleAll) {
+          sel = 'div.pv-entity__summary-info.pv-entity__summary-info--background-section.mb2 > h3'
+        }
+        else{
+          sel = 'div.pv-entity__summary-info.pv-entity__summary-info--background-section > h3';
+        }
         await page.waitFor(2 * 1000);
         var title = await getData(sel);
         if (title !== undefined) {
