@@ -312,7 +312,6 @@ try{
   }//for
 }//try
 catch(error){
-  log("Caught an error:"+error);
   alert("Caught an error:"+error);
 }
 var t1 = performance.now();
