@@ -131,7 +131,27 @@ try{
       });
     // }
     // await page.waitFor(3 * 1000);
-    
+    await page.evaluate(_ => {
+      window.scrollBy(0, window.innerHeight);
+    });
+    // await page.waitFor(1 * 1000);
+    var singleAll = false;
+    try{
+      await page.waitForSelector('div.pv-entity__summary-info.pv-entity__summary-info--background-section.mb2 > h3',{timeout:2000})
+      .then(() => singleAll = true);
+    }
+    catch(error){
+      try{
+        await page.waitForSelector('div.pv-entity__summary-info.pv-entity__summary-info--background-section > h3',{timeout:2000})
+      }
+      catch(error){
+        try{
+          await page.waitForSelector('div > div > div > h3 > span:nth-child(2)',{timeout:2000})
+        }
+        catch(error){
+        }
+      }
+    }
     var data = "";
     var multiPosition = false;
     var jobExists = false;
