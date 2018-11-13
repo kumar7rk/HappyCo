@@ -246,7 +246,8 @@ try{
     const clickElement = 'span.pv-top-card-v2-section__entity-name.pv-top-card-v2-section__contact-info.ml2'
     if (name !="") {//??not sure why - cause if a profile is unavailable skip. what else can it be. but better check than not
       await page.click(clickElement);
-      await page.waitFor(1 * 1000);
+      // await page.waitFor(1 * 1000);
+      await page.waitForSelector('div > section.pv-contact-info__contact-type.ci-vanity-url > div > a', {timeout:1000});
 
       sel = 'div > section.pv-contact-info__contact-type.ci-phone > ul > li';
       var phone = await getData(sel);
