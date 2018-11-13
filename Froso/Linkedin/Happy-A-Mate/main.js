@@ -3,6 +3,7 @@ const {app, BrowserWindow, ipcMain} = require('electron')
 const puppeteer = require('puppeteer');
 const {performance} = require('perf_hooks');
 const {file} = require('fs');
+const {TimeoutError} = require('puppeteer/Errors');
 
 ipcMain.on('email', (event, email) => {
   console.log("email:"+email);
