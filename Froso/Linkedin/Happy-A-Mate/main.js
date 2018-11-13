@@ -78,8 +78,8 @@ async function run (email, pw, excel) {
   page = await browser.newPage();
 
   await page.setViewport({
-      width: 1200,
-      height: 800
+      width: window.screen.availWidth,
+      height: window.screen.availHeight
   });
 
   await page.goto("https://www.linkedin.com");
@@ -105,6 +105,12 @@ try{
 
   for (var i = startRow; i <= endRow; i++) {
     log("Row:"+i)
+
+    await page.setViewport({
+      width: window.screen.availWidth,
+      height: window.screen.availHeight
+    });
+
     var address = 'R'+i;
     var cell = workbook[address];
     var profileUnavailable = (cell ? cell.v : undefined);
