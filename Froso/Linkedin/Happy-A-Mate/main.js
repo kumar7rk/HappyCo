@@ -244,7 +244,7 @@ try{
     
     //add phone location birthday into excel
     const clickElement = 'span.pv-top-card-v2-section__entity-name.pv-top-card-v2-section__contact-info.ml2'
-    if (name !="") {//??note sure why - cause if a profile is unavailable if skip. what else it can be. but better check than not
+    if (name !="") {//??not sure why - cause if a profile is unavailable skip. what else can it be. but better check than not
       await page.click(clickElement);
       await page.waitFor(1 * 1000);
 
