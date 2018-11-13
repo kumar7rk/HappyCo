@@ -102,8 +102,7 @@ try{
   workbook = XLSX.readFile(excel);
   first_sheet_name = workbook.SheetNames[0];
   worksheet = workbook.Sheets[first_sheet_name];
-
-  for (var i = startRow; i <= endRow; i++) {
+  for (var i = Number(startRow); i <= Number(endRow); i++) {
     log("Row:"+i)
 
     await page.setViewport({
