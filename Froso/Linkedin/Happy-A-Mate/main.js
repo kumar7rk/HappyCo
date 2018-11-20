@@ -50,6 +50,7 @@ function createWindow () {
   })
 }
 
+//********************************************Calling puppeteer code********************************************
 function smashIt(email, password, excel, startRow, endRow) {
   run(email, password, excel).then(result => {
     log("Running something:"+result)
@@ -57,8 +58,6 @@ function smashIt(email, password, excel, startRow, endRow) {
     log("Error running something:"+error)
   })
 }
-
-
 
 //********************************************Puppeteer code********************************************
 
@@ -323,7 +322,11 @@ await browser.close();
 if (today !=undefined) {
   alert("Please check output file (output " +today +".xlsx) in source file directory")
 }
-
+var elements = ["email", "password", "excel", "start", "end", "signin"]
+for (var i = 0; i < elements.length; i++) {
+  let element = document.getElementById(elements[i])
+  element.disabled = false;
+}
 }//run()
 
 //********************************************Get data from LinkedIn********************************************
