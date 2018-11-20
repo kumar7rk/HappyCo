@@ -46,8 +46,18 @@
       });
 
       function func() {
+        disableElements();
         smashIt(email, password, excel, startRow, endRow)
       }
+
+      function disableElements(element) {
+        var elements = ["email", "password", "excel", "start", "end", "signin"]
+        for (var i = 0; i < elements.length; i++) {
+          let element = document.getElementById(elements[i])
+          element.disabled = true;
+        }
+      }
+      
       document.getElementById("signin").addEventListener('click',function(){
         func();
       });
