@@ -24,6 +24,20 @@ ipcMain.on('end row', (event, endRow) => {
 
 let mainWindow
 
+app.on('ready', createWindow)
+
+app.on('window-all-closed', function () {
+  if (process.platform !== 'darwin') {
+    app.quit()
+  }
+})
+
+app.on('activate', function () {
+  if (mainWindow === null) {
+    createWindow()
+  }
+})
+
 //********************************************Creating main window********************************************
 function createWindow () {
   mainWindow = new BrowserWindow({width: 800, height: 600})
@@ -43,19 +57,8 @@ function smashIt(email, password, excel, startRow, endRow) {
     log("Error running something:"+error)
   })
 }
-app.on('ready', createWindow)
 
-app.on('window-all-closed', function () {
-  if (process.platform !== 'darwin') {
-    app.quit()
-  }
-})
 
-app.on('activate', function () {
-  if (mainWindow === null) {
-    createWindow()
-  }
-})
 
 //********************************************Puppeteer code********************************************
 
