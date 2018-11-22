@@ -56,8 +56,8 @@ function createWindow () {
 }
 
 //********************************************Calling puppeteer code********************************************
-function smashIt(email, password, excel, startRow, endRow) {
-  run(email, password, excel).then(result => {
+function smashIt() {
+  run().then(result => {
     log("Running something:"+result)
   }).catch(error => {
     log("Error running something:"+error)
@@ -76,7 +76,7 @@ var first_sheet_name;
 var worksheet;
 
 //********************************************Main function********************************************
-async function run (email, pw, excel) {
+async function run () {
   log("Run. Run for your life");
   browser = await puppeteer.launch({
     headless: false
@@ -98,7 +98,7 @@ async function run (email, pw, excel) {
   await page.click(USERNAME_SELECTOR);
   await page.keyboard.type(email);
   await page.click(PASSWORD_SELECTOR);
-  await page.keyboard.type(pw);
+  await page.keyboard.type(password);
   await page.click(BUTTON_SELECTOR);
   await page.waitForNavigation();
 
