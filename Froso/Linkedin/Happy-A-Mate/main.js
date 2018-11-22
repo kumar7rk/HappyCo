@@ -21,6 +21,11 @@ ipcMain.on('start row', (event, startRow) => {
 ipcMain.on('end row', (event, endRow) => {
   console.log("End row:"+endRow);
 });
+ipcMain.on('total profiles', (event, totalProfiles) => {
+  console.log("Total profiles:"+totalProfiles);
+  /*var totalProfiles1 = document.getElementById("totalProfiles");
+  totalProfiles1.value = totalProfiles;*/
+});
 
 let mainWindow
 
