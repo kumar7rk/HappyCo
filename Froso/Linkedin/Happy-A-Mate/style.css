@@ -5,3 +5,7 @@ body {
 p,h2 {
   color: white;
 }
+
+span {
+	display: none
+}
