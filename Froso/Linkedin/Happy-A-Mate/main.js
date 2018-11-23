@@ -20,6 +20,9 @@ ipcMain.on('start row', (event, startRow) => {
 ipcMain.on('end row', (event, endRow) => {
 });
 
+ipcMain.on('job duration', (event, jobDuration) => {
+});
+
 let mainWindow
 
 app.on('ready', createWindow)
@@ -304,7 +307,7 @@ try{
         ym = currentJobDuration.split(" ");
         if (ym.length ==1) {
            var num =  parseInt(ym[0]);
-           if (num<4) {
+           if (num < jobDuration) {
             setData('O'+i,"TRUE")
           }
         }
