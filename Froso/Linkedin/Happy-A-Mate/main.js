@@ -6,25 +6,18 @@ const {file} = require('fs');
 const {TimeoutError} = require('puppeteer/Errors');
 
 ipcMain.on('email', (event, email) => {
-  console.log("email:"+email);
 });
+
 ipcMain.on('password', (event, password) => {
-  console.log("password:*************");
 });
+
 ipcMain.on('excel', (event, excel) => {
-  console.log("Excel:"+excel);
 });
 
 ipcMain.on('start row', (event, startRow) => {
-  console.log("Start row:"+startRow);
 });
+
 ipcMain.on('end row', (event, endRow) => {
-  console.log("End row:"+endRow);
-});
-ipcMain.on('total profiles', (event, totalProfiles) => {
-  console.log("Total profiles:"+totalProfiles);
-  /*var totalProfiles1 = document.getElementById("totalProfiles");
-  totalProfiles1.value = totalProfiles;*/
 });
 
 let mainWindow
