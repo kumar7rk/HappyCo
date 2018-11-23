@@ -44,10 +44,12 @@
         endRow        = document.getElementById("end").value;
 
         if (startRow == "" || startRow <= "1") {
-          startRow = "2"
+          startRow = "2";
+          document.getElementById("start").value = startRow;
         }
         if (endRow == "") {
-          endRow = "200"
+          endRow = "200";
+          document.getElementById("end").value = endRow;
         }
         ipcRenderer.send('email', email)
         ipcRenderer.send('password', password)
