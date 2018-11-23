@@ -39,7 +39,7 @@ app.on('activate', function () {
 //********************************************Creating main window********************************************
 function createWindow () {
   mainWindow = new BrowserWindow({width: 800, height: 600})
-  console.log("loaded");
+  console.log("App launched ");
   mainWindow.loadFile('index.html')
   
   mainWindow.on('closed', function () {  
