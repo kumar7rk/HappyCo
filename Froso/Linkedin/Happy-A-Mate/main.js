@@ -110,6 +110,15 @@ try{
   for (var i = Number(startRow); i <= Number(endRow); i++) {
     var currentProfile1 = document.getElementById("currentProfile");
     currentProfile1.textContent = ++currentProfile;
+    
+    var timeRemaining = document.getElementById("timeRemaining");
+    var time = Math.round(parseInt((totalNumberOfProfiles- currentProfile)/9.5));
+    if (time == 0) {
+      time = "< 1";
+    }
+    timeRemaining.textContent = time;
+
+
 
     var totalRecordsDonePercent = document.getElementById("recordsDonePercent");
     totalRecordsDonePercent.textContent = parseInt((currentProfile-1)*100/totalNumberOfProfiles);
@@ -321,6 +330,8 @@ try{
     var pathTo = excel.substring(0,excel.lastIndexOf("/")+1);
     XLSX.writeFile(workbook ,pathTo+'/output '+today+'.xlsx')
   }//for
+   totalRecordsDonePercent.textContent = 100;
+   timeRemaining.textContent = 0;
 }//try
 catch(error){
   alert("Caught an error:"+error);
