@@ -15,8 +15,10 @@
       Record range <em>(Default:first 200 records)</em>
       <input type = "number"   id = "start"    placeholder="Starting row">&nbsp&nbsp&nbsp
       <input type = "number"   id = "end"      placeholder="Ending row"><br><br>
+      Current job Duration<em>(Default: 3 months)</em>
+      <input type = "number"   id = "jobDuration"      placeholder="Add # of months"><br><br>
       <input type = "button"   id = "signin"   value = "Let's do it"><br><br>
-      
+
       <span id = "currentlyVisitingProfile">Currently visiting profile:</span> 
       <span id = "currentProfile"></span> 
       <span id = "of"> of</span> 
@@ -25,7 +27,6 @@
       <span id = "completed">Completed:</span>
       <span id = "recordsDonePercent">0</span>
       <span id = "percent">%</span>
-
       <br><br>
       <span id = "approximateTimeRemaining">Approximate time remaining:</span>
       <span id = "timeRemaining"></span>
@@ -40,6 +41,7 @@
       let excel = "Null";
       let startRow = "2";
       let endRow = "200";
+      let jobDuration = "3";
 
       let totalNumberOfProfiles = "200";
       let recordsVisitedPercent = "0";
@@ -50,6 +52,7 @@
         excel         = document.getElementById("excel").files[0].path;
         startRow      = document.getElementById("start").value;
         endRow        = document.getElementById("end").value;
+        jobDuration        = document.getElementById("jobDuration").value;
 
         if (startRow == "" || startRow <= "1") {
           startRow = "2";
@@ -58,6 +61,11 @@
         if (endRow == "") {
           endRow = "200";
           document.getElementById("end").value = endRow;
+        }
+
+        if (jobDuration == "" || jobDuration > 11) {
+          jobDuration = "3";
+          document.getElementById("jobDuration").value = jobDuration;
         }
         
         totalNumberOfProfiles = endRow-startRow+1;
@@ -88,6 +96,7 @@
         ipcRenderer.send('excel', excel)
         ipcRenderer.send('start row', startRow)
         ipcRenderer.send('end row', endRow)
+        ipcRenderer.send('job duration', jobDuration)
       });
 
       function func() {
