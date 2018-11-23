@@ -102,7 +102,18 @@ try{
   workbook = XLSX.readFile(excel);
   first_sheet_name = workbook.SheetNames[0];
   worksheet = workbook.Sheets[first_sheet_name];
+  
+  var currentProfile = 0;
+  var totalNumberOfProfiles = endRow-startRow+1;
+  
+  //for 
   for (var i = Number(startRow); i <= Number(endRow); i++) {
+    var currentProfile1 = document.getElementById("currentProfile");
+    currentProfile1.textContent = ++currentProfile;
+
+    var totalRecordsDonePercent = document.getElementById("recordsDonePercent");
+    totalRecordsDonePercent.textContent = parseInt((currentProfile-1)*100/totalNumberOfProfiles);
+
     log("Row:"+i)
 
     await page.setViewport({
