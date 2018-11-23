@@ -345,7 +345,7 @@ await browser.close();
 if (today !=undefined) {
   alert("Please check output file (output " +today +".xlsx) in source file directory")
 }
-var elements = ["email", "password", "excel", "start", "end", "signin"]
+var elements = ["email", "password", "excel", "start", "end", "signin", "jobDuration"]
 for (var i = 0; i < elements.length; i++) {
   let element = document.getElementById(elements[i])
   element.disabled = false;
