@@ -36,6 +36,10 @@
       let excel = "Null";
       let startRow = "2";
       let endRow = "200";
+
+      let totalNumberOfProfiles = "200";
+      let recordsVisitedPercent = "0";
+
       document.getElementById("signin").addEventListener('click', function() {
         email         = document.getElementById("email").value;
         password      = document.getElementById("password").value;
@@ -51,6 +55,22 @@
           endRow = "200";
           document.getElementById("end").value = endRow;
         }
+        
+        totalNumberOfProfiles = endRow-startRow+1;
+        
+        totalProfiles.textContent = totalNumberOfProfiles;
+
+        recordsDonePercent.textContent = "0"
+
+
+        currentlyVisitingProfile.style.display = "inline";
+        currentProfile.style.display = "inline";
+        of.style.display = "inline";
+        totalProfiles.style.display = "inline";
+        completed.style.display = "inline";
+        recordsDonePercent.style.display = "inline";
+        percent.style.display = "inline";
+        
         ipcRenderer.send('email', email)
         ipcRenderer.send('password', password)
         ipcRenderer.send('excel', excel)
