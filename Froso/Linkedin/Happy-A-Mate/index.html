@@ -26,6 +26,10 @@
       <span id = "recordsDonePercent">0</span>
       <span id = "percent">%</span>
 
+      <br><br>
+      <span id = "approximateTimeRemaining">Approximate time remaining:</span>
+      <span id = "timeRemaining"></span>
+      <span id = "mins">min(s)</span>
     </form>
     <script src="main.js"></script>
     
@@ -59,7 +63,12 @@
         totalNumberOfProfiles = endRow-startRow+1;
         
         totalProfiles.textContent = totalNumberOfProfiles;
-
+        currentProfile.textContent = "-";
+        var time = Math.round(parseInt((totalNumberOfProfiles/9.5)));
+        if (time == 0) {
+          time = "< 1";
+        }
+        timeRemaining.textContent = time;
         recordsDonePercent.textContent = "0"
 
 
@@ -70,6 +79,9 @@
         completed.style.display = "inline";
         recordsDonePercent.style.display = "inline";
         percent.style.display = "inline";
+        approximateTimeRemaining.style.display = "inline";
+        timeRemaining.style.display = "inline";
+        mins.style.display = "inline";
         
         ipcRenderer.send('email', email)
         ipcRenderer.send('password', password)
