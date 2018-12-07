@@ -12,13 +12,13 @@
   "author": "HappyCo",
   "license": "CC0-1.0",
   "devDependencies": {
-    "electron": "^3.0.4",
+    "electron": "^3.0.10",
     "electron-packager": "^12.2.0"
   },
   "dependencies": {
-    "node": "^11.0.0",
+    "node": "^11.3.0",
     "npm": "^6.4.1",
-    "puppeteer": "^1.10.0",
-    "xlsx": "^0.14.0"
+    "puppeteer": "^1.11.0",
+    "xlsx": "^0.14.1"
   }
 }
