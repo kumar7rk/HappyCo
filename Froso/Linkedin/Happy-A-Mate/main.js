@@ -394,7 +394,8 @@ async function setTodaysDate(i) {
 async function valueChanged(readCell,data, writeCell) {
   var cell = worksheet[readCell];
   var value = (cell ? cell.v : undefined);
-  if (value !== data && data !== "") {
+
+  if (value.toLowerCase() !== data.toLowerCase() && data !== "") {
     setData(writeCell, "TRUE")
     setData(readCell, data)
   }
