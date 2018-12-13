@@ -47,12 +47,12 @@
       let recordsVisitedPercent = "0";
 
       document.getElementById("signin").addEventListener('click', function() {
-        email         = document.getElementById("email").value;
-        password      = document.getElementById("password").value;
-        excel         = document.getElementById("excel").files[0].path;
-        startRow      = document.getElementById("start").value;
-        endRow        = document.getElementById("end").value;
-        jobDuration        = document.getElementById("jobDuration").value;
+        email = document.getElementById("email").value;
+        password = document.getElementById("password").value;
+        excel = document.getElementById("excel").files[0].path;
+        startRow = document.getElementById("start").value;
+        endRow = document.getElementById("end").value;
+        jobDuration = document.getElementById("jobDuration").value;
 
         if (startRow == "" || startRow <= "1") {
           startRow = "2";
