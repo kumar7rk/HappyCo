@@ -348,7 +348,7 @@ try{
 
     log("Today's date:"+today)
     var pathTo = excel.substring(0,excel.lastIndexOf("/")+1);
-    XLSX.writeFile(workbook ,pathTo+'/output '+today+'.xlsx')
+    XLSX.writeFile(workbook ,pathTo+'/output '+today +" "+startRow +"-"+endRow+'.xlsx')
   }//for
    totalRecordsDonePercent.textContent = 100;
    timeRemaining.textContent = 0;
@@ -360,7 +360,7 @@ var t1 = performance.now();
 log((t1-t0)/1000+ " seconds");
 await browser.close();
 if (today !=undefined) {
-  alert("Please check output file (output " +today +".xlsx) in source file directory")
+  alert("Please check output file (output " +today +" "+startRow +"-"+endRow+".xlsx) in source file directory")
 }
 var elements = ["email", "password", "excel", "start", "end", "signin", "jobDuration"]
 for (var i = 0; i < elements.length; i++) {
