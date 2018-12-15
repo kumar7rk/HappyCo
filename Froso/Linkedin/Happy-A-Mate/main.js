@@ -4,6 +4,7 @@ const puppeteer = require('puppeteer');
 const {performance} = require('perf_hooks');
 const {file} = require('fs');
 const {TimeoutError} = require('puppeteer/Errors');
+const fs = require('fs');
 
 ipcMain.on('email', (event, email) => {
 });
@@ -109,6 +110,18 @@ try{
   var currentProfile = 0;
   var totalNumberOfProfiles = endRow-startRow+1;
   
+  //TODO-update the url because with executable won't understand this
+  readTextFile("/Users/Rohit/Documents/GitHub/HappyCo/Froso/Linkedin/Happy-A-Mate/config.json", function(text){
+    var data = JSON.parse(text);
+
+    data.row = endRow;
+    data.file.path = excel;
+    fs.writeFile("/Users/Rohit/Documents/GitHub/HappyCo/Froso/Linkedin/Happy-A-Mate/config.json", JSON.stringify(data), function(err) {
+    if(err) {
+        return alert("Error while writing file"+err);
+    }
+}); 
+  });
   //for 
   for (var i = Number(startRow); i <= Number(endRow); i++) {
     var currentProfile1 = document.getElementById("currentProfile");
@@ -404,4 +417,16 @@ async function valueChanged(readCell,data, writeCell) {
 //********************************************Log********************************************
 async function log(value){
   console.log(value);
+}
+
+async function readTextFile(file, callback) {
+    var rawFile = new XMLHttpRequest();
+    rawFile.overrideMimeType("application/json");
+    rawFile.open("GET", file, true);
+    rawFile.onreadystatechange = function() {
+        if (rawFile.readyState === 4 && rawFile.status == "200") {
+            callback(rawFile.responseText);
+        }
+    }
+    rawFile.send(null);
 }
