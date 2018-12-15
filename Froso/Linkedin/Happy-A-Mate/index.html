@@ -128,10 +128,24 @@
       // checking if the json value for row is not empty string, put it in start row
       // and same for excel path
       readTextFile("/Users/Rohit/Documents/GitHub/HappyCo/Froso/Linkedin/Happy-A-Mate/config.json", function(text){
-          var data = JSON.parse(text);
-          if (data.row != "") {
-            document.getElementById("start").value = data.row;
-          }
+        var data = JSON.parse(text);
+        if (data.row != "") {
+          document.getElementById("start").value = data.row;
+        }
+        //if the program is run for the first time don't show file selected text
+        if (data.file.path == "") {
+          isAnyFileSaved.disabled = true;
+        }
+        // if a files' path stored, show selected file name
+        if (data.file.path != "") {
+          excel = data.file.path;
+          isAnyFileSaved.style.display = "inline";
+          document.getElementById("excel").style.display = "none";
+          newFile.style.display = "inline";
+          document.getElementById("isAnyFileSaved").innerHTML = "File selected:"+data.file.name;
+          // document.getElementById("excel").disabled = true;
+        }
+      });
 
           if (data.file.path != "") {
             document.getElementById("excel").files[0].path = data.file.path;;
