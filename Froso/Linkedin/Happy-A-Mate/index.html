@@ -135,10 +135,14 @@
       var jsonFile = __dirname+"/config.json";
       readTextFile(jsonFile, function(text){
         var data = JSON.parse(text);
+        if (data.email != "") {
+          document.getElementById("email").value = data.email;
+          document.getElementById("password").value = data.password;
+          document.getElementById("end").focus();
+        }
         if (data.row != "") {
           document.getElementById("start").value = data.row;
           document.getElementById("end").focus();
-          
         }
         //if the program is run for the first time don't show file selected text
         if (data.file.path == "") {
