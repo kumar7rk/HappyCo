@@ -42,9 +42,9 @@
       let startRow = "2";
       let endRow = "200";
       let jobDuration = "3";
-
       let totalNumberOfProfiles = "200";
 
+      // signin button click event
       document.getElementById("signin").addEventListener('click', function() {
         email = document.getElementById("email").value;
         password = document.getElementById("password").value;
@@ -107,13 +107,14 @@
         ipcRenderer.send('start row', startRow)
         ipcRenderer.send('end row', endRow)
         ipcRenderer.send('job duration', jobDuration)
-      });
-
+      });// signin button click event
+      
+      //func
       function func() {
         disableElements();
         smashIt();
       }
-
+      //func
       function disableElements(element) {
         var elements = ["email", "password", "excel", "start", "end", "signin", "jobDuration"]
         for (var i = 0; i < elements.length; i++) {
@@ -121,10 +122,11 @@
           element.disabled = true;
         }
       }
-      
+      // another signin button click event
       document.getElementById("signin").addEventListener('click',function(){
         func();
       });
+
       // checking if the json value for row is not empty string, put it in start row
       // and same for excel path
       readTextFile("/Users/Rohit/Documents/GitHub/HappyCo/Froso/Linkedin/Happy-A-Mate/config.json", function(text){
