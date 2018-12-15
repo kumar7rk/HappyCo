@@ -111,14 +111,16 @@ try{
   var totalNumberOfProfiles = endRow-startRow+1;
   
   //TODO-update the url because executable won't understand this
-  readTextFile("/Users/Rohit/Documents/GitHub/HappyCo/Froso/Linkedin/Happy-A-Mate/config.json", function(text){
+  var jsonFile = __dirname+"/config.json";
+  readTextFile(jsonFile, function(text){
+  // readTextFile("/Users/Rohit/Documents/GitHub/HappyCo/Froso/Linkedin/Happy-A-Mate/config.json", function(text){
     var data = JSON.parse(text);
 
     data.row = Number(endRow)+1;
     data.file.path = excel;
     var fileName = excel.substring(excel.lastIndexOf("/")+1,excel.length);
     data.file.name = fileName;
-    fs.writeFile("/Users/Rohit/Documents/GitHub/HappyCo/Froso/Linkedin/Happy-A-Mate/config.json", JSON.stringify(data), function(err) {
+    fs.writeFile(jsonFile, JSON.stringify(data), function(err) {
       if(err) {
           return alert("Error while writing file"+err);
       }

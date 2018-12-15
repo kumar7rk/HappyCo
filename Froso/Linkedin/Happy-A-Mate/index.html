@@ -53,7 +53,8 @@
           excel = document.getElementById("excel").files[0].path;          
         }
         else {
-          readTextFile("/Users/Rohit/Documents/GitHub/HappyCo/Froso/Linkedin/Happy-A-Mate/config.json", function(text){
+          var jsonFile = __dirname+"/config.json";
+          readTextFile(jsonFile, function(text){
             var data = JSON.parse(text);
             if (data.file.path != null) {
               excel = data.file.path; 
@@ -129,7 +130,8 @@
 
       // checking if the json value for row is not empty string, put it in start row
       // and same for excel path
-      readTextFile("/Users/Rohit/Documents/GitHub/HappyCo/Froso/Linkedin/Happy-A-Mate/config.json", function(text){
+      var jsonFile = __dirname+"/config.json";
+      readTextFile(jsonFile, function(text){
         var data = JSON.parse(text);
         if (data.row != "") {
           document.getElementById("start").value = data.row;
