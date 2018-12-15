@@ -48,7 +48,18 @@
       document.getElementById("signin").addEventListener('click', function() {
         email = document.getElementById("email").value;
         password = document.getElementById("password").value;
-        excel = document.getElementById("excel").files[0].path;
+
+        if(document.getElementById("excel").files.length !=0){
+          excel = document.getElementById("excel").files[0].path;          
+        }
+        else {
+          readTextFile("/Users/Rohit/Documents/GitHub/HappyCo/Froso/Linkedin/Happy-A-Mate/config.json", function(text){
+            var data = JSON.parse(text);
+            if (data.file.path != null) {
+              excel = data.file.path; 
+            }
+          });
+        }
         startRow = document.getElementById("start").value;
         endRow = document.getElementById("end").value;
         jobDuration = document.getElementById("jobDuration").value;
