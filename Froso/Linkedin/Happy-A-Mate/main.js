@@ -116,6 +116,8 @@ try{
 
     data.row = Number(endRow)+1;
     data.file.path = excel;
+    var fileName = excel.substring(excel.lastIndexOf("/")+1,excel.length);
+    data.file.name = fileName;
     fs.writeFile("/Users/Rohit/Documents/GitHub/HappyCo/Froso/Linkedin/Happy-A-Mate/config.json", JSON.stringify(data), function(err) {
     if(err) {
         return alert("Error while writing file"+err);
