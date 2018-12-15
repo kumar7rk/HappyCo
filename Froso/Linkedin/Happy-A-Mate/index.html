@@ -149,6 +149,10 @@
           document.getElementById("excel").focus();
           isAnyFileSaved.disabled = true;
         }
+        //if no email entered focus there
+        if (data.email == "") {
+          document.getElementById("email").focus();
+        }
         // if a files' path stored, show selected file name
         if (data.file.path != "") {
           excel = data.file.path;
