@@ -110,7 +110,7 @@ try{
   var currentProfile = 0;
   var totalNumberOfProfiles = endRow-startRow+1;
   
-  //TODO-update the url because with executable won't understand this
+  //TODO-update the url because executable won't understand this
   readTextFile("/Users/Rohit/Documents/GitHub/HappyCo/Froso/Linkedin/Happy-A-Mate/config.json", function(text){
     var data = JSON.parse(text);
 
@@ -119,10 +119,10 @@ try{
     var fileName = excel.substring(excel.lastIndexOf("/")+1,excel.length);
     data.file.name = fileName;
     fs.writeFile("/Users/Rohit/Documents/GitHub/HappyCo/Froso/Linkedin/Happy-A-Mate/config.json", JSON.stringify(data), function(err) {
-    if(err) {
-        return alert("Error while writing file"+err);
-    }
-}); 
+      if(err) {
+          return alert("Error while writing file"+err);
+      }
+    }); 
   });
   //for 
   for (var i = Number(startRow); i <= Number(endRow); i++) {
