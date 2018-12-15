@@ -69,7 +69,7 @@
           document.getElementById("start").value = startRow;
         }
         if (endRow == "") {
-          endRow = "200";
+          endRow = Number(startRow)+99;
           document.getElementById("end").value = endRow;
         }
 
