@@ -147,10 +147,11 @@
         }
       });
 
-          if (data.file.path != "") {
-            document.getElementById("excel").files[0].path = data.file.path;;
-            // document.getElementById("excel").value = data.file.path;
-          }
+      document.getElementById("newFile").addEventListener('click',function(){
+        isAnyFileSaved.style.display = "none";
+        document.getElementById("excel").style.display = "inline";
+        document.getElementById("start").value = "";
+        newFile.style.display = "none";
       });
 
     </script>
