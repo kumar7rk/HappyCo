@@ -114,6 +114,20 @@
       document.getElementById("signin").addEventListener('click',function(){
         func();
       });
+      // checking if the json value for row is not empty string, put it in start row
+      // and same for excel path
+      readTextFile("/Users/Rohit/Documents/GitHub/HappyCo/Froso/Linkedin/Happy-A-Mate/config.json", function(text){
+          var data = JSON.parse(text);
+          if (data.row != "") {
+            document.getElementById("start").value = data.row;
+          }
+
+          if (data.file.path != "") {
+            document.getElementById("excel").files[0].path = data.file.path;;
+            // document.getElementById("excel").value = data.file.path;
+          }
+      });
+
     </script>
   </body>
 </html>
