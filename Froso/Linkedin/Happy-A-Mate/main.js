@@ -114,7 +114,7 @@ try{
   readTextFile("/Users/Rohit/Documents/GitHub/HappyCo/Froso/Linkedin/Happy-A-Mate/config.json", function(text){
     var data = JSON.parse(text);
 
-    data.row = endRow;
+    data.row = Number(endRow)+1;
     data.file.path = excel;
     fs.writeFile("/Users/Rohit/Documents/GitHub/HappyCo/Froso/Linkedin/Happy-A-Mate/config.json", JSON.stringify(data), function(err) {
     if(err) {
