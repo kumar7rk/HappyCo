@@ -141,41 +141,37 @@
         if (data.email != "") {
           document.getElementById("email").value = data.email;
           document.getElementById("password").value = data.password;
-          document.getElementById("end").focus();
         }
         //if row value exists, load and focus on end row
         if (data.row != "") {
           document.getElementById("start").value = data.row;
           document.getElementById("end").focus();
         }
-        //if the program is run for the first time don't show file selected text
-        if (data.file.path == "") {
-          document.getElementById("excel").focus();
-          isAnyFileSaved.disabled = true;
-        }
-        //if no email entered focus there
-        if (data.email == "") {
-          document.getElementById("email").focus();
-        }
         // if a files' path stored, show selected file name
         if (data.file.path != "") {
           excel = data.file.path;
+
           isAnyFileSaved.style.display = "inline";
           document.getElementById("excel").style.display = "none";
           newFile.style.display = "inline";
           document.getElementById("isAnyFileSaved").innerHTML = "File selected:"+data.file.name;
-          // document.getElementById("excel").disabled = true;
+        }
+        //if no email entered focus there (app's run for the first time)
+        if (data.email == "") {
+          document.getElementById("email").focus();
         }
       });
 
       document.getElementById("newFile").addEventListener('click',function(){
+        
         isAnyFileSaved.style.display = "none";
-        document.getElementById("excel").style.display = "inline";
-        document.getElementById("start").value = "";
         newFile.style.display = "none";
+        
+        document.getElementById("excel").style.display = "inline"
         document.getElementById("excel").focus();  
+        
+        document.getElementById("start").value = "";
       });
-
     </script>
   </body>
 </html>
