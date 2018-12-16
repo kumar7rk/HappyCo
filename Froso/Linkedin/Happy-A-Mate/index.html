@@ -137,11 +137,13 @@
       var jsonFile = __dirname+"/config.json";
       readTextFile(jsonFile, function(text){
         var data = JSON.parse(text);
+        //if email pw saved, add into fields from json
         if (data.email != "") {
           document.getElementById("email").value = data.email;
           document.getElementById("password").value = data.password;
           document.getElementById("end").focus();
         }
+        //if row value exists, load and focus on end row
         if (data.row != "") {
           document.getElementById("start").value = data.row;
           document.getElementById("end").focus();
