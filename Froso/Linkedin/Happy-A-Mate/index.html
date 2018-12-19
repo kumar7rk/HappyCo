@@ -50,7 +50,6 @@
       let endRow = "200";
       let jobDuration = "3";
       let totalNumberOfProfiles = "200";
-
       // signin button click event
       document.getElementById("signin").addEventListener('click', function() {
         email = document.getElementById("email").value;
@@ -115,6 +114,7 @@
         ipcRenderer.send('start row', startRow)
         ipcRenderer.send('end row', endRow)
         ipcRenderer.send('job duration', jobDuration)
+        ipcRenderer.send('output folder path', outputFolderPath)
       });// signin button click event
       
       //func
@@ -159,6 +159,11 @@
           newFile.style.display = "inline";
           document.getElementById("isAnyFileSaved").innerHTML = "File selected:"+data.file.name;
         }
+
+        if (data.output.name != "") {
+          document.getElementById("outputFolderChosen").innerHTML = data.output.name;
+          outputFolderPath = data.output.path;
+        }
         //if no email entered focus there (app's run for the first time)
         if (data.email == "") {
           document.getElementById("email").focus();
@@ -174,22 +179,16 @@
         
         document.getElementById("start").value = "";
       });
-      
       // if the select folder button is clicked internally click the input file dialog
-      document.getElementById("outputFolder").addEventListener('click', functxion() {
+      document.getElementById("outputFolder").addEventListener('click', function() {
         document.getElementById("output").click();
       });
-      
+      var outputFolderName = "No file chosen";
       //when a file is selected change the text on screen
       document.getElementById("output").onchange = function(){
-        if(document.getElementById("output").files.length != 0){
           outputFolderPath = document.getElementById("output").files[0].path;
-          var folderName = outputFolderPath.substring(outputFolderPath.lastIndexOf("/")+1,outputFolderPath.length);
-          document.getElementById("outputFolderChosen").innerHTML = folderName;
-        }
-        else {
-          document.getElementById("outputFolderChosen").innerHTML = "No file chosen";
-        }
+          outputFolderName = outputFolderPath.substring(outputFolderPath.lastIndexOf("/")+1,outputFolderPath.length);
+          document.getElementById("outputFolderChosen").innerHTML = outputFolderName;
       }
     </script>
   </body>
