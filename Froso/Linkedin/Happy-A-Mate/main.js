@@ -358,7 +358,12 @@ try{
     today = mm + '-' + dd + '-' + yyyy;
 
     log("Today's date:"+today)
+    //set path to input file path
     var pathTo = excel.substring(0,excel.lastIndexOf("/")+1);
+    //if an output folder is selected, save file there
+    if (outputFolderPath != "") {
+      pathTo = outputFolderPath;
+    }
     XLSX.writeFile(workbook ,pathTo+'/output '+today +" "+startRow +"-"+endRow+'.xlsx')
   }//for
    totalRecordsDonePercent.textContent = 100;
