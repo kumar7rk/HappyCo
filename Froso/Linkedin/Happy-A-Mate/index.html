@@ -20,7 +20,10 @@
       <h3><center><i>Optional</i></center></h3>
       Current job duration<em>(Default: 3 months)</em>
       <input type = "number"   id = "jobDuration"      placeholder="Months"><br><br>
-      <!-- <input type = ""   id = "jobDuration"      placeholder="Add # of months"><br><br> -->
+      Choose output file folder
+      <input type = "button" id = "outputFolder" value = "Select folder">
+      <span id = outputFolderChosen style="display:inline; font-size: 10pt" size = "2" >No folder chosen</span><br><br>
+      <input type="file" id = "output" style="display:none;" webkitdirectory directory>
       <input type = "button"   id = "signin"   value = "Let's do it"><br><br>
 
       <span id = "currentlyVisitingProfile">Currently visiting profile:</span> 
@@ -163,7 +166,6 @@
       });
 
       document.getElementById("newFile").addEventListener('click',function(){
-        
         isAnyFileSaved.style.display = "none";
         newFile.style.display = "none";
         
@@ -172,6 +174,23 @@
         
         document.getElementById("start").value = "";
       });
+      
+      // if the select folder button is clicked internally click the input file dialog
+      document.getElementById("outputFolder").addEventListener('click', functxion() {
+        document.getElementById("output").click();
+      });
+      
+      //when a file is selected change the text on screen
+      document.getElementById("output").onchange = function(){
+        if(document.getElementById("output").files.length != 0){
+          outputFolderPath = document.getElementById("output").files[0].path;
+          var folderName = outputFolderPath.substring(outputFolderPath.lastIndexOf("/")+1,outputFolderPath.length);
+          document.getElementById("outputFolderChosen").innerHTML = folderName;
+        }
+        else {
+          document.getElementById("outputFolderChosen").innerHTML = "No file chosen";
+        }
+      }
     </script>
   </body>
 </html>
