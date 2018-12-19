@@ -24,6 +24,10 @@ ipcMain.on('end row', (event, endRow) => {
 ipcMain.on('job duration', (event, jobDuration) => {
 });
 
+ipcMain.on('output folder path', (event, outputFolderPath) => {
+  console.log(outputFolderPath);
+});
+
 let mainWindow
 
 app.on('ready', createWindow)
@@ -113,15 +117,20 @@ try{
   //TODO-update the url because executable won't understand this
   var jsonFile = __dirname+"/config.json";
   readTextFile(jsonFile, function(text){
-  // readTextFile("/Users/Rohit/Documents/GitHub/HappyCo/Froso/Linkedin/Happy-A-Mate/config.json", function(text){
     var data = JSON.parse(text);
 
     data.email = email;
     data.password = password;
     data.row = Number(endRow)+1;
     data.file.path = excel;
+    
     var fileName = excel.substring(excel.lastIndexOf("/")+1,excel.length);
     data.file.name = fileName;
+    
+    data.output.path = outputFolderPath;
+    
+    var outputFolderName = outputFolderPath.substring(outputFolderPath.lastIndexOf("/")+1,outputFolderPath.length);
+    data.output.name = outputFolderName;
     fs.writeFile(jsonFile, JSON.stringify(data), function(err) {
       if(err) {
           return alert("Error while writing file"+err);
