@@ -1,0 +1,33 @@
+//********************************************List all HI users in Intercom********************************************
+
+func listAllHIUsers() {
+	allUsers := []intercom.User{}
+	totalUsers := 0
+	usersList, err := ic.Users.List(intercom.PageParams{})
+	if err != nil {
+		log.Error.KV("err", err).Println("Error from Intercom listing all users")	
+	}
+	//running on all the pages
+	fmt.Println("Pring total number of pages:")
+	fmt.Println(usersList.Pages.TotalPages)
+	for i := 1; i <= int(usersList.Pages.TotalPages); i++ {
+		usersList, err := ic.Users.List(intercom.PageParams{Page: int64(i)})
+		if err != nil {
+			log.Error.KV("err", err).KV("Page", i).Println("Error from Intercom listing all users for a page")
+			continue
+		}
+		totalUsers += len(usersList.Users)
+		for j := 0; j < totalUsers; j++ {
+			userID := usersList.Users[j].UserID
+			user, err := ic.Users.FindByUserID(userID)
+			if err != nil {
+				log.Error.KV("err", err).KV("userID", userID).Println("Error from Intercom finding a user")
+				continue
+			}
+			allUsers = append(allUsers, user)
+		}
+	}
+	// fmt.Println(allUsers)
+	fmt.Println("Total users:")
+	fmt.Println(totalUsers)
+}
